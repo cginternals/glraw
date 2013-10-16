@@ -12,7 +12,7 @@
 
 #include <QCoreApplication>
 
-#include <glraw-version.h>
+#include <version.h>
 
 
 enum Format

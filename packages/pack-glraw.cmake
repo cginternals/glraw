@@ -1,4 +1,6 @@
 
+message(STATUS "Configuring pack")
+
 # CPack configuration
 
 if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
@@ -45,7 +47,7 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     
     # Package specific options
-    
+
     set(CMAKE_MODULE_PATH                   ${GLRAW_SOURCE_DIR}/packages/${project_name})
 
     
@@ -134,7 +136,7 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
     
     # Install files
     
-    set(CPACK_INSTALL_CMAKE_PROJECTS        "${CMAKE_BINARY_DIR};template;ALL;/")
+    set(CPACK_INSTALL_CMAKE_PROJECTS        "${CMAKE_BINARY_DIR};glraw;ALL;/")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY     "${package_name}")
     set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY  "${package_name}")
     if(LINUX)
@@ -171,4 +173,4 @@ set_target_properties(pack PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 
 # Dependencies
-add_dependencies(pack ${project_root})
+add_dependencies(pack glraw glraw-viewer)

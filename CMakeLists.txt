@@ -139,10 +139,6 @@ install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION .)
 
 # GLOWMETA_VERSION LIBRARY
 
-
-# Target
-set(target glraw)
-
 # Find externals
 
 set(CMAKE_AUTOMOC ON)
@@ -157,82 +153,39 @@ set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
 # good resource: http://www.kdab.com/using-cmake-with-qt-5/
 
 # http://qt-project.org/forums/viewthread/30006/
-
 cmake_policy(SET CMP0020 NEW)
 
 
-find_package(Qt5Core    REQUIRED)
-find_package(Qt5Gui     REQUIRED)
-find_package(Qt5Widgets REQUIRED) # this is important in order to get uic working 
-find_package(Qt5OpenGL  REQUIRED)
+find_package(Qt5Core    5.1 REQUIRED)
+find_package(Qt5Gui     5.1 REQUIRED)
+find_package(Qt5Widgets 5.1 REQUIRED) # this is important in order to get uic working 
+find_package(Qt5OpenGL  5.1 REQUIRED)
 
 # deploy qt binaries (glraw debug target should not be deployed)
 if(WIN32)
     install_qt(${INSTALL_BIN} Core Gui Widgets OpenGL)
 endif()
 
+# Generate meta-header
+configure_file(version.h.in version.h)
+
 # Include directories
 include_directories(
-    ${CMAKE_BINARY_DIR} # for glraw-version.h
+    ${CMAKE_BINARY_DIR} # for version.h
 )
 
-set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
+# Projects
 
-# Generate meta-header
-configure_file(${source_path}/glraw-version.h.in glraw-version.h)
+add_subdirectory(source/glraw)
+add_subdirectory(source/glraw-viewer)
 
-set(sources
-    ${source_path}/main.cpp
-)
-
-# Group source files
-set(GLRAW_SOURCE_GROUP "Source Files")
-source_group_by_path(${source_path} "\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
-    ${GLRAW_SOURCE_GROUP} ${sources})
-
-# wrap ui files and group wrap headers
-list_extract(uis "\\\\.ui$" ${sources})
-qt5_wrap_ui(uihs ${uis})
-
-source_group_by_path(${CMAKE_CURRENT_BINARY_DIR} "\\\\.h$" 
-    ${GLRAW_SOURCE_GROUP} ${uihs})
-
-
-# Build library
-add_executable(${target} ${sources} ${uihs})
-
-qt5_use_modules(${target} OpenGL Gui Widgets)
-
-#target_link_libraries(${target})
-
-set_target_properties(${target}
-    PROPERTIES
-    LINKER_LANGUAGE CXX
-    COMPILE_DEFINITIONS_DEBUG   "${DEFAULT_COMPILE_DEFS_DEBUG}"
-    COMPILE_DEFINITIONS_RELEASE "${DEFAULT_COMPILE_DEFS_RELEASE}"
-    COMPILE_FLAGS               "${DEFAULT_COMPILE_FLAGS}"
-    LINK_FLAGS_DEBUG            "${DEFAULT_LINKER_FLAGS_DEBUG}"
-    LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
-    DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
 
 # Deployment
-install(TARGETS ${target}
-    RUNTIME DESTINATION ${INSTALL_BIN}
-#    LIBRARY DESTINATION ${INSTALL_SHARED}
-#    ARCHIVE DESTINATION ${INSTALL_LIB}
-)
 install(FILES 
     packages/RawFile.cpp
     packages/RawFile.h
     packages/RawFile.hpp
     DESTINATION ${INSTALL_DATA})
-
-# DEPLOYMENT
-
-# Data files
-#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
-#    DESTINATION ${INSTALL_DATA}
-#)
 
 # Packaging
 add_subdirectory(packages)
