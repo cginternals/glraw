@@ -12,6 +12,9 @@
 
 #include <QCoreApplication>
 
+#include <glraw-version.h>
+
+
 enum Format
 {
     GL_RED
@@ -40,6 +43,8 @@ enum Type
 QMap<QString, Format> g_formats;
 QMap<QString, Type> g_types;
 QVector<QString> g_options;
+QStringList g_manuals;
+QStringList g_versions;
 
 void initialize()
 {
@@ -61,12 +66,12 @@ void initialize()
     g_types["GL_INT"] = GL_INT;
     g_types["GL_FLOAT"] = GL_FLOAT;
 
-    g_options << "--mirror-horizontal";
-    g_options << "-mh";
-    g_options << "--mirror-vertical";
-    g_options << "-mv";
-    g_options << "--as-bgr";
-    g_options << "-bgr";
+    g_options << "--mirror-horizontal"  << "-mh" ;
+    g_options << "--mirror-vertical"    << "-mv" ;
+    g_options << "--as-bgr"             << "-bgr";
+
+    g_manuals  << "--help" << "-h" << "/?";
+    g_versions << "--version" << "-v";
 }
 
 static const int option_mh  = 0;
@@ -76,21 +81,27 @@ static const int option_bgr = 4;
 void man()
 {
     qDebug() << "";
-    qDebug() << "glraw 0.2 by Daniel Limberger <daniel.limberger@hpi.unipotsdam.de>";
+    qDebug() << GLRAW_PROJECT_NAME << GLRAW_VERSION << "by" << GLRAW_AUTHOR_ORGANIZATION;
     qDebug() << "Converts an input image to an OpenGL compatible format.";
     qDebug() << "";
     qDebug() << "usage: glraw <Target-Format> <Target-Type> [<Options>] <Input-FilePath>";
     qDebug() << "";
     qDebug() << "<Target-Formats>:";
-    qDebug() << " " << qPrintable(QStringList(g_formats.keys()).join("\n  "));
+    qDebug().nospace() << "  " << qPrintable(QStringList(g_formats.keys()).join("\n  "));
     qDebug() << "";
     qDebug() << "<Target-Types>:";
-    qDebug() << " " << qPrintable(QStringList(g_types.keys()).join("\n  "));
+    qDebug().nospace() << "  " << qPrintable(QStringList(g_types.keys()).join("\n  "));
     qDebug() << "";
     qDebug() << "<Options>:";
-    qDebug() << " " << qPrintable(g_options[option_mh])  << "(" << qPrintable(g_options[option_mh + 1])  << ")";
-    qDebug() << " " << qPrintable(g_options[option_mv])  << "(" << qPrintable(g_options[option_mv + 1])  << ")";
-    qDebug() << " " << qPrintable(g_options[option_bgr]) << "(" << qPrintable(g_options[option_bgr + 1]) << ")";
+    qDebug().nospace() << "  " << qPrintable(g_options[option_mh])  << " (" << qPrintable(g_options[option_mh + 1])  << ")";
+    qDebug().nospace() << "  " << qPrintable(g_options[option_mv])  << " (" << qPrintable(g_options[option_mv + 1])  << ")";
+    qDebug().nospace() << "  " << qPrintable(g_options[option_bgr]) << " (" << qPrintable(g_options[option_bgr + 1]) << ")";
+    qDebug() << "";
+}
+
+void version()
+{
+    qDebug() << GLRAW_PROJECT_NAME << GLRAW_VERSION;
     qDebug() << "";
 }
 
@@ -134,11 +145,15 @@ int main(int argc, char *argv[])
 
     initialize();
 
-    if (a.arguments()[1] == "--help" 
-     || a.arguments()[1] == "-h"
-     || a.arguments()[1] == "/?")
+    if (a.arguments().size() == 1 || g_manuals.contains(a.arguments()[1]))
     {
         man();
+        return 0;
+    }
+
+    if (g_versions.contains(a.arguments()[1]))
+    {
+        version();
         return 0;
     }
 
