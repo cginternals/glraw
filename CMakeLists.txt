@@ -80,8 +80,8 @@ endif()
 
 set(project ${META_PROJECT_NAME})
 if(WIN32)
-    set(INSTALL_BIN           ".")                      # C:\Programme\<project>
-    set(INSTALL_SHARED        ".")                      # C:\Programme\<project>
+    set(INSTALL_BIN           "bin")                    # C:\Programme\<project>
+    set(INSTALL_SHARED        "bin")                    # C:\Programme\<project>
     set(INSTALL_LIB           "lib")                    # C:\Programme\<project>\lib
     set(INSTALL_INCLUDE       "include")                # C:\Programme\<project>\include
     set(INSTALL_DOC           "doc")                    # C:\Programme\<project>\doc
@@ -119,6 +119,7 @@ elseif(LINUX)
     endif()
 endif()
 
+install(DIRECTORY ${GLRAW_SOURCE_DIR}/include/ DESTINATION ${INSTALL_INCLUDE})
 
 
 # GET REPOSITORY VERSION
@@ -172,20 +173,14 @@ configure_file(version.h.in version.h)
 # Include directories
 include_directories(
     ${CMAKE_BINARY_DIR} # for version.h
+    include
 )
 
 # Projects
 
 add_subdirectory(source/glraw)
+add_subdirectory(source/glraw-cmd)
 add_subdirectory(source/glraw-viewer)
-
-
-# Deployment
-install(FILES 
-    packages/RawFile.cpp
-    packages/RawFile.h
-    packages/RawFile.hpp
-    DESTINATION ${INSTALL_DATA})
 
 # Packaging
 add_subdirectory(packages)

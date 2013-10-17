@@ -173,4 +173,4 @@ set_target_properties(pack PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 
 # Dependencies
-add_dependencies(pack glraw glraw-viewer)
+add_dependencies(pack glraw glraw-cmd glraw-viewer)

@@ -1,25 +1,15 @@
 
 # Target
-set(target glraw-viewer)
+set(target glraw-cmd)
 message(STATUS "Configuring ${target}")
-
-add_definitions("-DGLRAW_EXPORTS")
 
 set(sources
     main.cpp
-
-    Application.cpp
-    Application.h
-    Canvas.cpp
-    Canvas.h
-    Viewer.cpp
-    Viewer.h
-    Viewer.ui
 )
 
 # Group source files
 set(GLRAW_SOURCE_GROUP "Source Files")
-source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
     ${GLRAW_SOURCE_GROUP} ${sources})
 
 # wrap ui files and group wrap headers
@@ -32,13 +22,14 @@ source_group_by_path(${CMAKE_CURRENT_BINARY_DIR} "\\\\.h$"
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR})
 
+
 # Build library
 add_executable(${target} ${sources} ${uihs})
 
 qt5_use_modules(${target} OpenGL Gui Widgets)
 
 target_link_libraries(${target}
-    glraw)
+	glraw)
 
 set_target_properties(${target}
     PROPERTIES
@@ -53,6 +44,6 @@ set_target_properties(${target}
 # Deployment
 install(TARGETS ${target}
     RUNTIME DESTINATION ${INSTALL_BIN}
-    LIBRARY DESTINATION ${INSTALL_SHARED}
-    ARCHIVE DESTINATION ${INSTALL_LIB}
+#    LIBRARY DESTINATION ${INSTALL_SHARED}
+#    ARCHIVE DESTINATION ${INSTALL_LIB}
 )
