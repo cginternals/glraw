@@ -69,6 +69,7 @@ void initialize()
     g_options << "--mirror-horizontal"  << "-mh" ;
     g_options << "--mirror-vertical"    << "-mv" ;
     g_options << "--as-bgr"             << "-bgr";
+    g_options << "--quiet"              << "-q";
 
     g_manuals  << "--help" << "-h" << "/?";
     g_versions << "--version" << "-v";
@@ -77,6 +78,7 @@ void initialize()
 static const int option_mh  = 0;
 static const int option_mv  = 2;
 static const int option_bgr = 4;
+static const int option_q   = 6;
 
 void man()
 {
@@ -96,6 +98,7 @@ void man()
     qDebug().nospace() << "  " << qPrintable(g_options[option_mh])  << " (" << qPrintable(g_options[option_mh + 1])  << ")";
     qDebug().nospace() << "  " << qPrintable(g_options[option_mv])  << " (" << qPrintable(g_options[option_mv + 1])  << ")";
     qDebug().nospace() << "  " << qPrintable(g_options[option_bgr]) << " (" << qPrintable(g_options[option_bgr + 1]) << ")";
+    qDebug().nospace() << "  " << qPrintable(g_options[option_q])   << " (" << qPrintable(g_options[option_q + 1])   << ")";
     qDebug() << "";
 }
 
@@ -103,6 +106,10 @@ void version()
 {
     qDebug() << GLRAW_PROJECT_NAME << GLRAW_VERSION;
     qDebug() << "";
+}
+
+void quietMessageHandler(QtMsgType, const QMessageLogContext &, const QString &)
+{
 }
 
 template<typename T>
@@ -156,6 +163,9 @@ int main(int argc, char *argv[])
         version();
         return 0;
     }
+
+    if (a.arguments().contains(g_options[option_q]) || a.arguments().contains(g_options[option_q + 1]))
+        qInstallMessageHandler(quietMessageHandler);
 
     const QString farg = a.arguments()[1];
     if(!g_formats.contains(farg))
