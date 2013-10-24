@@ -4,6 +4,8 @@ set(target glraw-cmd)
 message(STATUS "Configuring ${target}")
 
 set(sources
+    ArgumentsParser.cpp
+    ArgumentsParser.h
     main.cpp
 )
 
