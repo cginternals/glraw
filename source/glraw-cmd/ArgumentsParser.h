@@ -42,11 +42,19 @@ public:
     bool mirrorHorizontal() const;
     bool mirrorVertical() const;
     bool asBGR() const;
+
+    bool hasValidWidth() const;
+    bool hasValidHeight() const;
+    bool hasValidScale() const;
+    bool hasValidWidthScale() const;
+    bool hasValidHeightScale() const;
+    
     int width() const;
     int height() const;
     float scale() const;
     float widthScale() const;
     float heightScale() const;
+    
     Qt::AspectRatioMode aspectRatioMode() const;
     Qt::TransformationMode transformationMode() const;
     QString filePath() const;

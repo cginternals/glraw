@@ -47,7 +47,6 @@ void write(
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -68,6 +67,40 @@ int main(int argc, char *argv[])
     {
         qDebug() << "Loading file from input file failed.";
         return 0;
+    }
+
+    // scaling
+
+    if (parser.hasValidScale())
+    {
+        QSize size = image.size() * parser.scale();
+        image = image.scaled(size, parser.aspectRatioMode(), parser.transformationMode());
+    }
+
+    if (parser.hasValidWidth())
+    {
+        QSize size = image.size();
+        size.setWidth(parser.width());
+        image = image.scaled(size, parser.aspectRatioMode(), parser.transformationMode());
+    }
+    else if (parser.hasValidWidthScale())
+    {
+        QSize size = image.size();
+        size.setWidth(size.width() * parser.widthScale());
+        image = image.scaled(size, parser.aspectRatioMode(), parser.transformationMode());
+    }
+
+    if (parser.hasValidHeight())
+    {
+        QSize size = image.size();
+        size.setHeight(parser.height());
+        image = image.scaled(size, parser.aspectRatioMode(), parser.transformationMode());
+    }
+    else if (parser.hasValidHeightScale())
+    {
+        QSize size = image.size();
+        size.setHeight(size.height() * parser.heightScale());
+        image = image.scaled(size, parser.aspectRatioMode(), parser.transformationMode());
     }
 
     // file name
@@ -105,7 +138,6 @@ int main(int argc, char *argv[])
         image = image.rgbSwapped();
 
     image = image.mirrored(parser.mirrorHorizontal(), !parser.mirrorVertical());
-
 
     // write
 

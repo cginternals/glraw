@@ -95,6 +95,31 @@ bool ArgumentsParser::asBGR() const
     return m_asBGR;
 }
 
+bool ArgumentsParser::hasValidWidth() const
+{
+    return m_width != s_invalidInt;
+}
+
+bool ArgumentsParser::hasValidHeight() const
+{
+    return m_height != s_invalidInt;
+}
+
+bool ArgumentsParser::hasValidScale() const
+{
+    return m_scale != s_invalidFloat;
+}
+
+bool ArgumentsParser::hasValidWidthScale() const
+{
+    return m_widthScale != s_invalidFloat;
+}
+
+bool ArgumentsParser::hasValidHeightScale() const
+{
+    return m_heightScale != s_invalidFloat;
+}
+
 int ArgumentsParser::width() const
 {
     return m_width;
@@ -218,7 +243,7 @@ bool ArgumentsParser::parseTargetFormat(QStringList::const_iterator & argumentsI
 
     if (!formats.contains(*argumentsIt))
     {
-    	qWarning() << "Unknown Target-Format" << *argumentsIt << ".";
+    	qWarning() << "Unknown Target-Format" << qPrintable(*argumentsIt) << ".";
     	return false;
     }
 
@@ -234,7 +259,7 @@ bool ArgumentsParser::parseTargetType(QStringList::const_iterator & argumentsIt)
 
     if(!types.contains(*argumentsIt))
     {
-        qWarning() << "Unknown Target-Type" << *argumentsIt << ".";
+        qWarning() << "Unknown Target-Type" << qPrintable(*argumentsIt) << ".";
         return false;
     }
 
@@ -283,7 +308,7 @@ bool ArgumentsParser::parseScalingOptions(QStringList::const_iterator & argument
 
             if (m_scale == s_invalidFloat)
             {
-                qWarning() << *argumentsIt << " is not a float.";
+                qWarning() << qPrintable(*argumentsIt) << "is not a float.";
                 return false;
             }
         }
@@ -298,7 +323,7 @@ bool ArgumentsParser::parseScalingOptions(QStringList::const_iterator & argument
                 m_widthScale = parseFloat(*argumentsIt);
                 if (m_widthScale == s_invalidFloat)
                 {
-                    qWarning() << *argumentsIt << " is neither a float nor an integer.";
+                    qWarning() << qPrintable(*argumentsIt) << "is neither a float nor an integer greater zero";
                     return false;  
                 }
             }
@@ -312,9 +337,9 @@ bool ArgumentsParser::parseScalingOptions(QStringList::const_iterator & argument
             if (m_height == s_invalidInt)
             {
                 m_heightScale = parseFloat(*argumentsIt);
-                if (m_widthScale == s_invalidFloat)
+                if (m_heightScale == s_invalidFloat)
                 {
-                    qWarning() << *argumentsIt << " is neither a float nor an integer.";
+                    qWarning() << qPrintable(*argumentsIt) << "is neither a float nor an integer greater zero";
                     return false;  
                 }
             }
@@ -367,17 +392,8 @@ float ArgumentsParser::parseFloat(const QString & string)
 	bool ok;
 	float parsedValue = string.toFloat(&ok);
 
-	if (!ok)
-	{
-		qWarning() << string << " is no float.";
+	if (!ok || parsedValue <= 0)
 		return s_invalidFloat;
-	}
-
-	if (parsedValue <= 0)
-	{
-		qWarning() << string << " is smaller or equal zero.";
-		return s_invalidFloat;
-	}
 
 	return parsedValue;
 }
@@ -387,17 +403,8 @@ int ArgumentsParser::parseInt(const QString & string)
 	bool ok;
 	int parsedValue = string.toInt(&ok);
 
-	if (!ok)
-	{
-		qWarning() << string << " is no int.";
+	if (!ok || parsedValue <= 0)
 		return s_invalidInt;
-	}
-
-	if (parsedValue <= 0)
-	{
-		qWarning() << string << " is smaller or equal zero.";
-		return s_invalidInt;
-	}
 
 	return parsedValue;
 }
