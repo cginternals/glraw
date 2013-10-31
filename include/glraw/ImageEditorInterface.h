@@ -3,8 +3,12 @@
 
 #include <glraw/glraw.h>
 
+class QImage;
+
 namespace glraw
 {
+
+class AssetInformation;
 
 class ImageEditorInterface
 {

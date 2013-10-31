@@ -15,6 +15,7 @@
 #include <glraw/ConvertManager.h>
 #include <glraw/RawConverter.h>
 #include <glraw/RawFileWriter.h>
+#include <glraw/MirrorEditor.h>
 
 #include "ArgumentsParser.h"
 
@@ -27,9 +28,12 @@ int main(int argc, char * argv[])
     if (!parser.isValid())
         return 0;
     
+    glraw::MirrorEditor mirrorEditor(parser.mirrorHorizontal(), parser.mirrorVertical());
     glraw::RawConverter converter;
     glraw::RawFileWriter writer;
+    
     glraw::ConvertManager manager(converter, writer);
+    manager.appendImageEditor(&mirrorEditor);
     
     if (!manager.process(parser.filePath()))
         return 0;

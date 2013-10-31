@@ -32,6 +32,7 @@ set(api_includes
     ${header_path}/RawConverter.h
     ${header_path}/RawConverter.hpp
     ${header_path}/ImageEditorInterface.h
+    ${header_path}/MirrorEditor.h
     ${header_path}/RawDataHandlerInterface.h
     ${header_path}/RawFileWriter.h
 )
@@ -40,6 +41,7 @@ set(sources
     ${source_path}/AssetInformation.cpp
     ${source_path}/ConvertManager.cpp
     ${source_path}/RawConverter.cpp
+    ${source_path}/MirrorEditor.cpp
     ${source_path}/RawFileWriter.cpp
 )
 
