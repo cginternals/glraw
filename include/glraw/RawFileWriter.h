@@ -2,9 +2,8 @@
 #pragma once
 
 #include <glraw/glraw.h>
-#include <glraw/RawDataHandlerInterface.h>
+#include <glraw/AbstractFileWriter.h>
 
-class QString;
 class QDataStream;
 
 namespace glraw
@@ -12,7 +11,7 @@ namespace glraw
 
 class AssetInformation;
 
-class GLRAW_API RawFileWriter : public RawDataHandlerInterface
+class GLRAW_API RawFileWriter : public AbstractFileWriter
 {
 public:
     RawFileWriter();
@@ -20,8 +19,6 @@ public:
 
     virtual bool write(AssetInformation & info, 
                        const std::function<void(QDataStream &)> & lambda);
-    
-    QString targetFilePath(const AssetInformation & info);
 
 };
 

@@ -21,9 +21,13 @@ public:
     QVariant property(const QString & key) const;
     void setProperty(const QString & key, const QVariant & value);
 
-    const QMap<QString, QVariant> & properties() const;
+    const QVariantMap & properties() const;
+    QVariantMap stringProperties() const;
+    QVariantMap intProperties() const;
+    QVariantMap doubleProperties() const;
 
 protected:
+    QVariantMap properties(QVariant::Type type) const;
     QVariantMap m_properties;
 
 };

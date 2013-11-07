@@ -34,8 +34,11 @@ set(api_includes
     ${header_path}/ImageEditorInterface.h
     ${header_path}/MirrorEditor.h
     ${header_path}/ScaleEditor.h
+
     ${header_path}/RawDataHandlerInterface.h
+    ${header_path}/AbstractFileWriter.h
     ${header_path}/RawFileWriter.h
+    ${header_path}/GLRawFileWriter.h
 )
 
 set(sources
@@ -44,7 +47,10 @@ set(sources
     ${source_path}/RawConverter.cpp
     ${source_path}/MirrorEditor.cpp
     ${source_path}/ScaleEditor.cpp
+
+    ${source_path}/AbstractFileWriter.cpp
     ${source_path}/RawFileWriter.cpp
+    ${source_path}/GLRawFileWriter.cpp
 )
 
 # Group source files

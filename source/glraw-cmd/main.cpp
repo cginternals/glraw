@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
     
     glraw::MirrorEditor mirrorEditor(parser.mirrorHorizontal(), parser.mirrorVertical());
     glraw::ScaleEditor scaleEditor;
-    scaleEditor.setScale(2.f);
+    scaleEditor.setScale(0.5f);
     
     glraw::RawConverter converter;
     glraw::RawFileWriter writer;
