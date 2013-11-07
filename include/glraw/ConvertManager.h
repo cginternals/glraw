@@ -6,7 +6,7 @@
 #include <QString>
 #include <QLinkedList>
 #include <glraw/RawConverter.h>
-#include <glraw/RawDataHandlerInterface.h>
+#include <glraw/WriterInterface.h>
 
 namespace glraw
 {
@@ -16,7 +16,7 @@ class ImageEditorInterface;
 class GLRAW_API ConvertManager
 {
 public:
-    ConvertManager(RawConverter & converter, RawDataHandlerInterface & dataHandler);
+    ConvertManager(RawConverter & converter, WriterInterface & dataHandler);
     ~ConvertManager();
 
     bool process(const QString & inputFilePath);
@@ -26,7 +26,7 @@ public:
 protected:
     QLinkedList<ImageEditorInterface *> m_editors;
     RawConverter & m_converter;
-    RawDataHandlerInterface & m_dataHandler;
+    WriterInterface & m_dataHandler;
 
 };
 

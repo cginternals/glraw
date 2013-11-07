@@ -12,10 +12,10 @@ namespace glraw
     
 class AssetInformation;
 
-class GLRAW_API RawDataHandlerInterface
+class GLRAW_API WriterInterface
 {
 public:
-    virtual ~RawDataHandlerInterface() {};
+    virtual ~WriterInterface() {};
 
     virtual bool write(AssetInformation & info, 
                        const std::function<void(QDataStream &)> & lambda) = 0;

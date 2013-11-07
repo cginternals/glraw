@@ -3,14 +3,14 @@
 
 #include <glraw/glraw.h>
 
-#include <glraw/RawDataHandlerInterface.h>
+#include <glraw/WriterInterface.h>
 
 class QString;
 
 namespace glraw
 {
 
-class GLRAW_API AbstractFileWriter : public RawDataHandlerInterface
+class GLRAW_API AbstractFileWriter : public WriterInterface
 {
 public:
     virtual ~AbstractFileWriter();

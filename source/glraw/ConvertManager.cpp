@@ -11,7 +11,7 @@
 namespace glraw
 {
 
-ConvertManager::ConvertManager(RawConverter & converter, RawDataHandlerInterface & dataHandler)
+ConvertManager::ConvertManager(RawConverter & converter, WriterInterface & dataHandler)
 :   m_converter(converter)
 ,   m_dataHandler(dataHandler)
 {

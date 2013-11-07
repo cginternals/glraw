@@ -35,7 +35,7 @@ set(api_includes
     ${header_path}/MirrorEditor.h
     ${header_path}/ScaleEditor.h
 
-    ${header_path}/RawDataHandlerInterface.h
+    ${header_path}/WriterInterface.h
     ${header_path}/AbstractFileWriter.h
     ${header_path}/RawFileWriter.h
     ${header_path}/GLRawFileWriter.h
