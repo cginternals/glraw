@@ -23,7 +23,7 @@ ScaleEditor::~ScaleEditor()
 
 void ScaleEditor::editImage(QImage & image, AssetInformation & info)
 {
-    const QSize size = this->newSize(image.size());
+    QSize size = this->newSize(image.size());
     info.setProperty("width", size.width());
     info.setProperty("height", size.height());
 
