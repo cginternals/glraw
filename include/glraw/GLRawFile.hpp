@@ -12,11 +12,11 @@ template<typename T>
 char GLRawFile<T>::s_magicNumber[4] = { 'c', '6', 'f', '5' };
 
 template<typename T>
-GLRawFile<T>::GLRawFile(const std::string & filePath)
+GLRawFile<T>::GLRawFile(const std::string & filePath, bool readProperties)
 :   m_filePath(filePath)
 ,   m_valid(false)
 {
-    if (read())
+    if (read(readProperties))
         m_valid = true;
 }
 
@@ -80,7 +80,7 @@ bool GLRawFile<T>::hasDoubleProperty(const std::string & key) const
 }
 
 template<typename T>
-bool GLRawFile<T>::read()
+bool GLRawFile<T>::read(bool readProperties)
 {
     std::ifstream ifs(m_filePath, std::ios::in | std::ios::binary);
 
@@ -90,12 +90,21 @@ bool GLRawFile<T>::read()
         return false;
     }
     
-    uint64_t rawDataPosition;
-    
-    if (!readHeader(ifs, rawDataPosition))
-        return false;
 
-    readRawData(ifs, rawDataPosition);
+    if (!checkMagicNumber(ifs))
+        return false;
+    
+    uint64_t rawDataOffset;
+    readRawDataOffset(ifs, rawDataOffset);
+    
+    if (readProperties)
+    {
+        readStringProperties(ifs);
+        readIntProperties(ifs);
+        readDoubleProperties(ifs);
+    }
+
+    readRawData(ifs, rawDataOffset);
 
     ifs.close();
 
@@ -103,17 +112,29 @@ bool GLRawFile<T>::read()
 }
 
 template<typename T>
-bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
+bool GLRawFile<T>::checkMagicNumber(std::ifstream & ifs)
 {
     char magicNumber[sizeof(s_magicNumber)];
     ifs.read(magicNumber, sizeof(s_magicNumber));
+    
     if (strncmp(magicNumber, s_magicNumber, sizeof(s_magicNumber)) != 0)
     {
         std::cerr << "File \"" << m_filePath << "\" is not a glraw file." << std::endl;
         return false;
     }
 
-    ifs.read(reinterpret_cast<char *>(&rawDataPosition), sizeof(rawDataPosition));
+    return true;
+}
+
+template<typename T>
+void GLRawFile<T>::readRawDataOffset(std::ifstream & ifs, uint64_t & rawDataOffset)
+{
+    ifs.read(reinterpret_cast<char *>(&rawDataOffset), sizeof(rawDataOffset));
+}
+
+template<typename T>
+void GLRawFile<T>::readStringProperties(std::ifstream & ifs)
+{
     uint32_t stringCount;
     ifs.read(reinterpret_cast<char *>(&stringCount), sizeof(stringCount));
 
@@ -139,9 +160,14 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
         
         m_stringProperties.insert(pair);
     }
-    
+}
+
+template<typename T>
+void GLRawFile<T>::readIntProperties(std::ifstream & ifs)
+{
     uint32_t intCount;
     ifs.read(reinterpret_cast<char *>(&intCount), sizeof(intCount));
+
     for (uint32_t i = 0; i < intCount; i++)
     {
         uint32_t keySize;
@@ -161,9 +187,14 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
         
         m_intProperties.insert(pair);
     }
-    
+}
+
+template<typename T>
+void GLRawFile<T>::readDoubleProperties(std::ifstream & ifs)
+{
     uint32_t doubleCount;
     ifs.read(reinterpret_cast<char *>(&doubleCount), sizeof(doubleCount));
+
     for (uint32_t i = 0; i < doubleCount; i++)
     {
         uint32_t keySize;
@@ -183,19 +214,17 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
         
         m_intProperties.insert(pair);
     }
-
-    return true;
 }
 
 template<typename T>
-void GLRawFile<T>::readRawData(std::ifstream & ifs, uint64_t rawDataPosition)
+void GLRawFile<T>::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
 {
     ifs.seekg(0, std::ios::end);
     
     size_t endPosition = ifs.tellg();
-    const size_t size = endPosition - rawDataPosition;
+    const size_t size = endPosition - rawDataOffset;
     
-    ifs.seekg(rawDataPosition, std::ios::beg);
+    ifs.seekg(rawDataOffset, std::ios::beg);
 
     m_data.resize(size / sizeof(T));
 

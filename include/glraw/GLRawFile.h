@@ -14,7 +14,7 @@ class GLRawFile
 public:
     static char s_magicNumber[4];
 
-    GLRawFile(const std::string & filePath);
+    GLRawFile(const std::string & filePath, bool readProperties = true);
     virtual ~GLRawFile();
 
     const T * data() const;
@@ -32,9 +32,16 @@ public:
     bool hasDoubleProperty(const std::string & key) const;
 
 protected:
-    bool read();
-    bool readHeader(std::ifstream & ifs, uint64_t & rawDataPosition);
-    void readRawData(std::ifstream & ifs, uint64_t rawDataPosition);
+    bool read(bool readProperties);
+    
+    bool checkMagicNumber(std::ifstream & ifs);
+    void readRawDataOffset(std::ifstream & ifs, uint64_t & rawDataOffset);
+
+    void readStringProperties(std::ifstream & ifs);
+    void readIntProperties(std::ifstream & ifs);
+    void readDoubleProperties(std::ifstream & ifs);
+    
+    void readRawData(std::ifstream & ifs, uint64_t rawDataOffset);
 
 protected:
     const std::string m_filePath;
