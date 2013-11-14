@@ -18,6 +18,7 @@
 #include <glraw/MirrorEditor.h>
 #include <glraw/ScaleEditor.h>
 #include <glraw/GLRawFile.h>
+#include <glraw/RawFile.h>
 
 #include "ArgumentsParser.h"
 
@@ -45,6 +46,7 @@ int main(int argc, char * argv[])
         return 0;
     
     glraw::GLRawFile<int> file("/Users/maxjendruk/Desktop/apple.437.511.rgba.i.glraw");
+    glraw::RawFile<int> rfile("/Users/maxjendruk/Desktop/apple.437.511.rgba.i.glraw");
     
     return 0;
 }

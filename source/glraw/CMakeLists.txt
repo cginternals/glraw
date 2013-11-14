@@ -39,6 +39,9 @@ set(api_includes
     ${header_path}/AbstractFileWriter.h
     ${header_path}/RawFileWriter.h
     ${header_path}/GLRawFileWriter.h
+
+    ${header_path}/RawFile.hpp
+    ${header_path}/RawFile.h
     ${header_path}/GLRawFile.hpp
     ${header_path}/GLRawFile.h
 )
