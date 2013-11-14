@@ -107,7 +107,6 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
 {
     char magicNumber[sizeof(s_magicNumber)];
     ifs.read(magicNumber, sizeof(s_magicNumber));
-    std::cout << ifs.tellg();
     if (strncmp(magicNumber, s_magicNumber, sizeof(s_magicNumber)) != 0)
     {
         std::cerr << "File \"" << m_filePath << "\" is not a glraw file." << std::endl;
@@ -115,7 +114,6 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
     }
 
     ifs.read(reinterpret_cast<char *>(&rawDataPosition), sizeof(rawDataPosition));
-    std::cout << ifs.tellg();
     uint32_t stringCount;
     ifs.read(reinterpret_cast<char *>(&stringCount), sizeof(stringCount));
 
@@ -144,7 +142,6 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
     
     uint32_t intCount;
     ifs.read(reinterpret_cast<char *>(&intCount), sizeof(intCount));
-    
     for (uint32_t i = 0; i < intCount; i++)
     {
         uint32_t keySize;
@@ -167,7 +164,6 @@ bool GLRawFile<T>::readHeader(std::ifstream & ifs, uint64_t & rawDataPosition)
     
     uint32_t doubleCount;
     ifs.read(reinterpret_cast<char *>(&doubleCount), sizeof(doubleCount));
-    
     for (uint32_t i = 0; i < doubleCount; i++)
     {
         uint32_t keySize;
