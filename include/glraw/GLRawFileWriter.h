@@ -25,8 +25,6 @@ protected:
                      QFile & file,
                      AssetInformation & info);
 
-protected:
-
 };
 
 } // namespace glraw

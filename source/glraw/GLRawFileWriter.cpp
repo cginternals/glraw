@@ -36,6 +36,7 @@ bool GLRawFileWriter::write(AssetInformation & info,
     }
 
     QDataStream dataStream(&file);
+    dataStream.setByteOrder(QDataStream::LittleEndian);
 
     this->writeHeader(dataStream, file, info);
     lambda(dataStream);
@@ -48,7 +49,7 @@ bool GLRawFileWriter::write(AssetInformation & info,
 
 void GLRawFileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info)
 {
-    dataStream.writeBytes(s_magicNumber, sizeof(s_magicNumber));
+    dataStream.writeRawData(s_magicNumber, sizeof(s_magicNumber));
 
     quint64 rawDataOffsetPosition = file.pos();
     dataStream << static_cast<quint64>(0);
@@ -81,7 +82,7 @@ void GLRawFileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetI
     quint64 rawDataOffset = file.pos();
 
     file.seek(rawDataOffsetPosition);
-    dataStream << rawDataOffsetPosition;
+    dataStream << rawDataOffset;
     file.seek(rawDataOffset);
 }
 

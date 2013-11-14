@@ -41,7 +41,7 @@ QString AbstractFileWriter::targetFilePath(const AssetInformation & info, const 
         .arg(info.property("height").toInt())
         .arg(formatSuffixes[format])
         .arg(typeSuffixes[type])
-    .arg(fileExtension);
+        .arg(fileExtension);
     
     QFileInfo fileInfo(info.property("inputFilePath").toString());
     

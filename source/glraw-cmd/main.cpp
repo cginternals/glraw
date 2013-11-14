@@ -14,9 +14,10 @@
 
 #include <glraw/ConvertManager.h>
 #include <glraw/RawConverter.h>
-#include <glraw/RawFileWriter.h>
+#include <glraw/GLRawFileWriter.h>
 #include <glraw/MirrorEditor.h>
 #include <glraw/ScaleEditor.h>
+#include <glraw/GLRawFile.h>
 
 #include "ArgumentsParser.h"
 
@@ -34,7 +35,7 @@ int main(int argc, char * argv[])
     scaleEditor.setScale(0.5f);
     
     glraw::RawConverter converter;
-    glraw::RawFileWriter writer;
+    glraw::GLRawFileWriter writer;
     
     glraw::ConvertManager manager(converter, writer);
     manager.appendImageEditor(&mirrorEditor);
@@ -42,6 +43,8 @@ int main(int argc, char * argv[])
     
     if (!manager.process(parser.filePath()))
         return 0;
+    
+    glraw::GLRawFile<int> file("/Users/maxjendruk/Desktop/apple.437.511.rgba.i.glraw");
     
     return 0;
 }
