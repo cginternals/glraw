@@ -11,6 +11,7 @@
 #include <QStringList>
 
 #include <QCoreApplication>
+#include <QCommandLineParser>
 
 #include <glraw/ConvertManager.h>
 #include <glraw/RawConverter.h>
@@ -20,33 +21,32 @@
 #include <glraw/GLRawFile.h>
 #include <glraw/RawFile.h>
 
+#include "Application.h"
 #include "ArgumentsParser.h"
 
 int main(int argc, char * argv[])
 {
-    QCoreApplication a(argc, argv);
+    Application app(argc, argv);
     
-    ArgumentsParser parser(a.arguments());
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Converts Qt supported images to an OpenGL compatible raw format.");
+    parser.addHelpOption();
+    parser.addVersionOption();
     
-    if (!parser.isValid())
-        return 0;
+    parser.addPositionalArgument("source", "Source file with Qt-supported image format.");
     
-    glraw::MirrorEditor mirrorEditor(parser.mirrorHorizontal(), parser.mirrorVertical());
-    glraw::ScaleEditor scaleEditor;
-    scaleEditor.setScale(0.5f);
+    if (app.arguments().size() == 1)
+        parser.showHelp();
+    
+    parser.process(app);
+    
+    QString source = parser.positionalArguments().at(0);
     
     glraw::RawConverter converter;
     glraw::GLRawFileWriter writer;
-    
     glraw::ConvertManager manager(converter, writer);
-    manager.appendImageEditor(&mirrorEditor);
-    manager.appendImageEditor(&scaleEditor);
     
-    if (!manager.process(parser.filePath()))
-        return 0;
-    
-    glraw::GLRawFile<int> file("/Users/maxjendruk/Desktop/apple.437.511.rgba.i.glraw");
-    glraw::RawFile<int> rfile("/Users/maxjendruk/Desktop/apple.437.511.rgba.i.glraw");
+    manager.process(source);
     
     return 0;
 }

@@ -3,7 +3,12 @@
 set(target glraw-cmd)
 message(STATUS "Configuring ${target}")
 
+# Generate meta header
+configure_file(glraw-cmd-version.h.in glraw-cmd-version.h)
+
 set(sources
+    Application.cpp
+    Application.h
     ArgumentsParser.cpp
     ArgumentsParser.h
     main.cpp

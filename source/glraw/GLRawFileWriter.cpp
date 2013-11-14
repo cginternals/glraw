@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QDataStream>
 #include <QVariant>
+#include <QFileInfo>
 
 #include <glraw/AssetInformation.h>
 
@@ -42,8 +43,8 @@ bool GLRawFileWriter::write(AssetInformation & info,
     lambda(dataStream);
 
     file.close();
-
-    qDebug() << qPrintable(target) << "created.";
+    
+    qDebug() << qPrintable(QFileInfo(target).fileName()) << "created.";
     return true;
 }
 
