@@ -21,15 +21,16 @@ struct CommandLineOption;
 class Builder
 {
 public:
-    Builder(const QCoreApplication & app);
+    Builder();
     ~Builder();
 
+    void process(const QCoreApplication & app);
+    
 protected:
     static QList<CommandLineOption> commandLineOptions();
 
 protected:
     void initialize();
-    void processArguments(const QCoreApplication & app);
     
     bool quiet(const QString & name);
     bool format(const QString & name);

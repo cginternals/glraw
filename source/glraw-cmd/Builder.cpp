@@ -1,6 +1,8 @@
 
 #include "Builder.h"
 
+#include <iostream>
+
 #include <QDebug>
 #include <QCoreApplication>
 #include <QCommandLineOption>
@@ -12,13 +14,23 @@
 #include "CommandLineOption.h"
 #include "Conversions.h"
 
-Builder::Builder(const QCoreApplication & app)
+namespace
+{
+    void messageHandler(QtMsgType type, const QMessageLogContext & context, const QString & message)
+    {
+        if (type == QtDebugMsg)
+            return;
+
+        std::cerr << message.toStdString() << std::endl;
+    }
+}
+
+Builder::Builder()
 :   m_converter()
 ,   m_fileWriter()
 ,   m_manager(m_converter, m_fileWriter)
 {
     initialize();
-    processArguments(app);
 }
 
 Builder::~Builder()
@@ -144,8 +156,11 @@ void Builder::initialize()
     }
 }
 
-void Builder::processArguments(const QCoreApplication & app)
+void Builder::process(const QCoreApplication & app)
 {
+    if (app.arguments().size() == 1)
+        m_parser.showHelp();
+    
     m_parser.process(app);
     
     for (auto option : m_parser.optionNames())
@@ -154,21 +169,21 @@ void Builder::processArguments(const QCoreApplication & app)
             return;
     }
 
-    QStringList positionalArguments = m_parser.positionalArguments();
-
-    if (positionalArguments.size() < 1)
+    QStringList sources = m_parser.positionalArguments();
+    
+    if (sources.size() < 1)
     {
         qDebug() << "No source files passed in.";
         return;
     }
-
-    QString source = positionalArguments.at(0);
-
-    m_manager.process(source);
+    
+    for (auto source : sources)
+        m_manager.process(source);
 }
 
 bool Builder::quiet(const QString & name)
 {
+    qInstallMessageHandler(messageHandler);
     return true;
 }
 

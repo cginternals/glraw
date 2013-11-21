@@ -36,8 +36,8 @@ void messageHandler(QtMsgType type, const QMessageLogContext & context, const QS
 int main(int argc, char * argv[])
 {
     Application app(argc, argv);
-    
-    Builder builder(app);
+    Builder builder;
+    builder.process(app);
     
     return 0;
 }
