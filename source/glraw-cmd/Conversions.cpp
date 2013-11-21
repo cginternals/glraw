@@ -36,7 +36,26 @@ QMap<QString, Type> types()
     return types;
 }
 
+QMap<QString, Qt::TransformationMode> transformationModes()
+{
+    QMap<QString, Qt::TransformationMode> modes;
+    modes["nearest"] = Qt::FastTransformation;
+    modes["bilinear"] = Qt::SmoothTransformation;
+
+    return modes;
 }
+
+QMap<QString, Qt::AspectRatioMode> aspectRatioModes()
+{
+    QMap<QString, Qt::AspectRatioMode> modes;
+    modes["IgnoreAspectRatio"] = Qt::IgnoreAspectRatio;
+    modes["KeepAspectRatio"] = Qt::KeepAspectRatio;
+    modes["KeepAspectRatioByExpanding"] = Qt::KeepAspectRatioByExpanding;
+
+    return modes;
+}
+
+} // namespace
 
 namespace Conversions
 {
@@ -67,6 +86,34 @@ glraw::Type stringToType(const QString & string)
     static auto t = types();
 
     return t.value(string);
+}
+
+bool isTransformationMode(const QString & string)
+{
+    static auto m = transformationModes();
+
+    return m.contains(string);
+}
+
+Qt::TransformationMode stringToTransformationMode(const QString & string)
+{
+    static auto m = transformationModes();
+
+    return m.value(string);
+}
+
+bool isAspectRatioMode(const QString & string)
+{
+    static auto m = aspectRatioModes();
+
+    return m.contains(string);
+}
+
+Qt::AspectRatioMode stringToAspectRatioMode(const QString & string)
+{
+    static auto m = aspectRatioModes();
+
+    return m.value(string);
 }
 
 } // namespace Conversions

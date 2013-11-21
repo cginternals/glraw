@@ -6,6 +6,8 @@
 #include <QCommandLineOption>
 
 #include <glraw/Enumerations.h>
+#include <glraw/MirrorEditor.h>
+#include <glraw/ScaleEditor.h>
 
 #include "CommandLineOption.h"
 #include "Conversions.h"
@@ -131,11 +133,14 @@ void Builder::initialize()
             option.description,
             option.valueName
         ));
-
-        m_configureMethods.insert(
-            option.names.first(),
-            option.configureMethod
-        );
+        
+        for (auto name : option.names)
+        {
+            m_configureMethods.insert(
+                name,
+                option.configureMethod
+            );
+        }
     }
 }
 
@@ -199,45 +204,198 @@ bool Builder::type(const QString & name)
 
 bool Builder::mirrorVertical(const QString & name)
 {
+    const QString editorName = "MirrorEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::MirrorEditor());
+    
+    auto e = editor<glraw::MirrorEditor>(editorName);
+    
+    e->setVertical(true);
+    
     return true;
 }
 
 bool Builder::mirrorHorizontal(const QString & name)
 {
+    const QString editorName = "MirrorEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::MirrorEditor());
+    
+    auto e = editor<glraw::MirrorEditor>(editorName);
+    
+    e->setHorizontal(true);
+    
     return true;
 }
 
 bool Builder::scale(const QString & name)
 {
+    QString scaleString = m_parser.value(name);
+    
+    bool ok;
+    float scale = scaleString.toFloat(&ok);
+    if (!ok)
+    {
+        qDebug() << scaleString << "isn't a float.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+
+    e->setScale(scale);
+    
     return true;
 }
 
 bool Builder::widthScale(const QString & name)
 {
+    QString widthScaleString = m_parser.value(name);
+    
+    bool ok;
+    float widthScale = widthScaleString.toFloat(&ok);
+    if (!ok)
+    {
+        qDebug() << widthScaleString << "isn't a float.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+
+    e->setWidthScale(widthScale);
+    
     return true;
 }
 
 bool Builder::heightScale(const QString & name)
 {
+    QString heighScaleString = m_parser.value(name);
+    
+    bool ok;
+    float heightScale = heighScaleString.toFloat(&ok);
+    if (!ok)
+    {
+        qDebug() << heighScaleString << "isn't a float.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+
+    e->setHeightScale(heightScale);
+    
     return true;
 }
 
 bool Builder::width(const QString & name)
 {
+    QString widthString = m_parser.value(name);
+    
+    bool ok;
+    int width = widthString.toInt(&ok);
+    if (!ok)
+    {
+        qDebug() << widthString << "isn't a int.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+
+    e->setWidth(width);
+    
     return true;
 }
 
 bool Builder::height(const QString & name)
 {
+    QString heightString = m_parser.value(name);
+    
+    bool ok;
+    int height = heightString.toInt(&ok);
+    if (!ok)
+    {
+        qDebug() << heightString << "isn't a int.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+
+    e->setHeight(height);
+    
     return true;
 }
 
 bool Builder::transformMode(const QString & name)
 {
+    QString modeString = m_parser.value(name);
+    
+    if (!Conversions::isTransformationMode(modeString))
+    {
+        qDebug() << qPrintable(modeString) << "is not a transformation mode.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+    
+    e->setTransformationMode(
+        Conversions::stringToTransformationMode(modeString)
+    );
+
     return true;
 }
 
 bool Builder::aspectRatioMode(const QString & name)
 {
+    QString modeString = m_parser.value(name);
+    
+    if (!Conversions::isAspectRatioMode(modeString))
+    {
+        qDebug() << qPrintable(modeString) << "is not a transformation mode.";
+        return false;
+    }
+
+    const QString editorName = "ScaleEditor";
+    if (!editorExists(editorName))
+        appendEditor(editorName, new glraw::ScaleEditor());
+    
+    auto e = editor<glraw::ScaleEditor>(editorName);
+    
+    e->setAspectRatioMode(
+        Conversions::stringToAspectRatioMode(modeString)
+    );
+
     return true;
+}
+
+bool Builder::editorExists(const QString & key)
+{
+    return m_editors.contains(key);
+}
+
+void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * editor)
+{
+    m_manager.appendImageEditor(editor);
+    m_editors.insert(key, editor);
 }

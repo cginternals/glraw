@@ -10,6 +10,7 @@ set(sources
     Application.cpp
     Application.h
     Builder.cpp
+    Builder.hpp
     Builder.h
     CommandLineOption.h
     Conversions.h

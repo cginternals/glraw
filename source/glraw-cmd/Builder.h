@@ -10,6 +10,12 @@
 #include <glraw/RawFileWriter.h>
 
 class QCoreApplication;
+
+namespace glraw
+{
+    class ImageEditorInterface;
+}
+
 struct CommandLineOption;
 
 class Builder
@@ -37,13 +43,23 @@ protected:
     bool height(const QString & name);
     bool transformMode(const QString & name);
     bool aspectRatioMode(const QString & name);
+    
+protected:
+    bool editorExists(const QString & key);
+    void appendEditor(const QString & key, glraw::ImageEditorInterface * editor);
+    
+    template <class Editor>
+    Editor * editor(const QString & key);
 
 protected:
     QCommandLineParser m_parser;
     QMap<QString, bool (Builder::*)(const QString &)> m_configureMethods;
+    QMap<QString, glraw::ImageEditorInterface *> m_editors;
 
     glraw::RawConverter m_converter;
     glraw::RawFileWriter m_fileWriter;
     glraw::ConvertManager m_manager;
 
 };
+
+#include "Builder.hpp"
