@@ -22,6 +22,9 @@ public:
     void updateAssetInformation(AssetInformation & info);
     void convert(QImage & image, QDataStream & dataStream);
 
+    void setFormat(Format format);
+    void setType(Type type);
+
 protected:
     template <typename Type>
     void write(const QImage & image, QDataStream & dataStream);

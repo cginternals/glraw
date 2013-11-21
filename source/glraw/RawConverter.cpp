@@ -52,4 +52,13 @@ void RawConverter::convert(QImage & image, QDataStream & dataStream)
     }
 }
 
+void RawConverter::setFormat(Format format)
+{
+    m_format = format;
+}
+void RawConverter::setType(Type type)
+{
+    m_type = type;
+}
+
 } // namespace glraw

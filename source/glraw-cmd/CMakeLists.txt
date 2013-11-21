@@ -9,8 +9,11 @@ configure_file(glraw-cmd-version.h.in glraw-cmd-version.h)
 set(sources
     Application.cpp
     Application.h
-    ArgumentsParser.cpp
-    ArgumentsParser.h
+    Builder.cpp
+    Builder.h
+    CommandLineOption.h
+    Conversions.h
+    Conversions.cpp
     main.cpp
 )
 
