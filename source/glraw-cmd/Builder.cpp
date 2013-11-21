@@ -10,6 +10,8 @@
 #include <glraw/Enumerations.h>
 #include <glraw/MirrorEditor.h>
 #include <glraw/ScaleEditor.h>
+#include <glraw/RawFileWriter.h>
+#include <glraw/GLRawFileWriter.h>
 
 #include "CommandLineOption.h"
 #include "Conversions.h"
@@ -27,14 +29,15 @@ namespace
 
 Builder::Builder()
 :   m_converter()
-,   m_fileWriter()
-,   m_manager(m_converter, m_fileWriter)
+,   m_writer(new glraw::GLRawFileWriter())
+,   m_manager(m_converter, m_writer)
 {
     initialize();
 }
 
 Builder::~Builder()
 {
+    delete m_writer;
 }
 
 QList<CommandLineOption> Builder::commandLineOptions()
@@ -60,6 +63,13 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "Output type (default: GL_INT)",
         "type",
         &Builder::type
+    });
+    
+    options.append({
+        QStringList() << "r" << "raw",
+        "Writes files without header.",
+        QString(),
+        &Builder::raw
     });
 
     options.append({
@@ -214,6 +224,17 @@ bool Builder::type(const QString & name)
     
     m_converter.setType(Conversions::stringToType(formatString));
 
+    return true;
+}
+
+bool Builder::raw(const QString & name)
+{
+    auto rawWriter = new glraw::RawFileWriter();
+    m_manager.setWriter(rawWriter);
+    
+    delete m_writer;
+    m_writer = rawWriter;
+    
     return true;
 }
 

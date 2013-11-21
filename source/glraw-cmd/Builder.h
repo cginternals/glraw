@@ -7,7 +7,7 @@
 
 #include <glraw/ConvertManager.h>
 #include <glraw/RawConverter.h>
-#include <glraw/RawFileWriter.h>
+#include <glraw/WriterInterface.h>
 
 class QCoreApplication;
 
@@ -35,6 +35,7 @@ protected:
     bool quiet(const QString & name);
     bool format(const QString & name);
     bool type(const QString & name);
+    bool raw(const QString & name);
     bool mirrorVertical(const QString & name);
     bool mirrorHorizontal(const QString & name);
     bool scale(const QString & name);
@@ -58,7 +59,7 @@ protected:
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
 
     glraw::RawConverter m_converter;
-    glraw::RawFileWriter m_fileWriter;
+    glraw::WriterInterface * m_writer;
     glraw::ConvertManager m_manager;
 
 };

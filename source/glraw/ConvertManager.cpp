@@ -11,7 +11,7 @@
 namespace glraw
 {
 
-ConvertManager::ConvertManager(RawConverter & converter, WriterInterface & writer)
+ConvertManager::ConvertManager(RawConverter & converter, WriterInterface * writer)
 :   m_converter(converter)
 ,   m_writer(writer)
 {
@@ -46,7 +46,7 @@ bool ConvertManager::process(const QString & inputFilePath)
 
     m_converter.updateAssetInformation(info);
 
-    m_writer.write(info, [this, &image] (QDataStream & dataStream) {
+    m_writer->write(info, [this, &image] (QDataStream & dataStream) {
         m_converter.convert(image, dataStream);
     });
 
@@ -56,6 +56,11 @@ bool ConvertManager::process(const QString & inputFilePath)
 void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
 {
     m_editors.append(editor);
+}
+
+void ConvertManager::setWriter(glraw::WriterInterface * writer)
+{
+    m_writer = writer;
 }
 
 } // namespace glraw

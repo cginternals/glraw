@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QFile>
+#include <QFileInfo>
 
 namespace glraw
 {
@@ -33,7 +34,7 @@ bool RawFileWriter::write(AssetInformation & info,
 
     file.close();
 
-    qDebug() << qPrintable(target) << "created.";
+    qDebug() << qPrintable(QFileInfo(target).fileName()) << "created.";
     return true;
 }
 
