@@ -22,6 +22,20 @@ QMap<QString, Format> formats()
     return formats;
 }
 
+QMap<QString, Type> types()
+{
+    QMap<QString, Type> types;
+    types["GL_UNSIGNED_BYTE"] = GL_UNSIGNED_BYTE;
+    types["GL_BYTE"] = GL_BYTE;
+    types["GL_UNSIGNED_SHORT"] = GL_UNSIGNED_SHORT;
+    types["GL_SHORT"] = GL_SHORT;
+    types["GL_UNSIGNED_INT"] = GL_UNSIGNED_INT;
+    types["GL_INT"] = GL_INT;
+    types["GL_FLOAT"] = GL_FLOAT;
+
+    return types;
+}
+
 }
 
 namespace Conversions
@@ -39,6 +53,20 @@ Format stringToFormat(const QString & string)
     static auto f = formats();
 
     return f.value(string);
+}
+
+bool isType(const QString & string)
+{
+    static auto t = types();
+
+    return t.contains(string);
+}
+
+glraw::Type stringToType(const QString & string)
+{
+    static auto t = types();
+
+    return t.value(string);
 }
 
 } // namespace Conversions

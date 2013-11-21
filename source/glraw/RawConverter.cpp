@@ -11,6 +11,7 @@ RawConverter::RawConverter()
 ,   m_type(GL_INT)
 {
 }
+
 RawConverter::~RawConverter()
 {
 }

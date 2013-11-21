@@ -145,7 +145,7 @@ void Builder::processArguments(const QCoreApplication & app)
     
     for (auto option : m_parser.optionNames())
     {
-        if (!(this->*m_configureMethods.value(option))(option));
+        if (!(this->*m_configureMethods.value(option))(option))
             return;
     }
 
@@ -184,6 +184,16 @@ bool Builder::format(const QString & name)
 
 bool Builder::type(const QString & name)
 {
+    QString formatString = m_parser.value(name);
+    
+    if (!Conversions::isType(formatString))
+    {
+        qDebug() << qPrintable(formatString) << "is not a type.";
+        return false;
+    }
+    
+    m_converter.setType(Conversions::stringToType(formatString));
+
     return true;
 }
 
