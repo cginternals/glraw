@@ -118,9 +118,9 @@ bool Canvas::verifyExtensions() const
         qWarning("The following mandatory OpenGL extension is not supported:");
 
     foreach(const QString & extension, unsupported)
-        qWarning(qPrintable(extension));
+        qWarning() << qPrintable(extension);
 
-    qWarning("");
+    qWarning() << "";
 
     return false;
 }

@@ -9,7 +9,7 @@
 #include "Application.h"
 #include "Viewer.h"
 
-#include "ui_viewer.h"
+#include "ui_Viewer.h"
 
 
 namespace 
