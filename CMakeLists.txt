@@ -90,7 +90,7 @@ if(WIN32)
     set(INSTALL_INIT          "")                       # Not available under Windows
     set(INSTALL_DATA          ".")                      # C:\Programme\<project>
     set(INSTALL_EXAMPLES      ".")                      # C:\Programme\<project>
-elseif(LINUX)
+else()
     set(INSTALL_BIN           "bin")                    # /usr/[local]/bin
     set(INSTALL_SHARED        "lib")                    # /usr/[local]/lib
     set(INSTALL_LIB           "lib")                    # /usr/[local]/lib

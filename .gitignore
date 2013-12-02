@@ -11,6 +11,11 @@
 *.lai
 *.la
 *.a
+
+# Generated Raw Files
+*.raw
+*.glraw
+
 /build
 /_configure.bat
 /_open-project.bat
