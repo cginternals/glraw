@@ -1,10 +1,10 @@
 
 #include <glraw/AbstractFileWriter.h>
 
+#include <QtGui/qopengl.h>
 #include <QDebug>
 #include <QFileInfo>
 
-#include <glraw/Enumerations.h>
 #include <glraw/AssetInformation.h>
 
 namespace glraw
@@ -16,18 +16,20 @@ AbstractFileWriter::~AbstractFileWriter()
 
 QString AbstractFileWriter::targetFilePath(const AssetInformation & info, const QString & fileExtension)
 {
-    const Format format = static_cast<Format>(info.property("format").toInt());
-    const Type type = static_cast<Type>(info.property("type").toInt());
+    GLenum format = static_cast<GLenum>(info.property("format").toInt());
+    GLenum type = static_cast<GLenum>(info.property("type").toInt());
     
-    QMap<Format, QString> formatSuffixes;
-    formatSuffixes[GL_RED]  = "r";
-    formatSuffixes[GL_RG]   = "rg";
-    formatSuffixes[GL_RGB]  = "rgb";
-    formatSuffixes[GL_BGR]  = "bgr";
-    formatSuffixes[GL_RGBA] = "rgba";
-    formatSuffixes[GL_BGRA] = "bgra";
+    QMap<GLenum, QString> formatSuffixes;
+    formatSuffixes[GL_RED]   = "r";
+    formatSuffixes[GL_GREEN] = "g";
+    formatSuffixes[GL_BLUE]  = "b";
+    formatSuffixes[GL_RG]    = "rg";
+    formatSuffixes[GL_RGB]   = "rgb";
+    formatSuffixes[GL_BGR]   = "bgr";
+    formatSuffixes[GL_RGBA]  = "rgba";
+    formatSuffixes[GL_BGRA]  = "bgra";
     
-    QMap<Type, QString> typeSuffixes;
+    QMap<GLenum, QString> typeSuffixes;
     typeSuffixes[GL_UNSIGNED_BYTE]  = "ub";
     typeSuffixes[GL_BYTE]           = "b";
     typeSuffixes[GL_UNSIGNED_SHORT] = "us";

@@ -4,15 +4,15 @@
 #include <QMap>
 #include <QString>
 
-using namespace glraw;
-
 namespace
 {
 
-QMap<QString, Format> formats()
+QMap<QString, GLenum> formats()
 {
-    QMap<QString, Format> formats;
+    QMap<QString, GLenum> formats;
     formats["GL_RED"] = GL_RED;
+    formats["GL_RED"] = GL_GREEN;
+    formats["GL_RED"] = GL_BLUE;
     formats["GL_RG"] = GL_RG;
     formats["GL_RGB"] = GL_RGB;
     formats["GL_BGR"] = GL_BGR;
@@ -22,9 +22,9 @@ QMap<QString, Format> formats()
     return formats;
 }
 
-QMap<QString, Type> types()
+QMap<QString, GLenum> types()
 {
-    QMap<QString, Type> types;
+    QMap<QString, GLenum> types;
     types["GL_UNSIGNED_BYTE"] = GL_UNSIGNED_BYTE;
     types["GL_BYTE"] = GL_BYTE;
     types["GL_UNSIGNED_SHORT"] = GL_UNSIGNED_SHORT;
@@ -67,7 +67,7 @@ bool isFormat(const QString & string)
     return f.contains(string);
 }
 
-Format stringToFormat(const QString & string)
+GLenum stringToFormat(const QString & string)
 {
     static auto f = formats();
 
@@ -81,7 +81,7 @@ bool isType(const QString & string)
     return t.contains(string);
 }
 
-glraw::Type stringToType(const QString & string)
+GLenum stringToType(const QString & string)
 {
     static auto t = types();
 

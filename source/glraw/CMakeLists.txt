@@ -30,7 +30,6 @@ set(api_includes
     ${header_path}/AssetInformation.h
     ${header_path}/ConvertManager.h
     ${header_path}/RawConverter.h
-    ${header_path}/RawConverter.hpp
     ${header_path}/ImageEditorInterface.h
     ${header_path}/MirrorEditor.h
     ${header_path}/ScaleEditor.h
@@ -44,6 +43,8 @@ set(api_includes
     ${header_path}/RawFile.h
     ${header_path}/GLRawFile.hpp
     ${header_path}/GLRawFile.h
+
+    ${header_path}/Canvas.h
 )
 
 set(sources
@@ -56,6 +57,8 @@ set(sources
     ${source_path}/AbstractFileWriter.cpp
     ${source_path}/RawFileWriter.cpp
     ${source_path}/GLRawFileWriter.cpp
+
+    ${source_path}/Canvas.cpp
 )
 
 # Group source files

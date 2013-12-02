@@ -3,10 +3,13 @@
 
 #include <glraw/glraw.h>
 
-#include <assert.h>
+#include <cassert>
+
+#include <QtGui/qopengl.h>
 #include <QImage>
 #include <QDataStream>
-#include <glraw/Enumerations.h>
+
+#include <glraw/Canvas.h>
 
 namespace glraw
 {
@@ -22,18 +25,15 @@ public:
     void updateAssetInformation(AssetInformation & info);
     void convert(QImage & image, QDataStream & dataStream);
 
-    void setFormat(Format format);
-    void setType(Type type);
+    void setFormat(GLenum format);
+    void setType(GLenum type);
 
 protected:
-    template <typename Type>
-    void write(const QImage & image, QDataStream & dataStream);
-
-    Format m_format;
-    Type m_type;
+    GLenum m_format;
+    GLenum m_type;
+    
+    Canvas m_canvas;
 
 };
 
 } // namespace glraw
-
-#include <glraw/RawConverter.hpp>

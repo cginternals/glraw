@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include <QCoreApplication>
+#include <QApplication>
 
-class Application : public QCoreApplication
+class Application : public QApplication
 {
 public:
     Application(int & argc, char ** argv);
