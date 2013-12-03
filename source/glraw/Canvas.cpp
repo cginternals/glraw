@@ -20,7 +20,11 @@ Canvas::Canvas()
 Canvas::~Canvas()
 {
     if (textureLoaded())
+    {
+        m_context.makeCurrent(this);
         glDeleteTextures(1, &m_texture);
+        m_context.doneCurrent();
+    }
 }
 
 void Canvas::initializeGL()
@@ -47,15 +51,14 @@ void Canvas::loadTextureFromImage(QImage & image)
 {
     m_context.makeCurrent(this);
     
-    if (textureLoaded())
-        glDeleteTextures(1, &m_texture);
-    
     if (image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32)
         image = image.convertToFormat(QImage::Format_ARGB32);
     
     image = image.mirrored();
     
-    glGenTextures(1, &m_texture);
+    if (!textureLoaded())
+        glGenTextures(1, &m_texture);
+    
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                  image.width(), image.height(), 0,
@@ -74,8 +77,12 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     m_context.makeCurrent(this);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     
+    GLint width, height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    
     QByteArray imageData;
-    imageData.resize(numberOfElementsFor(format) * byteSizeOf(type));
+    imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
     glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
     glBindTexture(GL_TEXTURE_2D, 0);
