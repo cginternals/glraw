@@ -6,7 +6,7 @@
 
 #include <QVector>
 #include <QVector2D>
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
 class QOpenGLContext;
 class QSurfaceFormat;
@@ -48,5 +48,5 @@ protected:
     GLuint m_vaoHandle;
     GLuint m_vboHandle;
     static QVector<QVector2D> m_quad;
-    QGLShaderProgram* m_program;
+    QOpenGLShaderProgram* m_program;
 };

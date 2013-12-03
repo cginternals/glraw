@@ -1,18 +1,20 @@
 
-#pragma once
-
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 
+#include <cstring> // for strncmp, but we should not use C-functions in C++
+
+#include <glraw/GLRawFile.h>
+
 namespace glraw
 {
 
-template<typename T>
-char GLRawFile<T>::s_magicNumber[4] = { 'c', '6', 'f', '5' };
 
-template<typename T>
-GLRawFile<T>::GLRawFile(const std::string & filePath, bool readProperties)
+char GLRawFile::s_magicNumber[4] = { 'c', '6', 'f', '5' };
+
+
+GLRawFile::GLRawFile(const std::string & filePath, bool readProperties)
 :   m_filePath(filePath)
 ,   m_valid(false)
 {
@@ -20,67 +22,67 @@ GLRawFile<T>::GLRawFile(const std::string & filePath, bool readProperties)
         m_valid = true;
 }
 
-template<typename T>
-GLRawFile<T>::~GLRawFile()
+
+GLRawFile::~GLRawFile()
 {
 }
 
-template<typename T>
-bool GLRawFile<T>::isValid() const
+
+bool GLRawFile::isValid() const
 {
     return m_valid;
 }
 
-template<typename T>
-const T * GLRawFile<T>::data() const
+
+const char * GLRawFile::data() const
 {
     return &m_data.data()[0];
 }
 
-template<typename T>
-const size_t GLRawFile<T>::size() const
+
+const size_t GLRawFile::size() const
 {
     return m_data.size();
 }
 
-template<typename T>
-const std::string & GLRawFile<T>::stringProperty(const std::string & key) const
+
+const std::string & GLRawFile::stringProperty(const std::string & key) const
 {
     m_stringProperties.at(key);
 }
 
-template<typename T>
-int32_t GLRawFile<T>::intProperty(const std::string & key) const
+
+int32_t GLRawFile::intProperty(const std::string & key) const
 {
     m_intProperties.at(key);
 }
 
-template<typename T>
-double GLRawFile<T>::doubleProperty(const std::string & key) const
+
+double GLRawFile::doubleProperty(const std::string & key) const
 {
     m_doubleProperties.at(key);
 }
 
-template<typename T>
-bool GLRawFile<T>::hasStringProperty(const std::string & key) const
+
+bool GLRawFile::hasStringProperty(const std::string & key) const
 {
     return m_stringProperties.find(key) == m_stringProperties.end();
 }
 
-template<typename T>
-bool GLRawFile<T>::hasIntProperty(const std::string & key) const
+
+bool GLRawFile::hasIntProperty(const std::string & key) const
 {
     return m_intProperties.find(key) == m_intProperties.end();
 }
 
-template<typename T>
-bool GLRawFile<T>::hasDoubleProperty(const std::string & key) const
+
+bool GLRawFile::hasDoubleProperty(const std::string & key) const
 {
     return m_doubleProperties.find(key) == m_doubleProperties.end();
 }
 
-template<typename T>
-bool GLRawFile<T>::read(bool readProperties)
+
+bool GLRawFile::read(bool readProperties)
 {
     std::ifstream ifs(m_filePath, std::ios::in | std::ios::binary);
 
@@ -111,8 +113,8 @@ bool GLRawFile<T>::read(bool readProperties)
     return true;
 }
 
-template<typename T>
-bool GLRawFile<T>::checkMagicNumber(std::ifstream & ifs)
+
+bool GLRawFile::checkMagicNumber(std::ifstream & ifs)
 {
     char magicNumber[sizeof(s_magicNumber)];
     ifs.read(magicNumber, sizeof(s_magicNumber));
@@ -126,14 +128,14 @@ bool GLRawFile<T>::checkMagicNumber(std::ifstream & ifs)
     return true;
 }
 
-template<typename T>
-void GLRawFile<T>::readRawDataOffset(std::ifstream & ifs, uint64_t & rawDataOffset)
+
+void GLRawFile::readRawDataOffset(std::ifstream & ifs, uint64_t & rawDataOffset)
 {
     ifs.read(reinterpret_cast<char *>(&rawDataOffset), sizeof(rawDataOffset));
 }
 
-template<typename T>
-void GLRawFile<T>::readStringProperties(std::ifstream & ifs)
+
+void GLRawFile::readStringProperties(std::ifstream & ifs)
 {
     uint32_t stringCount;
     ifs.read(reinterpret_cast<char *>(&stringCount), sizeof(stringCount));
@@ -162,8 +164,8 @@ void GLRawFile<T>::readStringProperties(std::ifstream & ifs)
     }
 }
 
-template<typename T>
-void GLRawFile<T>::readIntProperties(std::ifstream & ifs)
+
+void GLRawFile::readIntProperties(std::ifstream & ifs)
 {
     uint32_t intCount;
     ifs.read(reinterpret_cast<char *>(&intCount), sizeof(intCount));
@@ -189,8 +191,8 @@ void GLRawFile<T>::readIntProperties(std::ifstream & ifs)
     }
 }
 
-template<typename T>
-void GLRawFile<T>::readDoubleProperties(std::ifstream & ifs)
+
+void GLRawFile::readDoubleProperties(std::ifstream & ifs)
 {
     uint32_t doubleCount;
     ifs.read(reinterpret_cast<char *>(&doubleCount), sizeof(doubleCount));
@@ -216,8 +218,8 @@ void GLRawFile<T>::readDoubleProperties(std::ifstream & ifs)
     }
 }
 
-template<typename T>
-void GLRawFile<T>::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
+
+void GLRawFile::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
 {
     ifs.seekg(0, std::ios::end);
     
@@ -226,7 +228,7 @@ void GLRawFile<T>::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
     
     ifs.seekg(rawDataOffset, std::ios::beg);
 
-    m_data.resize(size / sizeof(T));
+    m_data.resize(size);
 
     ifs.read(reinterpret_cast<char *>(&m_data[0]), size);
 }

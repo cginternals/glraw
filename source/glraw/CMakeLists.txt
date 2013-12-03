@@ -37,9 +37,6 @@ set(api_includes
     ${header_path}/RawFileWriter.h
     ${header_path}/GLRawFileWriter.h
 
-    ${header_path}/RawFile.hpp
-    ${header_path}/RawFile.h
-    ${header_path}/GLRawFile.hpp
     ${header_path}/GLRawFile.h
 
     ${header_path}/Canvas.h
@@ -54,6 +51,7 @@ set(sources
 
     ${source_path}/AbstractFileWriter.cpp
     ${source_path}/RawFileWriter.cpp
+    ${source_path}/GLRawFile.cpp
     ${source_path}/GLRawFileWriter.cpp
 
     ${source_path}/Canvas.cpp

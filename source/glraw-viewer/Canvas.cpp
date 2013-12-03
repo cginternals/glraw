@@ -123,9 +123,9 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
     glEnableVertexAttribArray(0);
 
-    m_program = new QGLShaderProgram(this);
-    auto vertexShader = new QGLShader(QGLShader::Vertex);
-    auto fragmentShader = new QGLShader(QGLShader::Fragment);
+    m_program = new QOpenGLShaderProgram(this);
+    auto vertexShader = new QOpenGLShader(QOpenGLShader::Vertex);
+    auto fragmentShader = new QOpenGLShader(QOpenGLShader::Fragment);
     vertexShader->compileSourceCode(vertexShaderSource);
     fragmentShader->compileSourceCode(fragmentShaderSource);
     m_program->addShader(vertexShader);
@@ -282,17 +282,17 @@ void Canvas::loadFile(const QString & filename)
 
     file.close();
 
-    for (int i = 0; i<w*h*4; ++i)
+    /*for (int i = 0; i<w*h*4; ++i)
     {
         int wrong = ((int*)data.data())[i];
         int right = wrong/255.0 * std::numeric_limits<int>::max();
         ((int*)data.data())[i] = right;
-    }
+    }*/
 
     m_context->makeCurrent(this);
 
     glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_INT, data.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
     glBindTexture(GL_TEXTURE_2D, 0);
 
 

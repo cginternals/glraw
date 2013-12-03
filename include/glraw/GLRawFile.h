@@ -4,11 +4,11 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
 
 namespace glraw
 {
 
-template<typename T>
 class GLRawFile
 {
 public:
@@ -17,7 +17,7 @@ public:
     GLRawFile(const std::string & filePath, bool readProperties = true);
     virtual ~GLRawFile();
 
-    const T * data() const;
+    const char * data() const;
     const size_t size() const;
 
     bool isValid() const;
@@ -45,7 +45,7 @@ protected:
 
 protected:
     const std::string m_filePath;
-    std::vector<T> m_data;
+    std::vector<char> m_data;
 
     std::map<std::string, std::string> m_stringProperties;
     std::map<std::string, int32_t> m_intProperties;
@@ -57,4 +57,3 @@ protected:
 
 } // namespace glraw
 
-#include "GLRawFile.hpp"
