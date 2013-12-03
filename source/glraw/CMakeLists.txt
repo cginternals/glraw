@@ -25,8 +25,6 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}")
 set(api_includes
     ${header_path}/glraw.h
 
-    ${header_path}/Enumerations.h
-
     ${header_path}/AssetInformation.h
     ${header_path}/ConvertManager.h
     ${header_path}/RawConverter.h

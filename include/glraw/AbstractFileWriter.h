@@ -5,7 +5,9 @@
 
 #include <glraw/WriterInterface.h>
 
-class QString;
+#include <QMap>
+#include <QString>
+#include <QtGui/qopengl.h>
 
 namespace glraw
 {
@@ -20,6 +22,9 @@ public:
 
 protected:
     static QString targetFilePath(const AssetInformation & info, const QString & fileExtension);
+
+    static const QMap<GLenum, QString> formatSuffixes;
+    static const QMap<GLenum, QString> typeSuffixes;
 
 };
 

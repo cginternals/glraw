@@ -10,26 +10,24 @@
 
 int main(int argc, char* argv[])
 {
-    int result = -1;
-
     Application app(argc, argv);
-    {
-        QScopedPointer<Viewer> viewer(new Viewer());
 
-        QSurfaceFormat format;
-        format.setVersion(3, 2);
-        format.setProfile(QSurfaceFormat::CoreProfile);
+    QScopedPointer<Viewer> viewer(new Viewer());
 
-        Canvas * canvas = new Canvas(format);
-        QWidget * widget = QWidget::createWindowContainer(canvas);
-        widget->setMinimumSize(1, 1);
-        widget->setAutoFillBackground(false); // Important for overdraw, not occluding the scene.
-        widget->setFocusPolicy(Qt::TabFocus);
+    QSurfaceFormat format;
+    format.setVersion(3, 2);
+    format.setProfile(QSurfaceFormat::CoreProfile);
 
-        viewer->setCentralWidget(widget);
-        viewer->show();
+    Canvas * canvas = new Canvas(format);
+    QWidget * widget = QWidget::createWindowContainer(canvas);
+    widget->setMinimumSize(1, 1);
+    widget->setAutoFillBackground(false); // Important for overdraw, not occluding the scene.
+    widget->setFocusPolicy(Qt::TabFocus);
 
-        result = app.exec();
-    }
-    return result;
+    QObject::connect(viewer.data(), &Viewer::fileDropped, canvas, &Canvas::loadFile);
+
+    viewer->setCentralWidget(widget);
+    viewer->show();
+
+    return app.exec();
 }

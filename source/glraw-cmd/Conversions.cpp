@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QString>
 
+
 namespace
 {
 
@@ -11,8 +12,8 @@ QMap<QString, GLenum> formats()
 {
     QMap<QString, GLenum> formats;
     formats["GL_RED"] = GL_RED;
-    formats["GL_RED"] = GL_GREEN;
-    formats["GL_RED"] = GL_BLUE;
+    formats["GL_GREEN"] = GL_GREEN;
+    formats["GL_BLUE"] = GL_BLUE;
     formats["GL_RG"] = GL_RG;
     formats["GL_RGB"] = GL_RGB;
     formats["GL_BGR"] = GL_BGR;
