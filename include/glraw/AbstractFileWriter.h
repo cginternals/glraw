@@ -4,7 +4,6 @@
 #include <glraw/glraw.h>
 
 #include <glraw/WriterInterface.h>
-#include <glraw/Enumerations.h>
 
 #include <QMap>
 #include <QString>
