@@ -2,7 +2,7 @@
 #pragma once
 
 #include <QWindow>
-#include <QOpenGLFunctions_3_2_Core>
+#include <QOpenGLFunctions_3_3_Core>
 
 #include <QVector>
 #include <QVector2D>
@@ -11,7 +11,7 @@
 class QOpenGLContext;
 class QSurfaceFormat;
 
-class Canvas : public QWindow, protected QOpenGLFunctions_3_2_Core
+class Canvas : public QWindow, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
 
