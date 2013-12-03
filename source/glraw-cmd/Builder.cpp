@@ -59,7 +59,7 @@ QList<CommandLineOption> Builder::commandLineOptions()
 
     options.append({
         QStringList() << "t" << "type",
-        "Output type (default: GL_INT)",
+        "Output type (default: GL_UNSIGNED_BYTE)",
         "type",
         &Builder::type
     });
@@ -167,8 +167,11 @@ void Builder::initialize()
 
 void Builder::process(const QCoreApplication & app)
 {
-    if (app.arguments().size() == 1)
-        m_parser.showHelp();
+    if (helpOptionSet(app))
+    {
+        showHelp();
+        return;
+    }
     
     m_parser.process(app);
     
@@ -433,4 +436,37 @@ void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * ed
 {
     m_manager.appendImageEditor(editor);
     m_editors.insert(key, editor);
+}
+
+bool Builder::helpOptionSet(const QCoreApplication & app) const
+{
+    if (app.arguments().size() == 1)
+        return true;
+
+    if (app.arguments().contains("--help"))
+        return true;
+
+    for (QString & argument : app.arguments())
+    {
+        if (argument.startsWith('-') &&
+            argument.contains('h'))
+            return true;
+    }
+
+    return false;
+}
+
+void Builder::showHelp() const
+{
+    qDebug() << qPrintable(m_parser.helpText()) << R"(
+Formats:          Types:                     Transformation Modes:
+  GL_RED            GL_UNSIGNED_BYTE           nearest
+  GL_BLUE           GL_BYTE                    linear
+  GL_GREEN          GL_UNSIGNED_SHORT        
+  GL_RG             GL_SHORT                 Aspect Ratio Modes:
+  GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
+  GL_BGR            GL_INT                     KeepAspectRatio
+  GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
+  GL_BGRA       
+)";
 }
