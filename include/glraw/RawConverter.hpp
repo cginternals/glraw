@@ -7,10 +7,10 @@ namespace glraw
 template <typename Type>
 void RawConverter::write(const QImage & image, QDataStream & dataStream)
 {
-    const bool r = (GL_RED == m_format || GL_RG == m_format || GL_RGB == m_format || GL_RGBA == m_format || GL_BGR == m_format || GL_BGRA == m_format);
-    const bool g = (GL_RG == m_format || GL_RGB == m_format || GL_RGBA == m_format || GL_BGR == m_format || GL_BGRA == m_format);
-    const bool b = (GL_RGB == m_format || GL_RGBA == m_format || GL_BGR == m_format || GL_BGRA == m_format);
-    const bool a = (GL_RGBA == m_format || GL_BGRA == m_format);
+    const bool r = (RAW_GL_RED == m_format || RAW_GL_RG == m_format || RAW_GL_RGB == m_format || RAW_GL_RGBA == m_format || RAW_GL_BGR == m_format || RAW_GL_BGRA == m_format);
+    const bool g = (RAW_GL_RG == m_format || RAW_GL_RGB == m_format || RAW_GL_RGBA == m_format || RAW_GL_BGR == m_format || RAW_GL_BGRA == m_format);
+    const bool b = (RAW_GL_RGB == m_format || RAW_GL_RGBA == m_format || RAW_GL_BGR == m_format || RAW_GL_BGRA == m_format);
+    const bool a = (RAW_GL_RGBA == m_format || RAW_GL_BGRA == m_format);
 
     // const bool grayscale = (GL_DEPTH_COMPONENT == format || GL_DEPTH_STENCIL == format || GL_STENCIL_INDEX == format);
 

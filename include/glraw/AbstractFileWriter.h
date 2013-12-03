@@ -4,6 +4,9 @@
 #include <glraw/glraw.h>
 
 #include <glraw/WriterInterface.h>
+#include <glraw/Enumerations.h>
+
+#include <QMap>
 
 class QString;
 
@@ -20,6 +23,9 @@ public:
 
 protected:
     static QString targetFilePath(const AssetInformation & info, const QString & fileExtension);
+
+    static const QMap<Format, QString> formatSuffixes;
+    static const QMap<Type, QString> typeSuffixes;
 
 };
 

@@ -10,6 +10,24 @@
 namespace glraw
 {
 
+const QMap<Format, QString> AbstractFileWriter::formatSuffixes = {
+    { RAW_GL_RED, "r" },
+    { RAW_GL_RG, "rg" },
+    { RAW_GL_RGB, "rgb" },
+    { RAW_GL_BGR, "bgr" },
+    { RAW_GL_RGBA, "rgba" },
+    { RAW_GL_BGRA, "bgra" }
+};
+const QMap<Type, QString> AbstractFileWriter::typeSuffixes = {
+    { RAW_GL_UNSIGNED_BYTE, "ub" },
+    { RAW_GL_BYTE, "b" },
+    { RAW_GL_UNSIGNED_SHORT, "us" },
+    { RAW_GL_SHORT, "s" },
+    { RAW_GL_UNSIGNED_INT, "ui" },
+    { RAW_GL_INT, "i" },
+    { RAW_GL_FLOAT, "f" }
+};
+
 AbstractFileWriter::~AbstractFileWriter()
 {
 }
@@ -18,23 +36,6 @@ QString AbstractFileWriter::targetFilePath(const AssetInformation & info, const 
 {
     const Format format = static_cast<Format>(info.property("format").toInt());
     const Type type = static_cast<Type>(info.property("type").toInt());
-    
-    QMap<Format, QString> formatSuffixes;
-    formatSuffixes[GL_RED]  = "r";
-    formatSuffixes[GL_RG]   = "rg";
-    formatSuffixes[GL_RGB]  = "rgb";
-    formatSuffixes[GL_BGR]  = "bgr";
-    formatSuffixes[GL_RGBA] = "rgba";
-    formatSuffixes[GL_BGRA] = "bgra";
-    
-    QMap<Type, QString> typeSuffixes;
-    typeSuffixes[GL_UNSIGNED_BYTE]  = "ub";
-    typeSuffixes[GL_BYTE]           = "b";
-    typeSuffixes[GL_UNSIGNED_SHORT] = "us";
-    typeSuffixes[GL_SHORT]          = "s";
-    typeSuffixes[GL_UNSIGNED_INT]   = "ui";
-    typeSuffixes[GL_INT]            = "i";
-    typeSuffixes[GL_FLOAT]          = "f";
     
     const QString suffixes = QString(".%1.%2.%3.%4.%5")
         .arg(info.property("width").toInt())

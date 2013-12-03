@@ -3,12 +3,14 @@
 
 #include <glraw/AssetInformation.h>
 
+#include <QGLWidget>
+
 namespace glraw
 {
 
 RawConverter::RawConverter()
-:   m_format(GL_RGBA)
-,   m_type(GL_INT)
+:   m_format(RAW_GL_RGBA)
+,   m_type(RAW_GL_INT)
 {
 }
 
@@ -24,30 +26,32 @@ void RawConverter::updateAssetInformation(AssetInformation & info)
 
 void RawConverter::convert(QImage & image, QDataStream & dataStream)
 {
-    if (!(image.format() == QImage::Format_ARGB32 || image.format() == QImage::Format_RGB32))
-        image = image.convertToFormat(QImage::Format_ARGB32);
+    /*if (!(image.format() == QImage::Format_ARGB32 || image.format() == QImage::Format_RGB32))
+        image = image.convertToFormat(QImage::Format_ARGB32);*/
+
+    image = QGLWidget::convertToGLFormat(image);
 
     switch(m_type)
     {
-    case GL_UNSIGNED_BYTE:
+    case RAW_GL_UNSIGNED_BYTE:
         this->write<quint8>(image, dataStream);
         break;
-    case GL_BYTE:
+    case RAW_GL_BYTE:
         this->write<qint8>(image, dataStream);
         break;
-    case GL_UNSIGNED_SHORT:
+    case RAW_GL_UNSIGNED_SHORT:
         this->write<quint16>(image, dataStream);
         break;
-    case GL_SHORT:
+    case RAW_GL_SHORT:
         this->write<qint16>(image, dataStream);
         break;
-    case GL_UNSIGNED_INT:
+    case RAW_GL_UNSIGNED_INT:
         this->write<quint32>(image, dataStream);
         break;
-    case GL_INT:
+    case RAW_GL_INT:
         this->write<qint32>(image, dataStream);
         break;
-    case GL_FLOAT:
+    case RAW_GL_FLOAT:
         this->write<float>(image, dataStream);
         break;
     }

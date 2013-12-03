@@ -21,6 +21,11 @@ public:
 
     virtual ~Viewer();
 
+    void dragEnterEvent(QDragEnterEvent * event);
+    void dragMoveEvent(QDragMoveEvent * event);
+    void dropEvent(QDropEvent * event);
+signals:
+    void fileDropped(const QString & filename);
 protected:
 	const QScopedPointer<Ui_Viewer> m_ui;
 };
