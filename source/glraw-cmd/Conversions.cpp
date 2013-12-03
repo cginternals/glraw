@@ -4,7 +4,6 @@
 #include <QMap>
 #include <QString>
 
-//using namespace glraw;
 
 namespace
 {
