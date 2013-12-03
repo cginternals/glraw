@@ -20,7 +20,11 @@ Canvas::Canvas()
 Canvas::~Canvas()
 {
     if (textureLoaded())
+    {
+        m_context.makeCurrent(this);
         glDeleteTextures(1, &m_texture);
+        m_context.doneCurrent();
+    }
 }
 
 void Canvas::initializeGL()
@@ -74,8 +78,12 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     m_context.makeCurrent(this);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     
+    GLint width, height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    
     QByteArray imageData;
-    imageData.resize(numberOfElementsFor(format) * byteSizeOf(type));
+    imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
     glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
     glBindTexture(GL_TEXTURE_2D, 0);
