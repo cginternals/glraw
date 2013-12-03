@@ -5,7 +5,7 @@
 #include "glraw-cmd-version.h"
 
 Application::Application(int & argc, char ** argv)
-:   QCoreApplication(argc, argv)
+:   QApplication(argc, argv)
 {
     QCoreApplication::setApplicationName(GLRAW_PROJECT_NAME);
     QCoreApplication::setApplicationVersion(GLRAW_VERSION);

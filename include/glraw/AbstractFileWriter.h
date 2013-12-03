@@ -7,8 +7,8 @@
 #include <glraw/Enumerations.h>
 
 #include <QMap>
-
-class QString;
+#include <QString>
+#include <QtGui/qopengl.h>
 
 namespace glraw
 {
@@ -24,8 +24,8 @@ public:
 protected:
     static QString targetFilePath(const AssetInformation & info, const QString & fileExtension);
 
-    static const QMap<Format, QString> formatSuffixes;
-    static const QMap<Type, QString> typeSuffixes;
+    static const QMap<GLenum, QString> formatSuffixes;
+    static const QMap<GLenum, QString> typeSuffixes;
 
 };
 

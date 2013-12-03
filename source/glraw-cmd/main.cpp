@@ -14,15 +14,9 @@
 int main(int argc, char * argv[])
 {
     Application app(argc, argv);
+    
     Builder builder;
     builder.process(app);
     
     return 0;
 }
-
-// TODO Why?
-// if (GL_BGR != parser.format() && GL_BGRA != parser.format())
-//     image = image.rgbSwapped();
-
-
-

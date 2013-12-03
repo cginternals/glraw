@@ -3,14 +3,12 @@
 
 #include <glraw/AssetInformation.h>
 
-#include <QGLWidget>
-
 namespace glraw
 {
 
 RawConverter::RawConverter()
-:   m_format(RAW_GL_RGBA)
-,   m_type(RAW_GL_INT)
+:   m_format(GL_RGBA)
+,   m_type(GL_UNSIGNED_BYTE)
 {
 }
 
@@ -20,48 +18,23 @@ RawConverter::~RawConverter()
 
 void RawConverter::updateAssetInformation(AssetInformation & info)
 {
-    info.setProperty("format", QVariant(m_format));
-    info.setProperty("type", QVariant(m_type));
+    info.setProperty("format", QVariant(static_cast<int>(m_format)));
+    info.setProperty("type", QVariant(static_cast<int>(m_type)));
 }
 
 void RawConverter::convert(QImage & image, QDataStream & dataStream)
 {
-    /*if (!(image.format() == QImage::Format_ARGB32 || image.format() == QImage::Format_RGB32))
-        image = image.convertToFormat(QImage::Format_ARGB32);*/
-
-    image = QGLWidget::convertToGLFormat(image);
-
-    switch(m_type)
-    {
-    case RAW_GL_UNSIGNED_BYTE:
-        this->write<quint8>(image, dataStream);
-        break;
-    case RAW_GL_BYTE:
-        this->write<qint8>(image, dataStream);
-        break;
-    case RAW_GL_UNSIGNED_SHORT:
-        this->write<quint16>(image, dataStream);
-        break;
-    case RAW_GL_SHORT:
-        this->write<qint16>(image, dataStream);
-        break;
-    case RAW_GL_UNSIGNED_INT:
-        this->write<quint32>(image, dataStream);
-        break;
-    case RAW_GL_INT:
-        this->write<qint32>(image, dataStream);
-        break;
-    case RAW_GL_FLOAT:
-        this->write<float>(image, dataStream);
-        break;
-    }
+    m_canvas.loadTextureFromImage(image);
+    
+    QByteArray imageData = m_canvas.imageFromTexture(m_format, m_type);
+    dataStream << imageData;
 }
 
-void RawConverter::setFormat(Format format)
+void RawConverter::setFormat(GLenum format)
 {
     m_format = format;
 }
-void RawConverter::setType(Type type)
+void RawConverter::setType(GLenum type)
 {
     m_type = type;
 }

@@ -1,31 +1,31 @@
 
 #include <glraw/AbstractFileWriter.h>
 
+#include <QtGui/qopengl.h>
 #include <QDebug>
 #include <QFileInfo>
 
-#include <glraw/Enumerations.h>
 #include <glraw/AssetInformation.h>
 
 namespace glraw
 {
 
-const QMap<Format, QString> AbstractFileWriter::formatSuffixes = {
-    { RAW_GL_RED, "r" },
-    { RAW_GL_RG, "rg" },
-    { RAW_GL_RGB, "rgb" },
-    { RAW_GL_BGR, "bgr" },
-    { RAW_GL_RGBA, "rgba" },
-    { RAW_GL_BGRA, "bgra" }
+const QMap<GLenum, QString> AbstractFileWriter::formatSuffixes = {
+    { GL_RED, "r" },
+    { GL_RG, "rg" },
+    { GL_RGB, "rgb" },
+    { GL_BGR, "bgr" },
+    { GL_RGBA, "rgba" },
+    { GL_BGRA, "bgra" }
 };
-const QMap<Type, QString> AbstractFileWriter::typeSuffixes = {
-    { RAW_GL_UNSIGNED_BYTE, "ub" },
-    { RAW_GL_BYTE, "b" },
-    { RAW_GL_UNSIGNED_SHORT, "us" },
-    { RAW_GL_SHORT, "s" },
-    { RAW_GL_UNSIGNED_INT, "ui" },
-    { RAW_GL_INT, "i" },
-    { RAW_GL_FLOAT, "f" }
+const QMap<GLenum, QString> AbstractFileWriter::typeSuffixes = {
+    { GL_UNSIGNED_BYTE, "ub" },
+    { GL_BYTE, "b" },
+    { GL_UNSIGNED_SHORT, "us" },
+    { GL_SHORT, "s" },
+    { GL_UNSIGNED_INT, "ui" },
+    { GL_INT, "i" },
+    { GL_FLOAT, "f" }
 };
 
 AbstractFileWriter::~AbstractFileWriter()
@@ -34,9 +34,9 @@ AbstractFileWriter::~AbstractFileWriter()
 
 QString AbstractFileWriter::targetFilePath(const AssetInformation & info, const QString & fileExtension)
 {
-    const Format format = static_cast<Format>(info.property("format").toInt());
-    const Type type = static_cast<Type>(info.property("type").toInt());
-    
+    GLenum format = static_cast<GLenum>(info.property("format").toInt());
+    GLenum type = static_cast<GLenum>(info.property("type").toInt());
+       
     const QString suffixes = QString(".%1.%2.%3.%4.%5")
         .arg(info.property("width").toInt())
         .arg(info.property("height").toInt())

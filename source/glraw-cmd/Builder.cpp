@@ -7,7 +7,6 @@
 #include <QCoreApplication>
 #include <QCommandLineOption>
 
-#include <glraw/Enumerations.h>
 #include <glraw/MirrorEditor.h>
 #include <glraw/ScaleEditor.h>
 #include <glraw/RawFileWriter.h>
@@ -109,14 +108,14 @@ QList<CommandLineOption> Builder::commandLineOptions()
 
     options.append({
         QStringList() << "width",
-        "Sets the width.",
+        "Sets the width in px.",
         "integer",
         &Builder::width
     });
 
     options.append({
         QStringList() << "height",
-        "Sets the height.",
+        "Sets the height in px.",
         "integer",
         &Builder::height
     });

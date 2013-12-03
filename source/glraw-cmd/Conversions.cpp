@@ -4,34 +4,36 @@
 #include <QMap>
 #include <QString>
 
-using namespace glraw;
+//using namespace glraw;
 
 namespace
 {
 
-QMap<QString, Format> formats()
+QMap<QString, GLenum> formats()
 {
-    QMap<QString, Format> formats;
-    formats["GL_RED"] = RAW_GL_RED;
-    formats["GL_RG"] = RAW_GL_RG;
-    formats["GL_RGB"] = RAW_GL_RGB;
-    formats["GL_BGR"] = RAW_GL_BGR;
-    formats["GL_RGBA"] = RAW_GL_RGBA;
-    formats["GL_BGRA"] = RAW_GL_BGRA;
+    QMap<QString, GLenum> formats;
+    formats["GL_RED"] = GL_RED;
+    formats["GL_GREEN"] = GL_GREEN;
+    formats["GL_BLUE"] = GL_BLUE;
+    formats["GL_RG"] = GL_RG;
+    formats["GL_RGB"] = GL_RGB;
+    formats["GL_BGR"] = GL_BGR;
+    formats["GL_RGBA"] = GL_RGBA;
+    formats["GL_BGRA"] = GL_BGRA;
 
     return formats;
 }
 
-QMap<QString, Type> types()
+QMap<QString, GLenum> types()
 {
-    QMap<QString, Type> types;
-    types["GL_UNSIGNED_BYTE"] = RAW_GL_UNSIGNED_BYTE;
-    types["GL_BYTE"] = RAW_GL_BYTE;
-    types["GL_UNSIGNED_SHORT"] = RAW_GL_UNSIGNED_SHORT;
-    types["GL_SHORT"] = RAW_GL_SHORT;
-    types["GL_UNSIGNED_INT"] = RAW_GL_UNSIGNED_INT;
-    types["GL_INT"] = RAW_GL_INT;
-    types["GL_FLOAT"] = RAW_GL_FLOAT;
+    QMap<QString, GLenum> types;
+    types["GL_UNSIGNED_BYTE"] = GL_UNSIGNED_BYTE;
+    types["GL_BYTE"] = GL_BYTE;
+    types["GL_UNSIGNED_SHORT"] = GL_UNSIGNED_SHORT;
+    types["GL_SHORT"] = GL_SHORT;
+    types["GL_UNSIGNED_INT"] = GL_UNSIGNED_INT;
+    types["GL_INT"] = GL_INT;
+    types["GL_FLOAT"] = GL_FLOAT;
 
     return types;
 }
@@ -67,7 +69,7 @@ bool isFormat(const QString & string)
     return f.contains(string);
 }
 
-Format stringToFormat(const QString & string)
+GLenum stringToFormat(const QString & string)
 {
     static auto f = formats();
 
@@ -81,7 +83,7 @@ bool isType(const QString & string)
     return t.contains(string);
 }
 
-glraw::Type stringToType(const QString & string)
+GLenum stringToType(const QString & string)
 {
     static auto t = types();
 
