@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     QScopedPointer<Viewer> viewer(new Viewer());
 
     QSurfaceFormat format;
-    format.setVersion(3, 2);
+    format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat::CoreProfile);
 
     Canvas * canvas = new Canvas(format);

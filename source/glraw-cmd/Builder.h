@@ -52,6 +52,9 @@ protected:
     
     template <class Editor>
     Editor * editor(const QString & key);
+    
+    bool helpOptionSet(const QCoreApplication & app) const;
+    void showHelp() const;
 
 protected:
     QCommandLineParser m_parser;

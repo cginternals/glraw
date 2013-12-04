@@ -50,10 +50,9 @@ const GLint Canvas::getInteger(const GLenum penum)
 namespace {
 
 const char* vertexShaderSource =
-R"(
-#version 330
+R"(#version 330
 
-in layout(location = 0) vec2 in_vertex;
+layout(location = 0) in vec2 in_vertex;
 out vec2 texCoord;
 
 void main()
@@ -65,17 +64,16 @@ void main()
 )";
 
 const char* fragmentShaderSource =
-R"(
-#version 330
+R"(#version 330
 
-uniform sampler2D texture;
+uniform sampler2D u_texture;
 in vec2 texCoord;
 
-out layout(location = 0) vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 void main()
 {
-    fragColor = texture2D(texture, texCoord);
+    fragColor = texture(u_texture, texCoord);
     //fragColor = vec4(texCoord, 0.0, 1.0);
 }
 
