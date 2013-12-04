@@ -31,7 +31,7 @@ protected:
     
     
     QOpenGLContext m_context;
-    QOpenGLFunctions_3_3_Core gl;
+    QOpenGLFunctions_3_3_Core m_gl;
     GLuint m_texture;
 
 };

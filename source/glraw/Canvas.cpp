@@ -22,7 +22,7 @@ Canvas::~Canvas()
     if (textureLoaded())
     {
         m_context.makeCurrent(this);
-        gl.glDeleteTextures(1, &m_texture);
+        m_gl.glDeleteTextures(1, &m_texture);
         m_context.doneCurrent();
     }
 }
@@ -38,7 +38,7 @@ void Canvas::initializeGL()
 
     m_context.makeCurrent(this);
 
-    if (!gl.initializeOpenGLFunctions())
+    if (!m_gl.initializeOpenGLFunctions())
     {
         qCritical() << "Initializing OpenGL failed.";
         return;
@@ -57,15 +57,15 @@ void Canvas::loadTextureFromImage(QImage & image)
     image = image.mirrored();
     
     if (!textureLoaded())
-        gl.glGenTextures(1, &m_texture);
+        m_gl.glGenTextures(1, &m_texture);
     
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+    m_gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                  image.width(), image.height(), 0,
                  GL_BGRA, GL_UNSIGNED_BYTE,
                  image.bits());
     
-    gl.glBindTexture(GL_TEXTURE_2D, 0);
+    m_gl.glBindTexture(GL_TEXTURE_2D, 0);
     
     m_context.doneCurrent();
 }
@@ -75,17 +75,17 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     assert(textureLoaded());
     
     m_context.makeCurrent(this);
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    m_gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    m_gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
-    gl.glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
+    m_gl.glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
-    gl.glBindTexture(GL_TEXTURE_2D, 0);
+    m_gl.glBindTexture(GL_TEXTURE_2D, 0);
     m_context.doneCurrent();
     
     return imageData;
