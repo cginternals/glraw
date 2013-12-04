@@ -22,7 +22,11 @@ Canvas::Canvas(
 }
 
 Canvas::~Canvas()
-{
+{  
+    gl.glDeleteTextures(1, &m_textureHandle);
+    gl.glDeleteBuffers(1, &m_vboHandle);
+    gl.glDeleteVertexArrays(1, &m_vaoHandle);
+    delete m_program;
 }
 
 QSurfaceFormat Canvas::format() const
@@ -35,14 +39,14 @@ QSurfaceFormat Canvas::format() const
 
 const QString Canvas::getString(const GLenum penum)
 {
-    const QString result = reinterpret_cast<const char*>(glGetString(penum));
+    const QString result = reinterpret_cast<const char*>(gl.glGetString(penum));
     return result;
 }
 
 const GLint Canvas::getInteger(const GLenum penum)
 {
     GLint result;
-    glGetIntegerv(penum, &result);
+    gl.glGetIntegerv(penum, &result);
 
     return result;
 }
@@ -94,12 +98,12 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     m_context->create();
 
     m_context->makeCurrent(this);
-    initializeOpenGLFunctions();
+    gl.initializeOpenGLFunctions();
 
-    glGenTextures(1, &m_textureHandle);
-    glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    gl.glGenTextures(1, &m_textureHandle);
+    gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int w = 10;
     int h = 10;
@@ -108,19 +112,19 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     {
         data[i] = i/(w*h*4.0)*std::numeric_limits<int>::max();
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_INT, data);
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_INT, data);
     delete data;
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glBindTexture(GL_TEXTURE_2D, 0);
 
-    glGenVertexArrays(1, &m_vaoHandle);
-    glBindVertexArray(m_vaoHandle);
+    gl.glGenVertexArrays(1, &m_vaoHandle);
+    gl.glBindVertexArray(m_vaoHandle);
 
-    glGenBuffers(1, &m_vboHandle);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vboHandle);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*4, m_quad.constData(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
-    glEnableVertexAttribArray(0);
+    gl.glGenBuffers(1, &m_vboHandle);
+    gl.glBindBuffer(GL_ARRAY_BUFFER, m_vboHandle);
+    gl.glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*4, m_quad.constData(), GL_STATIC_DRAW);
+    gl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
+    gl.glEnableVertexAttribArray(0);
 
     m_program = new QOpenGLShaderProgram(this);
     auto vertexShader = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -145,7 +149,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
     m_context->makeCurrent(this);
 
     int side = qMin(width(), height());
-    glViewport((width() - side) / 2, (height() - side) / 2, side, side);
+    gl.glViewport((width() - side) / 2, (height() - side) / 2, side, side);
 
     m_context->doneCurrent();
 }
@@ -162,22 +166,22 @@ void Canvas::paintGL()
 {
     m_context->makeCurrent(this);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+    gl.glActiveTexture(GL_TEXTURE0);
+    gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
 
     m_program->bind();
 
-    glBindVertexArray(m_vaoHandle);
+    gl.glBindVertexArray(m_vaoHandle);
 
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    gl.glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-    glBindVertexArray(0);
+    gl.glBindVertexArray(0);
 
     m_program->release();
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glBindTexture(GL_TEXTURE_2D, 0);
 
     m_context->swapBuffers(this);
     m_context->doneCurrent();
@@ -265,9 +269,9 @@ void Canvas::loadFile(const QString & filename)
 
     m_context->makeCurrent(this);
 
-    glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
+    gl.glBindTexture(GL_TEXTURE_2D, 0);
 
 
     paintGL();

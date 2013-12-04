@@ -11,7 +11,7 @@
 class QOpenGLContext;
 class QSurfaceFormat;
 
-class Canvas : public QWindow, protected QOpenGLFunctions_3_3_Core
+class Canvas : public QWindow
 {
     Q_OBJECT
 
@@ -43,6 +43,7 @@ protected:
 
 protected:
     QScopedPointer<QOpenGLContext> m_context;
+    QOpenGLFunctions_3_3_Core gl;
 
     GLuint m_textureHandle;
     GLuint m_vaoHandle;

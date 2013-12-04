@@ -5,14 +5,14 @@
 
 #include <QWindow>
 #include <QByteArray>
-#include <QOpenGLFunctions_4_1_Core>
+#include <QOpenGLFunctions_3_3_Core>
 
 class QImage;
 
 namespace glraw
 {
 
-class GLRAW_API Canvas : public QWindow, protected QOpenGLFunctions_4_1_Core
+class GLRAW_API Canvas : public QWindow
 {
 public:
     Canvas();
@@ -31,6 +31,7 @@ protected:
     
     
     QOpenGLContext m_context;
+    QOpenGLFunctions_3_3_Core gl;
     GLuint m_texture;
 
 };

@@ -22,7 +22,7 @@ Canvas::~Canvas()
     if (textureLoaded())
     {
         m_context.makeCurrent(this);
-        glDeleteTextures(1, &m_texture);
+        gl.glDeleteTextures(1, &m_texture);
         m_context.doneCurrent();
     }
 }
@@ -30,7 +30,7 @@ Canvas::~Canvas()
 void Canvas::initializeGL()
 {
     QSurfaceFormat format;
-    format.setVersion(4, 1);
+    format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat::CoreProfile);
 
     m_context.setFormat(format);
@@ -38,7 +38,7 @@ void Canvas::initializeGL()
 
     m_context.makeCurrent(this);
 
-    if (!initializeOpenGLFunctions())
+    if (!gl.initializeOpenGLFunctions())
     {
         qCritical() << "Initializing OpenGL failed.";
         return;
@@ -57,15 +57,15 @@ void Canvas::loadTextureFromImage(QImage & image)
     image = image.mirrored();
     
     if (!textureLoaded())
-        glGenTextures(1, &m_texture);
+        gl.glGenTextures(1, &m_texture);
     
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                  image.width(), image.height(), 0,
                  GL_BGRA, GL_UNSIGNED_BYTE,
                  image.bits());
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glBindTexture(GL_TEXTURE_2D, 0);
     
     m_context.doneCurrent();
 }
@@ -75,17 +75,17 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     assert(textureLoaded());
     
     m_context.makeCurrent(this);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
-    glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
+    gl.glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glBindTexture(GL_TEXTURE_2D, 0);
     m_context.doneCurrent();
     
     return imageData;
