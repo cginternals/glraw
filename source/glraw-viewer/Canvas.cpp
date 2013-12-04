@@ -233,6 +233,7 @@ bool Canvas::verifyExtensions() const
 #include <QFile>
 #include <QDebug>
 //#include <glraw/RawFile.h>
+#include <iostream>
 
 void Canvas::loadFile(const QString & filename)
 {
@@ -257,10 +258,10 @@ void Canvas::loadFile(const QString & filename)
         return;
     }
 
-    int w = 2560;
-    int h = 1920;
-    GLenum format = GL_RGBA;
-    GLenum type = GL_UNSIGNED_BYTE;
+    int w = rawFile.intProperty("width");
+    int h = rawFile.intProperty("height");
+    GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
+    GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
 
     m_context->makeCurrent(this);
 

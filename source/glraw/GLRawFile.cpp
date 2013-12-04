@@ -1,9 +1,40 @@
 
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
 #include <glraw/GLRawFile.h>
+
+namespace
+{
+
+template<typename T>
+T read(std::ifstream & stream)
+{
+    T value;
+    stream.read(reinterpret_cast<char*>(&value), sizeof(value));
+    return value;
+}
+
+std::string readString(std::ifstream & stream)
+{
+    std::stringstream ss;
+    char c;
+
+    while (stream.good())
+    {
+        stream.get(c);
+        if (c == '\0')
+            break;
+
+        ss << c;
+    }
+
+    return ss.str();
+}
+
+}
 
 namespace glraw
 {
@@ -16,7 +47,7 @@ GLRawFile::GLRawFile(const std::string & filePath, bool parseProperties)
 : m_filePath(filePath)
 , m_valid(false)
 {
-    m_valid = read(parseProperties);
+    m_valid = readFile(parseProperties);
 }
 
 
@@ -33,7 +64,7 @@ bool GLRawFile::isValid() const
 
 const char * GLRawFile::data() const
 {
-    return &m_data.data()[0];
+    return m_data.data();
 }
 
 
@@ -45,19 +76,19 @@ const size_t GLRawFile::size() const
 
 const std::string & GLRawFile::stringProperty(const std::string & key) const
 {
-    m_stringProperties.at(key);
+    return m_stringProperties.at(key);
 }
 
 
 int32_t GLRawFile::intProperty(const std::string & key) const
 {
-    m_intProperties.at(key);
+    return m_intProperties.at(key);
 }
 
 
 double GLRawFile::doubleProperty(const std::string & key) const
 {
-    m_doubleProperties.at(key);
+    return m_doubleProperties.at(key);
 }
 
 
@@ -79,7 +110,7 @@ bool GLRawFile::hasDoubleProperty(const std::string & key) const
 }
 
 
-bool GLRawFile::read(bool parseProperties)
+bool GLRawFile::readFile(bool parseProperties)
 {
     std::ifstream ifs(m_filePath, std::ios::in | std::ios::binary);
 
@@ -91,20 +122,18 @@ bool GLRawFile::read(bool parseProperties)
     
     uint64_t offset = 0;
 
-    if (readUint16(ifs) == s_magicNumber)
+    if (read<uint16_t>(ifs) == s_magicNumber)
     {
-        offset = readUint64(ifs);
+        offset = read<uint64_t>(ifs);
 
         if (parseProperties)
         {
-            /*readStringProperties(ifs);
-            readIntProperties(ifs);
-            readDoubleProperties(ifs);*/
+            readProperties(ifs, offset);
         }
     }
     else
     {
-        ifs.seekg(0, std::ios::beg);
+        ifs.seekg(0);
     }
     
     readRawData(ifs, offset);
@@ -114,113 +143,29 @@ bool GLRawFile::read(bool parseProperties)
     return true;
 }
 
-void GLRawFile::readProperties(std::ifstream & ifs)
+void GLRawFile::readProperties(std::ifstream & ifs, uint64_t offset)
 {
-
-}
-
-void GLRawFile::readStringProperties(std::ifstream & ifs)
-{
-    uint32_t stringCount;
-    ifs.read(reinterpret_cast<char *>(&stringCount), sizeof(stringCount));
-
-    for (uint32_t i = 0; i < stringCount; i++)
+    while (ifs.tellg() < offset && ifs.good())
     {
-        uint32_t keySize;
-        ifs.read(reinterpret_cast<char *>(&keySize), sizeof(keySize));
-        char * key = new char[keySize];
-        ifs.read(key, keySize);
-        
-        uint32_t valueSize;
-        ifs.read(reinterpret_cast<char *>(&valueSize), sizeof(valueSize));
-        char * value = new char[valueSize];
-        ifs.read(value, valueSize);
-        
-        std::pair<std::string, std::string> pair(
-            std::string(key, keySize),
-            std::string(value, valueSize)
-        );
-        
-        delete[] key;
-        delete[] value;
-        
-        m_stringProperties.insert(pair);
+        uint8_t type = read<uint8_t>(ifs);
+
+        std::string key = readString(ifs);
+
+        switch (type)
+        {
+            case IntType:
+                m_intProperties[key] = read<int32_t>(ifs);
+                break;
+            case DoubleType:
+                m_doubleProperties[key] = read<double>(ifs);
+                break;
+            case StringType:
+                m_stringProperties[key] = readString(ifs);
+                break;
+            default:
+                return;
+        }
     }
-}
-
-
-void GLRawFile::readIntProperties(std::ifstream & ifs)
-{
-    uint32_t intCount;
-    ifs.read(reinterpret_cast<char *>(&intCount), sizeof(intCount));
-
-    for (uint32_t i = 0; i < intCount; i++)
-    {
-        uint32_t keySize;
-        ifs.read(reinterpret_cast<char *>(&keySize), sizeof(keySize));
-        char * key = new char[keySize];
-        ifs.read(key, keySize);
-        
-        int32_t value;
-        ifs.read(reinterpret_cast<char *>(&value), sizeof(value));
-        
-        std::pair<std::string, int32_t> pair(
-            std::string(key, keySize),
-            value
-        );
-        
-        delete[] key;
-        
-        m_intProperties.insert(pair);
-    }
-}
-
-
-void GLRawFile::readDoubleProperties(std::ifstream & ifs)
-{
-    uint32_t doubleCount;
-    ifs.read(reinterpret_cast<char *>(&doubleCount), sizeof(doubleCount));
-
-    for (uint32_t i = 0; i < doubleCount; i++)
-    {
-        uint32_t keySize;
-        ifs.read(reinterpret_cast<char *>(&keySize), sizeof(keySize));
-        char * key = new char[keySize];
-        ifs.read(key, keySize);
-        
-        double value;
-        ifs.read(reinterpret_cast<char *>(&value), sizeof(value));
-        
-        std::pair<std::string, double> pair(
-            std::string(key, keySize),
-            value
-        );
-        
-        delete[] key;
-        
-        m_intProperties.insert(pair);
-    }
-}
-
-uint8_t GLRawFile::readUint16(std::ifstream & ifs)
-{
-    uint8_t value;
-    ifs.read(reinterpret_cast<char*>(&value), sizeof(value));
-    return value;
-}
-
-uint16_t GLRawFile::readUint16(std::ifstream & ifs)
-{
-    uint16_t value;
-    ifs.read(reinterpret_cast<char*>(&value), sizeof(value));
-    return value;
-}
-
-uint64_t GLRawFile::readUint64(std::ifstream & ifs)
-{
-    uint64_t value;
-    ifs.read(reinterpret_cast<char *>(&value), sizeof(value));
-    return value;
 }
 
 void GLRawFile::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)

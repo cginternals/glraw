@@ -75,9 +75,9 @@ void GLRawFileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetI
         if (type == GLRawFile::Unknown)
             continue;
 
-        dataStream
-            << static_cast<char>(type)
-            << key.toUtf8();
+        dataStream << static_cast<uint8_t>(type);
+        writeString(dataStream, key);
+
         writeValue(dataStream, value);
     }
 
@@ -101,14 +101,21 @@ void GLRawFileWriter::writeValue(QDataStream & dataStream, const QVariant & valu
             dataStream << static_cast<qint32>(value.toInt());
             break;
         case QVariant::Double:
-            dataStream << static_cast<qint64>(value.toDouble());
+            dataStream << value.toDouble();
             break;
         case QVariant::String:
-            dataStream << value.toString().toUtf8();
+            writeString(dataStream, value.toString());
             break;
         default:
-            dataStream << '\0';
+            dataStream << static_cast<qint8>(0);
     }
+}
+
+void GLRawFileWriter::writeString(QDataStream & dataStream, const QString & string)
+{
+    QByteArray bytes = string.toUtf8();
+    dataStream.writeRawData(bytes.data(), bytes.length());
+    dataStream << static_cast<qint8>(0);
 }
 
 } // namespace glraw

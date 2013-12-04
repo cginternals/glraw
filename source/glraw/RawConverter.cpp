@@ -27,7 +27,7 @@ void RawConverter::convert(QImage & image, QDataStream & dataStream)
     m_canvas.loadTextureFromImage(image);
     
     QByteArray imageData = m_canvas.imageFromTexture(m_format, m_type);
-    dataStream << imageData;
+    dataStream.writeBytes(imageData.data(), imageData.length());
 }
 
 void RawConverter::setFormat(GLenum format)

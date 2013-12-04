@@ -24,6 +24,5 @@
 
 # QtCreator
 CMakeLists.txt.user
-CMakeLists.txt.user.3.0-pre1
-CMakeLists.txt.user.15
+CMakeLists.txt.user.*
 *.autosave

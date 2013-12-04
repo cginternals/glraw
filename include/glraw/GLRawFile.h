@@ -39,16 +39,12 @@ public:
     bool hasDoubleProperty(const std::string & key) const;
 
 protected:
-    bool read(bool parseProperties);
+    bool readFile(bool parseProperties);
     
-    void readProperties(std::ifstream & ifs);
+    void readProperties(std::ifstream & ifs, uint64_t offset);
     void readStringProperties(std::ifstream & ifs);
     void readIntProperties(std::ifstream & ifs);
     void readDoubleProperties(std::ifstream & ifs);
-
-    uint8_t readUint8(std::ifstream & ifs);
-    uint16_t readUint16(std::ifstream & ifs);
-    uint64_t readUint64(std::ifstream & ifs);
     
     void readRawData(std::ifstream & ifs, uint64_t offset);
 

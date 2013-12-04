@@ -28,6 +28,7 @@ protected:
 
     unsigned typeIndicator(QVariant::Type type);
     void writeValue(QDataStream & dataStream, const QVariant & value);
+    void writeString(QDataStream & dataStream, const QString & string);
 
     static QMap<QVariant::Type, int> s_typeIndicators;
 
