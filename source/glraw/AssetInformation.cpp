@@ -38,28 +38,4 @@ const QVariantMap & AssetInformation::properties() const
     return m_properties;
 }
 
-QVariantMap AssetInformation::properties(QVariant::Type type) const
-{
-    QVariantMap map;
-    for (auto it = m_properties.begin(); it != m_properties.end(); it++)
-        if (it.value().type() == type)
-            map.insert(it.key(), it.value());
-    return map;
-}
-
-QVariantMap AssetInformation::stringProperties() const
-{
-    return this->properties(QVariant::String);
-}
-
-QVariantMap AssetInformation::intProperties() const
-{
-    return this->properties(QVariant::Int);
-}
-
-QVariantMap AssetInformation::doubleProperties() const
-{
-    return this->properties(QVariant::Double);
-}
-
 } // namespace glraw

@@ -12,9 +12,16 @@ namespace glraw
 class GLRawFile
 {
 public:
-    static char s_magicNumber[4];
+    static uint16_t s_magicNumber;
 
-    GLRawFile(const std::string & filePath, bool readProperties = true);
+    enum PropertyType {
+        Unknown = 0,
+        IntType = 1,
+        DoubleType = 2,
+        StringType = 3
+    };
+
+    GLRawFile(const std::string & filePath, bool parseProperties = true);
     virtual ~GLRawFile();
 
     const char * data() const;
@@ -32,16 +39,18 @@ public:
     bool hasDoubleProperty(const std::string & key) const;
 
 protected:
-    bool read(bool readProperties);
+    bool read(bool parseProperties);
     
-    bool checkMagicNumber(std::ifstream & ifs);
-    void readRawDataOffset(std::ifstream & ifs, uint64_t & rawDataOffset);
-
+    void readProperties(std::ifstream & ifs);
     void readStringProperties(std::ifstream & ifs);
     void readIntProperties(std::ifstream & ifs);
     void readDoubleProperties(std::ifstream & ifs);
+
+    uint8_t readUint8(std::ifstream & ifs);
+    uint16_t readUint16(std::ifstream & ifs);
+    uint64_t readUint64(std::ifstream & ifs);
     
-    void readRawData(std::ifstream & ifs, uint64_t rawDataOffset);
+    void readRawData(std::ifstream & ifs, uint64_t offset);
 
 protected:
     const std::string m_filePath;

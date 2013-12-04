@@ -14,7 +14,11 @@
 namespace glraw
 {
     
-char GLRawFileWriter::s_magicNumber[4] = { 'c', '6', 'f', '5' };
+QMap<QVariant::Type, int> GLRawFileWriter::s_typeIndicators = {
+    { QVariant::Int, GLRawFile::IntType },
+    { QVariant::Double, GLRawFile::DoubleType },
+    { QVariant::String, GLRawFile::StringType }
+};
 
 GLRawFileWriter::GLRawFileWriter()
 {
@@ -24,10 +28,9 @@ GLRawFileWriter::~GLRawFileWriter()
 {
 }
 
-bool GLRawFileWriter::write(AssetInformation & info, 
-    const std::function<void(QDataStream &)> & lambda)
+bool GLRawFileWriter::write(AssetInformation & info, const std::function<void(QDataStream &)> & lambda)
 {
-    QString target = this->targetFilePath(info, "glraw");
+    QString target = targetFilePath(info, "glraw");
     QFile file(target);
 
     if(!file.open(QIODevice::WriteOnly))
@@ -39,7 +42,7 @@ bool GLRawFileWriter::write(AssetInformation & info,
     QDataStream dataStream(&file);
     dataStream.setByteOrder(QDataStream::LittleEndian);
 
-    this->writeHeader(dataStream, file, info);
+    writeHeader(dataStream, file, info);
     lambda(dataStream);
 
     file.close();
@@ -50,34 +53,32 @@ bool GLRawFileWriter::write(AssetInformation & info,
 
 void GLRawFileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info)
 {
-    dataStream.writeRawData(s_magicNumber, sizeof(s_magicNumber));
+    if (info.properties().empty())
+        return;
+
+    dataStream << static_cast<quint16>(GLRawFile::s_magicNumber);
 
     quint64 rawDataOffsetPosition = file.pos();
     dataStream << static_cast<quint64>(0);
 
-    QVariantMap stringProperties = info.stringProperties();
-    QVariantMap intProperties = info.intProperties();
-    QVariantMap doubleProperties = info.doubleProperties();
+    QMapIterator<QVariantMap::key_type, QVariantMap::mapped_type> iterator(info.properties());
 
-    dataStream << static_cast<qint32>(stringProperties.size());
-    for (auto it = stringProperties.begin(); it != stringProperties.end(); it++)
+    while (iterator.hasNext())
     {
-        dataStream << it.key().toUtf8();
-        dataStream << it.value().toString().toUtf8();
-    }
+        iterator.next();
 
-    dataStream << static_cast<qint32>(intProperties.size());
-    for (auto it = intProperties.begin(); it != intProperties.end(); it++)
-    {
-        dataStream << it.key().toUtf8();
-        dataStream << static_cast<qint32>(it.value().toInt());
-    }
+        QString key = iterator.key();
+        QVariant value = iterator.value();
 
-    dataStream << static_cast<qint32>(doubleProperties.size());
-    for (auto it = doubleProperties.begin(); it != doubleProperties.end(); it++)
-    {
-        dataStream << it.key().toUtf8();
-        dataStream << it.value().toDouble();
+        int type = typeIndicator(value.type());
+
+        if (type == GLRawFile::Unknown)
+            continue;
+
+        dataStream
+            << static_cast<char>(type)
+            << key.toUtf8();
+        writeValue(dataStream, value);
     }
 
     quint64 rawDataOffset = file.pos();
@@ -85,6 +86,29 @@ void GLRawFileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetI
     file.seek(rawDataOffsetPosition);
     dataStream << rawDataOffset;
     file.seek(rawDataOffset);
+}
+
+unsigned GLRawFileWriter::typeIndicator(QVariant::Type type)
+{
+    return s_typeIndicators.value(type, GLRawFile::Unknown);
+}
+
+void GLRawFileWriter::writeValue(QDataStream & dataStream, const QVariant & value)
+{
+    switch (value.type())
+    {
+        case QVariant::Int:
+            dataStream << static_cast<qint32>(value.toInt());
+            break;
+        case QVariant::Double:
+            dataStream << static_cast<qint64>(value.toDouble());
+            break;
+        case QVariant::String:
+            dataStream << value.toString().toUtf8();
+            break;
+        default:
+            dataStream << '\0';
+    }
 }
 
 } // namespace glraw

@@ -3,23 +3,20 @@
 #include <fstream>
 #include <iostream>
 
-#include <cstring> // for strncmp, but we should not use C-functions in C++
-
 #include <glraw/GLRawFile.h>
 
 namespace glraw
 {
 
 
-char GLRawFile::s_magicNumber[4] = { 'c', '6', 'f', '5' };
+uint16_t GLRawFile::s_magicNumber = 0xC6F5;
 
 
-GLRawFile::GLRawFile(const std::string & filePath, bool readProperties)
-:   m_filePath(filePath)
-,   m_valid(false)
+GLRawFile::GLRawFile(const std::string & filePath, bool parseProperties)
+: m_filePath(filePath)
+, m_valid(false)
 {
-    if (read(readProperties))
-        m_valid = true;
+    m_valid = read(parseProperties);
 }
 
 
@@ -82,7 +79,7 @@ bool GLRawFile::hasDoubleProperty(const std::string & key) const
 }
 
 
-bool GLRawFile::read(bool readProperties)
+bool GLRawFile::read(bool parseProperties)
 {
     std::ifstream ifs(m_filePath, std::ios::in | std::ios::binary);
 
@@ -92,48 +89,35 @@ bool GLRawFile::read(bool readProperties)
         return false;
     }
     
+    uint64_t offset = 0;
 
-    if (!checkMagicNumber(ifs))
-        return false;
-    
-    uint64_t rawDataOffset;
-    readRawDataOffset(ifs, rawDataOffset);
-    
-    if (readProperties)
+    if (readUint16(ifs) == s_magicNumber)
     {
-        readStringProperties(ifs);
-        readIntProperties(ifs);
-        readDoubleProperties(ifs);
-    }
+        offset = readUint64(ifs);
 
-    readRawData(ifs, rawDataOffset);
+        if (parseProperties)
+        {
+            /*readStringProperties(ifs);
+            readIntProperties(ifs);
+            readDoubleProperties(ifs);*/
+        }
+    }
+    else
+    {
+        ifs.seekg(0, std::ios::beg);
+    }
+    
+    readRawData(ifs, offset);
 
     ifs.close();
 
     return true;
 }
 
-
-bool GLRawFile::checkMagicNumber(std::ifstream & ifs)
+void GLRawFile::readProperties(std::ifstream & ifs)
 {
-    char magicNumber[sizeof(s_magicNumber)];
-    ifs.read(magicNumber, sizeof(s_magicNumber));
-    
-    if (strncmp(magicNumber, s_magicNumber, sizeof(s_magicNumber)) != 0)
-    {
-        std::cerr << "File \"" << m_filePath << "\" is not a glraw file." << std::endl;
-        return false;
-    }
 
-    return true;
 }
-
-
-void GLRawFile::readRawDataOffset(std::ifstream & ifs, uint64_t & rawDataOffset)
-{
-    ifs.read(reinterpret_cast<char *>(&rawDataOffset), sizeof(rawDataOffset));
-}
-
 
 void GLRawFile::readStringProperties(std::ifstream & ifs)
 {
@@ -218,6 +202,26 @@ void GLRawFile::readDoubleProperties(std::ifstream & ifs)
     }
 }
 
+uint8_t GLRawFile::readUint16(std::ifstream & ifs)
+{
+    uint8_t value;
+    ifs.read(reinterpret_cast<char*>(&value), sizeof(value));
+    return value;
+}
+
+uint16_t GLRawFile::readUint16(std::ifstream & ifs)
+{
+    uint16_t value;
+    ifs.read(reinterpret_cast<char*>(&value), sizeof(value));
+    return value;
+}
+
+uint64_t GLRawFile::readUint64(std::ifstream & ifs)
+{
+    uint64_t value;
+    ifs.read(reinterpret_cast<char *>(&value), sizeof(value));
+    return value;
+}
 
 void GLRawFile::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
 {
@@ -230,7 +234,7 @@ void GLRawFile::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
 
     m_data.resize(size);
 
-    ifs.read(reinterpret_cast<char *>(&m_data[0]), size);
+    ifs.read(m_data.data(), size);
 }
 
 } // namespace glraw

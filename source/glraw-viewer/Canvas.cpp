@@ -7,6 +7,7 @@
 
 #include "Canvas.h"
 
+#include <glraw/GLRawFile.h>
 
 Canvas::Canvas(
     const QSurfaceFormat & format
@@ -237,7 +238,7 @@ bool Canvas::verifyExtensions() const
 
 void Canvas::loadFile(const QString & filename)
 {
-    // filename.2560.1920.rgba.i.glraw
+    /*// filename.2560.1920.rgba.i.glraw
     QRegExp regExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.glraw$)");
 
     bool match = regExp.exactMatch(filename);
@@ -250,49 +251,23 @@ void Canvas::loadFile(const QString & filename)
     int w = parts[1].toInt();
     int h = parts[2].toInt();
     QString formatString = parts[3].toLower();
-    QString typeString = parts[4].toLower();
-
-    QFile file(filename);
-
-    if (!file.open(QIODevice::ReadOnly))
+    QString typeString = parts[4].toLower();*/
+    glraw::GLRawFile rawFile(filename.toStdString());
+    if (!rawFile.isValid())
     {
-        QMessageBox::information(nullptr, "Error", QString("Could not open file %1: %2").arg(filename).arg(file.errorString()));
+        qWarning() << "Could not read file.";
         return;
     }
 
-    QByteArray bytes = file.readAll();
-
-    static QByteArray magicNumber("c6f5");
-
-    quint64 offset = 0;
-    QByteArray data;
-
-    if (bytes.startsWith(magicNumber))
-    {
-        offset = *reinterpret_cast<quint64*>(bytes.mid(magicNumber.size()).data());
-        data = bytes.mid(offset);
-
-        assert(bytes.mid(offset).size() >= w*h*4*4);
-    }
-    else
-    {
-        file.close();
-        return;
-    }
-
-    file.close();
-
-    /*for (int i = 0; i<w*h*4; ++i)
-    {
-        int wrong = ((int*)data.data())[i];
-        int right = wrong/255.0 * std::numeric_limits<int>::max();
-        ((int*)data.data())[i] = right;
-    }*/
+    int w = 2560;
+    int h = 1920;
+    GLenum format = GL_RGBA;
+    GLenum type = GL_UNSIGNED_BYTE;
 
     m_context->makeCurrent(this);
 
     glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
