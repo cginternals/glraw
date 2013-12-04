@@ -42,7 +42,14 @@ Builder::~Builder()
 QList<CommandLineOption> Builder::commandLineOptions()
 {
     QList<CommandLineOption> options;
-
+    
+    options.append({
+        QStringList() << "h" << "help",
+        "Displays this help.",
+        QString(),
+        &Builder::help
+    });
+    
     options.append({
         QStringList() << "q" << "quiet",
         "Suppresses any output",
@@ -142,7 +149,6 @@ QList<CommandLineOption> Builder::commandLineOptions()
 void Builder::initialize()
 {
     m_parser.setApplicationDescription("Converts Qt supported images to an OpenGL compatible raw format.");
-    m_parser.addHelpOption();
     m_parser.addVersionOption();
 
     m_parser.addPositionalArgument("source", "Source file with Qt-supported image format.");
@@ -167,12 +173,6 @@ void Builder::initialize()
 
 void Builder::process(const QCoreApplication & app)
 {
-    if (helpOptionSet(app))
-    {
-        showHelp();
-        return;
-    }
-    
     m_parser.process(app);
     
     for (auto option : m_parser.optionNames())
@@ -191,6 +191,22 @@ void Builder::process(const QCoreApplication & app)
     
     for (auto source : sources)
         m_manager.process(source);
+}
+
+bool Builder::help(const QString & name)
+{
+   qDebug() << qPrintable(m_parser.helpText()) << R"(
+Formats:          Types:                     Transformation Modes:
+  GL_RED            GL_UNSIGNED_BYTE           nearest
+  GL_BLUE           GL_BYTE                    linear
+  GL_GREEN          GL_UNSIGNED_SHORT        
+  GL_RG             GL_SHORT                 Aspect Ratio Modes:
+  GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
+  GL_BGR            GL_INT                     KeepAspectRatio
+  GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
+  GL_BGRA       
+)";
+    return false;
 }
 
 bool Builder::quiet(const QString & name)
@@ -436,37 +452,4 @@ void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * ed
 {
     m_manager.appendImageEditor(editor);
     m_editors.insert(key, editor);
-}
-
-bool Builder::helpOptionSet(const QCoreApplication & app) const
-{
-    if (app.arguments().size() == 1)
-        return true;
-
-    if (app.arguments().contains("--help"))
-        return true;
-
-    for (QString & argument : app.arguments())
-    {
-        if (argument.startsWith('-') &&
-            argument.contains('h'))
-            return true;
-    }
-
-    return false;
-}
-
-void Builder::showHelp() const
-{
-    qDebug() << qPrintable(m_parser.helpText()) << R"(
-Formats:          Types:                     Transformation Modes:
-  GL_RED            GL_UNSIGNED_BYTE           nearest
-  GL_BLUE           GL_BYTE                    linear
-  GL_GREEN          GL_UNSIGNED_SHORT        
-  GL_RG             GL_SHORT                 Aspect Ratio Modes:
-  GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
-  GL_BGR            GL_INT                     KeepAspectRatio
-  GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
-  GL_BGRA       
-)";
 }

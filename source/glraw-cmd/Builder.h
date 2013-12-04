@@ -32,6 +32,7 @@ protected:
 protected:
     void initialize();
     
+    bool help(const QString & name);
     bool quiet(const QString & name);
     bool format(const QString & name);
     bool type(const QString & name);
@@ -52,9 +53,6 @@ protected:
     
     template <class Editor>
     Editor * editor(const QString & key);
-    
-    bool helpOptionSet(const QCoreApplication & app) const;
-    void showHelp() const;
 
 protected:
     QCommandLineParser m_parser;
