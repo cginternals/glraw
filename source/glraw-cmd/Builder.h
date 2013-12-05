@@ -47,6 +47,7 @@ protected:
     bool height(const QString & name);
     bool transformMode(const QString & name);
     bool aspectRatioMode(const QString & name);
+    bool shader(const QString & name);
     
 protected:
     bool editorExists(const QString & key);

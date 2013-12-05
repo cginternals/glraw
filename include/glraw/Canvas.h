@@ -23,7 +23,10 @@ public:
     void loadTextureFromImage(QImage & image);
     QByteArray imageFromTexture(GLenum format, GLenum type);
     
+    bool process(const QString & fragmentShader);
+    
     bool textureLoaded() const;
+    bool textureProcessed() const;
 
 protected:
     static int byteSizeOf(GLenum type);
@@ -32,6 +35,7 @@ protected:
     
     QOpenGLContext m_context;
     GLuint m_texture;
+    GLuint m_processedTexture;
     QOpenGLFunctions_3_2_Core gl;
     
 };

@@ -149,6 +149,13 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "mode",
         &Builder::aspectRatioMode
     });
+    
+    options.append({
+        QStringList() << "shader",
+        "Applies an fragment shader before conversion ",
+        "source",
+        &Builder::shader
+    });
 
     return options;
 }
@@ -451,6 +458,16 @@ bool Builder::aspectRatioMode(const QString & name)
         Conversions::stringToAspectRatioMode(modeString)
     );
 
+    return true;
+}
+
+bool Builder::shader(const QString & name)
+{
+    QString sourcePath = m_parser.value(name);
+    
+    if (!m_converter->setFragmentShader(sourcePath))
+        return false;
+    
     return true;
 }
 

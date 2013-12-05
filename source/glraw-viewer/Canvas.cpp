@@ -123,8 +123,9 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     gl.glGenBuffers(1, &m_vboHandle);
     gl.glBindBuffer(GL_ARRAY_BUFFER, m_vboHandle);
     gl.glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*4, m_quad.constData(), GL_STATIC_DRAW);
-    gl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
+    
     gl.glEnableVertexAttribArray(0);
+    gl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
 
     m_program = new QOpenGLShaderProgram(this);
     auto vertexShader = new QOpenGLShader(QOpenGLShader::Vertex);
