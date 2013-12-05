@@ -26,11 +26,11 @@ public:
 protected:
     void writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info);
 
-    unsigned typeIndicator(QVariant::Type type);
+    GLRawFile::PropertyType typeIndicator(QVariant::Type type);
     void writeValue(QDataStream & dataStream, const QVariant & value);
     void writeString(QDataStream & dataStream, const QString & string);
 
-    static QMap<QVariant::Type, int> s_typeIndicators;
+    static QMap<QVariant::Type, GLRawFile::PropertyType> s_typeIndicators;
 
 };
 

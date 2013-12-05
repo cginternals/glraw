@@ -14,7 +14,7 @@
 namespace glraw
 {
     
-QMap<QVariant::Type, int> GLRawFileWriter::s_typeIndicators = {
+QMap<QVariant::Type, GLRawFile::PropertyType> GLRawFileWriter::s_typeIndicators = {
     { QVariant::Int, GLRawFile::IntType },
     { QVariant::Double, GLRawFile::DoubleType },
     { QVariant::String, GLRawFile::StringType }
@@ -88,7 +88,7 @@ void GLRawFileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetI
     file.seek(rawDataOffset);
 }
 
-unsigned GLRawFileWriter::typeIndicator(QVariant::Type type)
+GLRawFile::PropertyType GLRawFileWriter::typeIndicator(QVariant::Type type)
 {
     return s_typeIndicators.value(type, GLRawFile::Unknown);
 }
