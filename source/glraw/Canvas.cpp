@@ -2,6 +2,8 @@
 #include <glraw/Canvas.h>
 
 #include <cassert>
+
+#include <QGLWidget>
 #include <QtDebug>
 
 namespace glraw
@@ -51,10 +53,7 @@ void Canvas::loadTextureFromImage(QImage & image)
 {
     m_context.makeCurrent(this);
     
-    if (image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32)
-        image = image.convertToFormat(QImage::Format_ARGB32);
-    
-    image = image.mirrored();
+    image = QGLWidget::convertToGLFormat(image);
     
     if (!textureLoaded())
         m_gl.glGenTextures(1, &m_texture);
@@ -62,7 +61,7 @@ void Canvas::loadTextureFromImage(QImage & image)
     m_gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     m_gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                  image.width(), image.height(), 0,
-                 GL_BGRA, GL_UNSIGNED_BYTE,
+                 GL_RGBA, GL_UNSIGNED_BYTE,
                  image.bits());
     
     m_gl.glBindTexture(GL_TEXTURE_2D, 0);
