@@ -140,6 +140,8 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
 
     printHardwareInfo();
     verifyExtensions(); // false if no painter ...
+    
+    gl.glClearColor(0.57f, 0.57f, 0.57f, 1.0f);
 
     m_context->doneCurrent();
 }
@@ -167,6 +169,9 @@ void Canvas::paintGL()
     m_context->makeCurrent(this);
 
     gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    gl.glEnable(GL_BLEND);
+    gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     gl.glActiveTexture(GL_TEXTURE0);
     gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
@@ -182,6 +187,8 @@ void Canvas::paintGL()
     m_program->release();
 
     gl.glBindTexture(GL_TEXTURE_2D, 0);
+    
+    gl.glDisable(GL_BLEND);
 
     m_context->swapBuffers(this);
     m_context->doneCurrent();
