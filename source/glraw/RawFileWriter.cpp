@@ -17,8 +17,7 @@ RawFileWriter::~RawFileWriter()
 {
 }
 
-bool RawFileWriter::write(AssetInformation & info, 
-    const std::function<void(QDataStream &)> & lambda)
+bool RawFileWriter::write(const QByteArray & imageData, AssetInformation & info)
 {
     QString target = this->targetFilePath(info, "raw");
     QFile file(target);
@@ -30,7 +29,7 @@ bool RawFileWriter::write(AssetInformation & info,
     }
 
     QDataStream dataStream(&file);
-    lambda(dataStream);
+    dataStream.writeBytes(imageData.data(), imageData.length());
 
     file.close();
 

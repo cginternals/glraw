@@ -4,6 +4,8 @@
 #include <QtGui/qopengl.h>
 #include <QDebug>
 #include <QFileInfo>
+#include <QByteArray>
+#include <QString>
 
 #include <glraw/AssetInformation.h>
 

@@ -4,12 +4,10 @@
 #include <glraw/glraw.h>
 
 #include <cassert>
-
 #include <QtGui/qopengl.h>
-#include <QImage>
-#include <QDataStream>
-
 #include <glraw/Canvas.h>
+
+class QImage;
 
 namespace glraw
 {
@@ -22,8 +20,7 @@ public:
     RawConverter();
     ~RawConverter();
 
-    void updateAssetInformation(AssetInformation & info);
-    void convert(QImage & image, QDataStream & dataStream);
+    QByteArray convert(QImage & image, AssetInformation & info);
 
     void setFormat(GLenum format);
     void setType(GLenum type);

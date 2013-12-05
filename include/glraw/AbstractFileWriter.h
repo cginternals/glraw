@@ -3,23 +3,25 @@
 
 #include <glraw/glraw.h>
 
-#include <glraw/WriterInterface.h>
-
 #include <QMap>
-#include <QString>
 #include <QtGui/qopengl.h>
+
+class QByteArray;
+class QString;
 
 namespace glraw
 {
+    
+class AssetInformation;
 
-class GLRAW_API AbstractFileWriter : public WriterInterface
+class GLRAW_API AbstractFileWriter
 {
 public:
     AbstractFileWriter();
     virtual ~AbstractFileWriter();
 
-    virtual bool write(AssetInformation & info, 
-                       const std::function<void(QDataStream &)> & lambda) = 0;
+    virtual bool write(const QByteArray & imageData,
+                       AssetInformation & info) = 0;
     
     bool suffixesEnabled() const;
     void setSuffixesEnabled(bool b);

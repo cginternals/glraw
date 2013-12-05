@@ -5,13 +5,16 @@
 #include <QFile>
 #include <QImage>
 #include <QDataStream>
+
 #include <glraw/AssetInformation.h>
 #include <glraw/ImageEditorInterface.h>
+#include <glraw/AbstractFileWriter.h>
+#include <glraw/RawConverter.h>
 
 namespace glraw
 {
 
-ConvertManager::ConvertManager(RawConverter * converter, WriterInterface * writer)
+ConvertManager::ConvertManager(RawConverter * converter, AbstractFileWriter * writer)
 :   m_converter(converter)
 ,   m_writer(writer)
 {
@@ -45,11 +48,8 @@ bool ConvertManager::process(const QString & inputFilePath)
     for (auto editor : m_editors)
         editor->editImage(image, info);
 
-    m_converter->updateAssetInformation(info);
-
-    m_writer->write(info, [this, &image] (QDataStream & dataStream) {
-        m_converter->convert(image, dataStream);
-    });
+    QByteArray imageData = m_converter->convert(image, info);
+    m_writer->write(imageData, info);
 
     return true;
 }
@@ -59,7 +59,7 @@ void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
     m_editors.append(editor);
 }
 
-void ConvertManager::setWriter(glraw::WriterInterface * writer)
+void ConvertManager::setWriter(AbstractFileWriter * writer)
 {
     m_writer.reset(writer);
 }

@@ -5,6 +5,8 @@
 
 #include <QGLWidget>
 #include <QtDebug>
+#include <QByteArray>
+#include <QImage>
 
 namespace glraw
 {

@@ -4,10 +4,10 @@
 #include <glraw/glraw.h>
 
 #include <QWindow>
-#include <QByteArray>
 #include <QOpenGLFunctions_3_2_Core>
 
 class QImage;
+class QByteArray;
 
 namespace glraw
 {

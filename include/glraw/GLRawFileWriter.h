@@ -21,7 +21,8 @@ public:
     GLRawFileWriter();
     ~GLRawFileWriter();
 
-    virtual bool write(AssetInformation & info, const std::function<void(QDataStream &)> & lambda);
+    virtual bool write(const QByteArray & imageData,
+                       AssetInformation & info);
 
 protected:
     void writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info);

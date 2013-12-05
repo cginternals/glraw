@@ -16,18 +16,13 @@ RawConverter::~RawConverter()
 {
 }
 
-void RawConverter::updateAssetInformation(AssetInformation & info)
+QByteArray RawConverter::convert(QImage & image, AssetInformation & info)
 {
     info.setProperty("format", QVariant(static_cast<int>(m_format)));
     info.setProperty("type", QVariant(static_cast<int>(m_type)));
-}
-
-void RawConverter::convert(QImage & image, QDataStream & dataStream)
-{
-    m_canvas.loadTextureFromImage(image);
     
-    QByteArray imageData = m_canvas.imageFromTexture(m_format, m_type);
-    dataStream.writeBytes(imageData.data(), imageData.length());
+    m_canvas.loadTextureFromImage(image);
+    return m_canvas.imageFromTexture(m_format, m_type);
 }
 
 void RawConverter::setFormat(GLenum format)

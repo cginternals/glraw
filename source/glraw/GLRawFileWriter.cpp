@@ -28,7 +28,7 @@ GLRawFileWriter::~GLRawFileWriter()
 {
 }
 
-bool GLRawFileWriter::write(AssetInformation & info, const std::function<void(QDataStream &)> & lambda)
+bool GLRawFileWriter::write(const QByteArray & imageData, AssetInformation & info)
 {
     QString target = targetFilePath(info, "glraw");
     QFile file(target);
@@ -43,7 +43,8 @@ bool GLRawFileWriter::write(AssetInformation & info, const std::function<void(QD
     dataStream.setByteOrder(QDataStream::LittleEndian);
 
     writeHeader(dataStream, file, info);
-    lambda(dataStream);
+    
+    dataStream.writeBytes(imageData.data(), imageData.length());
 
     file.close();
     

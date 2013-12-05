@@ -17,8 +17,8 @@ public:
     RawFileWriter();
     ~RawFileWriter();
 
-    virtual bool write(AssetInformation & info, 
-                       const std::function<void(QDataStream &)> & lambda);
+    virtual bool write(const QByteArray & imageData,
+                       AssetInformation & info);
 
 };
 
