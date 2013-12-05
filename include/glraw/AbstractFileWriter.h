@@ -15,16 +15,22 @@ namespace glraw
 class GLRAW_API AbstractFileWriter : public WriterInterface
 {
 public:
+    AbstractFileWriter();
     virtual ~AbstractFileWriter();
 
     virtual bool write(AssetInformation & info, 
                        const std::function<void(QDataStream &)> & lambda) = 0;
+    
+    bool suffixesEnabled() const;
+    void setSuffixesEnabled(bool b);
 
 protected:
-    static QString targetFilePath(const AssetInformation & info, const QString & fileExtension);
+    QString targetFilePath(const AssetInformation & info, const QString & fileExtension);
 
-    static const QMap<GLenum, QString> formatSuffixes;
-    static const QMap<GLenum, QString> typeSuffixes;
+    static const QMap<GLenum, QString> s_formatSuffixes;
+    static const QMap<GLenum, QString> s_typeSuffixes;
+
+    bool m_suffixesEnabled;
 
 };
 

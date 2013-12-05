@@ -16,7 +16,7 @@ class ImageEditorInterface;
 class GLRAW_API ConvertManager
 {
 public:
-    ConvertManager(RawConverter & converter, WriterInterface * writer);
+    ConvertManager(RawConverter * converter, WriterInterface * writer);
     ~ConvertManager();
 
     bool process(const QString & inputFilePath);
@@ -27,8 +27,9 @@ public:
 
 protected:
     QLinkedList<ImageEditorInterface *> m_editors;
-    RawConverter & m_converter;
-    WriterInterface * m_writer;
+    
+    QScopedPointer<RawConverter> m_converter;
+    QScopedPointer<WriterInterface> m_writer;
 
 };
 

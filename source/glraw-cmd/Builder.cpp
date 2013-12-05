@@ -27,7 +27,7 @@ namespace
 }
 
 Builder::Builder()
-:   m_converter()
+:   m_converter(new glraw::RawConverter())
 ,   m_writer(new glraw::GLRawFileWriter())
 ,   m_manager(m_converter, m_writer)
 {
@@ -36,7 +36,6 @@ Builder::Builder()
 
 Builder::~Builder()
 {
-    delete m_writer;
 }
 
 QList<CommandLineOption> Builder::commandLineOptions()
@@ -228,7 +227,7 @@ bool Builder::format(const QString & name)
         return false;
     }
     
-    m_converter.setFormat(Conversions::stringToFormat(formatString));
+    m_converter->setFormat(Conversions::stringToFormat(formatString));
 
     return true;
 }
@@ -243,7 +242,7 @@ bool Builder::type(const QString & name)
         return false;
     }
     
-    m_converter.setType(Conversions::stringToType(formatString));
+    m_converter->setType(Conversions::stringToType(formatString));
 
     return true;
 }

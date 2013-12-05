@@ -57,9 +57,9 @@ protected:
 protected:
     QCommandLineParser m_parser;
     QMap<QString, bool (Builder::*)(const QString &)> m_configureMethods;
+    
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
-
-    glraw::RawConverter m_converter;
+    glraw::RawConverter * m_converter;
     glraw::WriterInterface * m_writer;
     glraw::ConvertManager m_manager;
 
