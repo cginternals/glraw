@@ -6,14 +6,14 @@
 #include <QCommandLineParser>
 
 #include <glraw/ConvertManager.h>
-#include <glraw/RawConverter.h>
-#include <glraw/WriterInterface.h>
 
 class QCoreApplication;
 
 namespace glraw
 {
     class ImageEditorInterface;
+    class AbstractFileWriter;
+    class RawConverter;
 }
 
 struct CommandLineOption;
@@ -34,6 +34,7 @@ protected:
     
     bool help(const QString & name);
     bool quiet(const QString & name);
+    bool noSuffixes(const QString & name);
     bool format(const QString & name);
     bool type(const QString & name);
     bool raw(const QString & name);
@@ -60,7 +61,7 @@ protected:
     
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
     glraw::RawConverter * m_converter;
-    glraw::WriterInterface * m_writer;
+    glraw::AbstractFileWriter * m_writer;
     glraw::ConvertManager m_manager;
 
 };

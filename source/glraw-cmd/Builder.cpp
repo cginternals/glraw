@@ -11,6 +11,7 @@
 #include <glraw/ScaleEditor.h>
 #include <glraw/RawFileWriter.h>
 #include <glraw/GLRawFileWriter.h>
+#include <glraw/RawConverter.h>
 
 #include "CommandLineOption.h"
 #include "Conversions.h"
@@ -54,6 +55,13 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "Suppresses any output",
         QString(),
         &Builder::quiet
+    });
+    
+    options.append({
+        QStringList() << "n" << "no-suffixes",
+        "Disables file suffixes.",
+        QString(),
+        &Builder::noSuffixes
     });
 
     options.append({
@@ -217,6 +225,12 @@ bool Builder::quiet(const QString & name)
     return true;
 }
 
+bool Builder::noSuffixes(const QString & name)
+{
+    m_writer->setSuffixesEnabled(false);
+    return true;
+}
+
 bool Builder::format(const QString & name)
 {
     QString formatString = m_parser.value(name);
@@ -249,11 +263,11 @@ bool Builder::type(const QString & name)
 
 bool Builder::raw(const QString & name)
 {
-    auto rawWriter = new glraw::RawFileWriter();
-    m_manager.setWriter(rawWriter);
+    auto writer = new glraw::RawFileWriter();
+    writer->setSuffixesEnabled(m_writer->suffixesEnabled());
     
-    delete m_writer;
-    m_writer = rawWriter;
+    m_writer = writer;
+    m_manager.setWriter(m_writer);
     
     return true;
 }
