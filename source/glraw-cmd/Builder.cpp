@@ -188,7 +188,10 @@ void Builder::initialize()
 void Builder::process(const QCoreApplication & app)
 {
     if (app.arguments().size() == 1)
-        m_parser.showHelp();
+    {
+        showHelp();
+        return;
+    }
     
     m_parser.process(app);
     
@@ -212,17 +215,7 @@ void Builder::process(const QCoreApplication & app)
 
 bool Builder::help(const QString & name)
 {
-   qDebug() << qPrintable(m_parser.helpText()) << R"(
-Formats:          Types:                     Transformation Modes:
-  GL_RED            GL_UNSIGNED_BYTE           nearest
-  GL_BLUE           GL_BYTE                    linear
-  GL_GREEN          GL_UNSIGNED_SHORT        
-  GL_RG             GL_SHORT                 Aspect Ratio Modes:
-  GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
-  GL_BGR            GL_INT                     KeepAspectRatio
-  GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
-  GL_BGRA       
-)";
+    showHelp();
     return false;
 }
 
@@ -480,4 +473,19 @@ void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * ed
 {
     m_manager.appendImageEditor(editor);
     m_editors.insert(key, editor);
+}
+
+void Builder::showHelp() const
+{
+   qDebug() << qPrintable(m_parser.helpText()) << R"(
+Formats:          Types:                     Transformation Modes:
+  GL_RED            GL_UNSIGNED_BYTE           nearest
+  GL_BLUE           GL_BYTE                    linear
+  GL_GREEN          GL_UNSIGNED_SHORT        
+  GL_RG             GL_SHORT                 Aspect Ratio Modes:
+  GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
+  GL_BGR            GL_INT                     KeepAspectRatio
+  GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
+  GL_BGRA       
+)";
 }

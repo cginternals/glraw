@@ -55,6 +55,8 @@ protected:
     
     template <class Editor>
     Editor * editor(const QString & key);
+    
+    void showHelp() const;
 
 protected:
     QCommandLineParser m_parser;
