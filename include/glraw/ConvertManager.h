@@ -20,7 +20,7 @@ public:
     ConvertManager(RawConverter * converter, AbstractFileWriter * writer);
     ~ConvertManager();
 
-    bool process(const QString & inputFilePath);
+    bool process(const QString & sourcePath);
 
     void appendImageEditor(ImageEditorInterface * editor);
     void setWriter(AbstractFileWriter * writer);

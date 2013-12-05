@@ -18,6 +18,7 @@ public:
     ~RawFileWriter();
 
     virtual bool write(const QByteArray & imageData,
+                       const QString & sourcePath, 
                        AssetInformation & info);
 
 };

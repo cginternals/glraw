@@ -22,6 +22,7 @@ public:
     ~GLRawFileWriter();
 
     virtual bool write(const QByteArray & imageData,
+                       const QString & sourcePath,
                        AssetInformation & info);
 
 protected:

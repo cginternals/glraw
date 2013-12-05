@@ -17,9 +17,9 @@ RawFileWriter::~RawFileWriter()
 {
 }
 
-bool RawFileWriter::write(const QByteArray & imageData, AssetInformation & info)
+bool RawFileWriter::write(const QByteArray & imageData, const QString & sourcePath, AssetInformation & info)
 {
-    QString target = this->targetFilePath(info, "raw");
+    QString target = targetFilePath(sourcePath, "raw", info);
     QFile file(target);
 
     if(!file.open(QIODevice::WriteOnly))

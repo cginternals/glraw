@@ -25,15 +25,15 @@ ConvertManager::~ConvertManager()
     qDeleteAll(m_editors);
 }
 
-bool ConvertManager::process(const QString & inputFilePath)
+bool ConvertManager::process(const QString & sourcePath)
 {
-    if (!QFile::exists(inputFilePath))
+    if (!QFile::exists(sourcePath))
     {
         qDebug() << "Input file does not exist.";
         return false;
     }
     
-    QImage image(inputFilePath);
+    QImage image(sourcePath);
     if (image.isNull())
     {
         qDebug() << "Loading image from input file failed.";
@@ -41,7 +41,6 @@ bool ConvertManager::process(const QString & inputFilePath)
     }
 
     AssetInformation info;
-    info.setProperty("inputFilePath", inputFilePath);
     info.setProperty("width", image.width());
     info.setProperty("height", image.height());
 
@@ -49,7 +48,7 @@ bool ConvertManager::process(const QString & inputFilePath)
         editor->editImage(image, info);
 
     QByteArray imageData = m_converter->convert(image, info);
-    m_writer->write(imageData, info);
+    m_writer->write(imageData, sourcePath, info);
 
     return true;
 }

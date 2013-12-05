@@ -21,13 +21,14 @@ public:
     virtual ~AbstractFileWriter();
 
     virtual bool write(const QByteArray & imageData,
+                       const QString & sourcePath,
                        AssetInformation & info) = 0;
     
     bool suffixesEnabled() const;
     void setSuffixesEnabled(bool b);
 
 protected:
-    QString targetFilePath(const AssetInformation & info, const QString & fileExtension);
+    QString targetFilePath(const QString & sourcePath, const QString & fileExtension, const AssetInformation & info);
 
     static const QMap<GLenum, QString> s_formatSuffixes;
     static const QMap<GLenum, QString> s_typeSuffixes;

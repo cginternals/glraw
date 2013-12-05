@@ -51,9 +51,9 @@ void AbstractFileWriter::setSuffixesEnabled(bool b)
     m_suffixesEnabled = b;
 }
 
-QString AbstractFileWriter::targetFilePath(const AssetInformation & info, const QString & fileExtension)
+QString AbstractFileWriter::targetFilePath(const QString & sourcePath, const QString & fileExtension, const AssetInformation & info)
 {
-    QFileInfo fileInfo(info.property("inputFilePath").toString());
+    QFileInfo fileInfo(sourcePath);
     
     if (!m_suffixesEnabled)
         return fileInfo.absolutePath() + "/" + fileInfo.baseName() + "." + fileExtension;

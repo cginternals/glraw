@@ -28,9 +28,10 @@ GLRawFileWriter::~GLRawFileWriter()
 {
 }
 
-bool GLRawFileWriter::write(const QByteArray & imageData, AssetInformation & info)
+bool GLRawFileWriter::write(const QByteArray & imageData,
+    const QString & sourcePath, AssetInformation & info)
 {
-    QString target = targetFilePath(info, "glraw");
+    QString target = targetFilePath(sourcePath, "glraw", info);
     QFile file(target);
 
     if(!file.open(QIODevice::WriteOnly))
