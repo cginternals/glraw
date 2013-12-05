@@ -5,7 +5,7 @@
 
 #include <QWindow>
 #include <QByteArray>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_3_2_Core>
 
 class QImage;
 
@@ -31,9 +31,9 @@ protected:
     
     
     QOpenGLContext m_context;
-    QOpenGLFunctions_3_3_Core m_gl;
     GLuint m_texture;
-
+    QOpenGLFunctions_3_2_Core gl;
+    
 };
 
 } // namespace glraw
