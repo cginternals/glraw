@@ -7,7 +7,7 @@
 
 #include "Canvas.h"
 
-#include <glraw/GLRawFile.h>
+#include <glraw/RawFile.h>
 
 Canvas::Canvas(
     const QSurfaceFormat & format
@@ -255,7 +255,7 @@ void Canvas::loadFile(const QString & filename)
     int h = parts[2].toInt();
     QString formatString = parts[3].toLower();
     QString typeString = parts[4].toLower();*/
-    glraw::GLRawFile rawFile(filename.toStdString());
+    glraw::RawFile rawFile(filename.toStdString());
     if (!rawFile.isValid())
     {
         qWarning() << "Could not read file.";

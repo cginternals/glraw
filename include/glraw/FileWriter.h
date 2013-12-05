@@ -4,7 +4,7 @@
 
 #include <glraw/glraw.h>
 
-#include <glraw/GLRawFile.h>
+#include <glraw/RawFile.h>
 
 #include <QtGui/qopengl.h>
 #include <QMap>
@@ -37,11 +37,11 @@ public:
 protected:
     void writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info);
 
-    static GLRawFile::PropertyType typeIndicator(QVariant::Type type);
+    static RawFile::PropertyType typeIndicator(QVariant::Type type);
     static void writeValue(QDataStream & dataStream, const QVariant & value);
     static void writeString(QDataStream & dataStream, const QString & string);
 
-    static const QMap<QVariant::Type, GLRawFile::PropertyType> s_typeIndicators;
+    static const QMap<QVariant::Type, RawFile::PropertyType> s_typeIndicators;
 
 protected:
     QString targetFilePath(const QString & sourcePath, const AssetInformation & info);

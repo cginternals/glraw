@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-#include <glraw/GLRawFile.h>
+#include <glraw/RawFile.h>
 
 namespace
 {
@@ -40,10 +40,10 @@ namespace glraw
 {
 
 
-uint16_t GLRawFile::s_magicNumber = 0xC6F5;
+uint16_t RawFile::s_magicNumber = 0xC6F5;
 
 
-GLRawFile::GLRawFile(const std::string & filePath, bool parseProperties)
+RawFile::RawFile(const std::string & filePath, bool parseProperties)
 : m_filePath(filePath)
 , m_valid(false)
 {
@@ -51,66 +51,66 @@ GLRawFile::GLRawFile(const std::string & filePath, bool parseProperties)
 }
 
 
-GLRawFile::~GLRawFile()
+RawFile::~RawFile()
 {
 }
 
 
-bool GLRawFile::isValid() const
+bool RawFile::isValid() const
 {
     return m_valid;
 }
 
 
-const char * GLRawFile::data() const
+const char * RawFile::data() const
 {
     return m_data.data();
 }
 
 
-const size_t GLRawFile::size() const
+const size_t RawFile::size() const
 {
     return m_data.size();
 }
 
 
-const std::string & GLRawFile::stringProperty(const std::string & key) const
+const std::string & RawFile::stringProperty(const std::string & key) const
 {
     return m_stringProperties.at(key);
 }
 
 
-int32_t GLRawFile::intProperty(const std::string & key) const
+int32_t RawFile::intProperty(const std::string & key) const
 {
     return m_intProperties.at(key);
 }
 
 
-double GLRawFile::doubleProperty(const std::string & key) const
+double RawFile::doubleProperty(const std::string & key) const
 {
     return m_doubleProperties.at(key);
 }
 
 
-bool GLRawFile::hasStringProperty(const std::string & key) const
+bool RawFile::hasStringProperty(const std::string & key) const
 {
     return m_stringProperties.find(key) == m_stringProperties.end();
 }
 
 
-bool GLRawFile::hasIntProperty(const std::string & key) const
+bool RawFile::hasIntProperty(const std::string & key) const
 {
     return m_intProperties.find(key) == m_intProperties.end();
 }
 
 
-bool GLRawFile::hasDoubleProperty(const std::string & key) const
+bool RawFile::hasDoubleProperty(const std::string & key) const
 {
     return m_doubleProperties.find(key) == m_doubleProperties.end();
 }
 
 
-bool GLRawFile::readFile(bool parseProperties)
+bool RawFile::readFile(bool parseProperties)
 {
     std::ifstream ifs(m_filePath, std::ios::in | std::ios::binary);
 
@@ -143,7 +143,7 @@ bool GLRawFile::readFile(bool parseProperties)
     return true;
 }
 
-void GLRawFile::readProperties(std::ifstream & ifs, uint64_t offset)
+void RawFile::readProperties(std::ifstream & ifs, uint64_t offset)
 {
     while (ifs.tellg() < offset && ifs.good())
     {
@@ -168,7 +168,7 @@ void GLRawFile::readProperties(std::ifstream & ifs, uint64_t offset)
     }
 }
 
-void GLRawFile::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
+void RawFile::readRawData(std::ifstream & ifs, uint64_t rawDataOffset)
 {
     ifs.seekg(0, std::ios::end);
     

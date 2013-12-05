@@ -13,10 +13,10 @@
 namespace glraw
 {
     
-const QMap<QVariant::Type, GLRawFile::PropertyType> FileWriter::s_typeIndicators = {
-    { QVariant::Int, GLRawFile::IntType },
-    { QVariant::Double, GLRawFile::DoubleType },
-    { QVariant::String, GLRawFile::StringType }
+const QMap<QVariant::Type, RawFile::PropertyType> FileWriter::s_typeIndicators = {
+    { QVariant::Int, RawFile::IntType },
+    { QVariant::Double, RawFile::DoubleType },
+    { QVariant::String, RawFile::StringType }
 };
 
 const QMap<GLenum, QString> FileWriter::s_formatSuffixes = {
@@ -103,7 +103,7 @@ void FileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInform
     if (info.properties().empty())
         return;
 
-    dataStream << static_cast<quint16>(GLRawFile::s_magicNumber);
+    dataStream << static_cast<quint16>(RawFile::s_magicNumber);
 
     quint64 rawDataOffsetPosition = file.pos();
     dataStream << static_cast<quint64>(0);
@@ -119,7 +119,7 @@ void FileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInform
 
         int type = typeIndicator(value.type());
 
-        if (type == GLRawFile::Unknown)
+        if (type == RawFile::Unknown)
             continue;
 
         dataStream << static_cast<uint8_t>(type);
@@ -135,9 +135,9 @@ void FileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInform
     file.seek(rawDataOffset);
 }
 
-GLRawFile::PropertyType FileWriter::typeIndicator(QVariant::Type type)
+RawFile::PropertyType FileWriter::typeIndicator(QVariant::Type type)
 {
-    return s_typeIndicators.value(type, GLRawFile::Unknown);
+    return s_typeIndicators.value(type, RawFile::Unknown);
 }
 
 void FileWriter::writeValue(QDataStream & dataStream, const QVariant & value)

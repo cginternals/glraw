@@ -9,7 +9,7 @@
 namespace glraw
 {
 
-class GLRawFile
+class RawFile
 {
 public:
     static uint16_t s_magicNumber;
@@ -21,8 +21,8 @@ public:
         StringType = 3
     };
 
-    GLRawFile(const std::string & filePath, bool parseProperties = true);
-    virtual ~GLRawFile();
+    RawFile(const std::string & filePath, bool parseProperties = true);
+    virtual ~RawFile();
 
     const char * data() const;
     const size_t size() const;
