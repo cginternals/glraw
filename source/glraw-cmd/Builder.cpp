@@ -173,6 +173,9 @@ void Builder::initialize()
 
 void Builder::process(const QCoreApplication & app)
 {
+    if (app.arguments().size() == 1)
+        m_parser.showHelp();
+    
     m_parser.process(app);
     
     for (auto option : m_parser.optionNames())
