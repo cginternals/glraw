@@ -32,11 +32,8 @@ set(api_includes
     ${header_path}/MirrorEditor.h
     ${header_path}/ScaleEditor.h
 
-    ${header_path}/AbstractFileWriter.h
-    ${header_path}/RawFileWriter.h
-    ${header_path}/GLRawFileWriter.h
-
     ${header_path}/GLRawFile.h
+    ${header_path}/FileWriter.h
 
     ${header_path}/Canvas.h
 )
@@ -48,10 +45,8 @@ set(sources
     ${source_path}/MirrorEditor.cpp
     ${source_path}/ScaleEditor.cpp
 
-    ${source_path}/AbstractFileWriter.cpp
-    ${source_path}/RawFileWriter.cpp
     ${source_path}/GLRawFile.cpp
-    ${source_path}/GLRawFileWriter.cpp
+    ${source_path}/FileWriter.cpp
 
     ${source_path}/Canvas.cpp
 )

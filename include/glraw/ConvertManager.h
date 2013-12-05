@@ -11,25 +11,24 @@ namespace glraw
 {
 
 class ImageEditorInterface;
-class AbstractFileWriter;
+class FileWriter;
 class RawConverter;
 
 class GLRAW_API ConvertManager
 {
 public:
-    ConvertManager(RawConverter * converter, AbstractFileWriter * writer);
+    ConvertManager(RawConverter * converter, FileWriter * writer);
     ~ConvertManager();
 
     bool process(const QString & sourcePath);
 
     void appendImageEditor(ImageEditorInterface * editor);
-    void setWriter(AbstractFileWriter * writer);
 
 protected:
     QLinkedList<ImageEditorInterface *> m_editors;
     
     QScopedPointer<RawConverter> m_converter;
-    QScopedPointer<AbstractFileWriter> m_writer;
+    QScopedPointer<FileWriter> m_writer;
 
 };
 

@@ -9,8 +9,8 @@
 
 #include <glraw/MirrorEditor.h>
 #include <glraw/ScaleEditor.h>
-#include <glraw/RawFileWriter.h>
-#include <glraw/GLRawFileWriter.h>
+#include <glraw/FileWriter.h>
+#include <glraw/FileWriter.h>
 #include <glraw/RawConverter.h>
 
 #include "CommandLineOption.h"
@@ -29,7 +29,7 @@ namespace
 
 Builder::Builder()
 :   m_converter(new glraw::RawConverter())
-,   m_writer(new glraw::GLRawFileWriter())
+,   m_writer(new glraw::FileWriter())
 ,   m_manager(m_converter, m_writer)
 {
     initialize();
@@ -263,12 +263,7 @@ bool Builder::type(const QString & name)
 
 bool Builder::raw(const QString & name)
 {
-    auto writer = new glraw::RawFileWriter();
-    writer->setSuffixesEnabled(m_writer->suffixesEnabled());
-    
-    m_writer = writer;
-    m_manager.setWriter(m_writer);
-    
+    m_writer->setHeaderEnabled(false);
     return true;
 }
 

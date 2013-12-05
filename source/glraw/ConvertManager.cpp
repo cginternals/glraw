@@ -8,13 +8,13 @@
 
 #include <glraw/AssetInformation.h>
 #include <glraw/ImageEditorInterface.h>
-#include <glraw/AbstractFileWriter.h>
+#include <glraw/FileWriter.h>
 #include <glraw/RawConverter.h>
 
 namespace glraw
 {
 
-ConvertManager::ConvertManager(RawConverter * converter, AbstractFileWriter * writer)
+ConvertManager::ConvertManager(RawConverter * converter, FileWriter * writer)
 :   m_converter(converter)
 ,   m_writer(writer)
 {
@@ -56,11 +56,6 @@ bool ConvertManager::process(const QString & sourcePath)
 void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
 {
     m_editors.append(editor);
-}
-
-void ConvertManager::setWriter(AbstractFileWriter * writer)
-{
-    m_writer.reset(writer);
 }
 
 } // namespace glraw

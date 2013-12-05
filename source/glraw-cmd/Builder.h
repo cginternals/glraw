@@ -12,7 +12,7 @@ class QCoreApplication;
 namespace glraw
 {
     class ImageEditorInterface;
-    class AbstractFileWriter;
+    class FileWriter;
     class RawConverter;
 }
 
@@ -61,7 +61,7 @@ protected:
     
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
     glraw::RawConverter * m_converter;
-    glraw::AbstractFileWriter * m_writer;
+    glraw::FileWriter * m_writer;
     glraw::ConvertManager m_manager;
 
 };
