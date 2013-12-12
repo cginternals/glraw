@@ -152,7 +152,8 @@ QList<CommandLineOption> Builder::commandLineOptions()
     
     options.append({
         QStringList() << "shader",
-        "Applies an fragment shader before conversion ",
+        "Applies a fragment shader before conversion  "
+        "(see for example data/grayscale.frag)",
         "source",
         &Builder::shader
     });

@@ -35,7 +35,6 @@ namespace glraw
 Canvas::Canvas()
 :   QWindow((QScreen *)nullptr)
 ,   m_texture(0)
-,   m_processedTexture(0)
 {
     setSurfaceType(OpenGLSurface);
     create();
@@ -84,9 +83,9 @@ void Canvas::loadTextureFromImage(QImage & image)
     
     gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                 image.width(), image.height(), 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE,
-                 image.bits());
+                    image.width(), image.height(), 0,
+                    GL_RGBA, GL_UNSIGNED_BYTE,
+                    image.bits());
     
     gl.glBindTexture(GL_TEXTURE_2D, 0);
     
@@ -97,10 +96,8 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
 {
     assert(textureLoaded());
     
-    GLuint imageTexture = textureProcessed() ? m_processedTexture : m_texture;
-    
     m_context.makeCurrent(this);
-    gl.glBindTexture(GL_TEXTURE_2D, imageTexture);
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
     gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
@@ -139,45 +136,31 @@ bool Canvas::process(const QString & fragmentShader)
     
     program.bind();
     
-    GLuint depthAttachment;
-    
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
-    
     GLint width, height;
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
     gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
-    if (!textureProcessed());
-        gl.glGenTextures(1, &m_processedTexture);
-    
-    gl.glGenTextures(1, &depthAttachment);
-    
-    gl.glBindTexture(GL_TEXTURE_2D, m_processedTexture);
+    GLuint processedTexture;
+    gl.glGenTextures(1, &processedTexture);
+    gl.glBindTexture(GL_TEXTURE_2D, processedTexture);
     gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-    
-    gl.glBindTexture(GL_TEXTURE_2D, depthAttachment);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     
     GLuint fbo;
     gl.glGenFramebuffers(1, &fbo);
     gl.glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    gl.glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
     
-    gl.glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_processedTexture, 0);
-    gl.glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthAttachment, 0);
+    GLuint vao;
+    gl.glGenVertexArrays(1, &vao);
+    gl.glBindVertexArray(vao);
     
-    if (gl.glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        qDebug() << "cube fbo invalid";
-    
-    QVector<QVector2D> quad = {
+    const QVector<QVector2D> quad = {
         QVector2D(-1, -1),
         QVector2D(1, -1),
         QVector2D(1, 1),
         QVector2D(-1, 1)
     };
-    
-    GLuint vao;
-    gl.glGenVertexArrays(1, &vao);
-    gl.glBindVertexArray(vao);
     
     GLuint buffer;
     gl.glGenBuffers(1, &buffer);
@@ -188,8 +171,7 @@ bool Canvas::process(const QString & fragmentShader)
     
     
     gl.glViewport(0, 0, width, height);
-    
-    program.setUniformValue("u_texture", 0);
+    gl.glDisable(GL_DEPTH_TEST);
     
     gl.glActiveTexture(GL_TEXTURE0);
     gl.glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -199,16 +181,22 @@ bool Canvas::process(const QString & fragmentShader)
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-    gl.glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    program.setUniformValue("image", 0);
+    program.setUniformValue("width", width);
+    program.setUniformValue("height", height);
     
-    program.release();
+    gl.glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     
     gl.glDeleteBuffers(1, &buffer);
     gl.glDeleteVertexArrays(1, &vao);
     gl.glDeleteFramebuffers(1, &fbo);
-    gl.glDeleteTextures(1, &depthAttachment);
+    gl.glDeleteTextures(1, &m_texture);
+    
+    program.release();
     
     m_context.doneCurrent();
+
+    m_texture = processedTexture;
     
     return true;
 }
@@ -216,11 +204,6 @@ bool Canvas::process(const QString & fragmentShader)
 bool Canvas::textureLoaded() const
 {
     return m_texture != 0;
-}
-    
-bool Canvas::textureProcessed() const
-{
-    return m_processedTexture != 0;
 }
     
 int Canvas::byteSizeOf(GLenum type)

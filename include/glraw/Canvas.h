@@ -26,16 +26,13 @@ public:
     bool process(const QString & fragmentShader);
     
     bool textureLoaded() const;
-    bool textureProcessed() const;
 
 protected:
     static int byteSizeOf(GLenum type);
     static int numberOfElementsFor(GLenum format);
     
-    
     QOpenGLContext m_context;
     GLuint m_texture;
-    GLuint m_processedTexture;
     QOpenGLFunctions_3_2_Core gl;
     
 };
