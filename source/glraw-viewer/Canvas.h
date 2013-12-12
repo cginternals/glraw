@@ -50,4 +50,5 @@ protected:
     GLuint m_vboHandle;
     static QVector<QVector2D> m_quad;
     QOpenGLShaderProgram* m_program;
+    QSize m_textureSize;
 };
