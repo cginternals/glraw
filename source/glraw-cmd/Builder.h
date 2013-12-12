@@ -21,6 +21,8 @@ struct CommandLineOption;
 class Builder
 {
 public:
+    using ConfigureMethod = bool (Builder::*)(const QString &);
+    
     Builder();
     ~Builder();
 
@@ -60,7 +62,7 @@ protected:
 
 protected:
     QCommandLineParser m_parser;
-    QMap<QString, bool (Builder::*)(const QString &)> m_configureMethods;
+    QMap<QString, ConfigureMethod> m_configureMethods;
     
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
     glraw::RawConverter * m_converter;

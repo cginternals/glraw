@@ -8,5 +8,5 @@ struct CommandLineOption
     QStringList names;
     QString description;
     QString valueName;
-    bool (Builder::*configureMethod)(const QString &);
+    Builder::ConfigureMethod configureMethod;
 };
