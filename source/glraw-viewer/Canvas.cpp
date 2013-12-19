@@ -170,6 +170,10 @@ void Canvas::paintGL()
     {
         QSize size = m_textureSize.scaled(width(), height(), Qt::KeepAspectRatio);
         QPoint position((width() - size.width()) * 0.5f, (height() - size.height()) * 0.5f);
+        
+        size *= devicePixelRatio();
+        position *= devicePixelRatio();
+        
         gl.glViewport(position.x(), position.y(), size.width(), size.height());
     }
 
