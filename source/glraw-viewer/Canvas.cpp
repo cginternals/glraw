@@ -149,12 +149,9 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
 
 void Canvas::resizeEvent(QResizeEvent * event)
 {
-    m_context->makeCurrent(this);
-
-    int side = qMin(width(), height());
-    gl.glViewport((width() - side) / 2, (height() - side) / 2, side, side);
-
-    m_context->doneCurrent();
+    /* Setting the viewport here is useless,
+       because QOpenGLContext::makeCurrent()
+       calls internally glViewport() on OS X. */
 }
 
 void Canvas::exposeEvent(QExposeEvent * event)
@@ -168,6 +165,13 @@ void Canvas::exposeEvent(QExposeEvent * event)
 void Canvas::paintGL()
 {
     m_context->makeCurrent(this);
+    
+    if (!m_textureSize.isNull())
+    {
+        QSize size = m_textureSize.scaled(width(), height(), Qt::KeepAspectRatio);
+        QPoint position((width() - size.width()) * 0.5f, (height() - size.height()) * 0.5f);
+        gl.glViewport(position.x(), position.y(), size.width(), size.height());
+    }
 
     gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -263,6 +267,7 @@ void Canvas::loadFile(const QString & filename)
     int h = parts[2].toInt();
     QString formatString = parts[3].toLower();
     QString typeString = parts[4].toLower();*/
+    
     glraw::RawFile rawFile(filename.toStdString());
     if (!rawFile.isValid())
     {
@@ -279,8 +284,13 @@ void Canvas::loadFile(const QString & filename)
 
     gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
     gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
+    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     gl.glBindTexture(GL_TEXTURE_2D, 0);
-
-
+    
+    m_textureSize = QSize(w, h);
+    
+    m_context->doneCurrent();
+    
     paintGL();
 }
