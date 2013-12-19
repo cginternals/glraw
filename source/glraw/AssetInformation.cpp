@@ -14,7 +14,7 @@ AssetInformation::~AssetInformation()
 {
 }
 
-bool AssetInformation::propertyExist(const QString & key) const
+bool AssetInformation::propertyExists(const QString & key) const
 {
     return m_properties.contains(key);
 }

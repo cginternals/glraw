@@ -17,7 +17,7 @@ public:
     AssetInformation();
     ~AssetInformation();
 
-    bool propertyExist(const QString & key) const;
+    bool propertyExists(const QString & key) const;
     QVariant property(const QString & key) const;
     void setProperty(const QString & key, const QVariant & value);
 

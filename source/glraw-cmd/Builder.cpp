@@ -10,8 +10,9 @@
 #include <glraw/MirrorEditor.h>
 #include <glraw/ScaleEditor.h>
 #include <glraw/FileWriter.h>
-#include <glraw/FileWriter.h>
-#include <glraw/RawConverter.h>
+#include <glraw/Converter.h>
+#include <glraw/CompressionConverter.h>
+
 
 #include "CommandLineOption.h"
 #include "Conversions.h"
@@ -28,9 +29,9 @@ namespace
 }
 
 Builder::Builder()
-:   m_converter(new glraw::RawConverter())
+:   m_converter(nullptr)
 ,   m_writer(new glraw::FileWriter())
-,   m_manager(m_converter, m_writer)
+,   m_manager(m_writer)
 {
     initialize();
 }
@@ -76,6 +77,13 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "Output type (default: GL_UNSIGNED_BYTE)",
         "type",
         &Builder::type
+    });
+    
+    options.append({
+        QStringList() << "compressed-format",
+        "Output format (default: GL_COMPRESSED_RGBA)",
+        "format",
+        &Builder::compressedFormat
     });
     
     options.append({
@@ -196,11 +204,19 @@ void Builder::process(const QCoreApplication & app)
     
     m_parser.process(app);
     
+    m_manager.setConverter(nullptr);
+    m_converter = nullptr;
+    
     for (auto option : m_parser.optionNames())
     {
         if (!(this->*m_configureMethods.value(option))(option))
             return;
     }
+
+    if (m_converter == nullptr)
+        m_converter = new glraw::Converter();
+    
+    m_manager.setConverter(m_converter);
 
     QStringList sources = m_parser.positionalArguments();
     
@@ -242,7 +258,18 @@ bool Builder::format(const QString & name)
         return false;
     }
     
-    m_converter->setFormat(Conversions::stringToFormat(formatString));
+    if (m_converter == nullptr)
+        m_converter = new glraw::Converter();
+    
+    glraw::Converter * converter = dynamic_cast<glraw::Converter *>(m_converter);
+    
+    if (converter == nullptr)
+    {
+        qDebug() << "You can either specify a compressed format or an uncompressed format and type.";
+        return false;
+    }
+    
+    converter->setFormat(Conversions::stringToFormat(formatString));
 
     return true;
 }
@@ -257,8 +284,45 @@ bool Builder::type(const QString & name)
         return false;
     }
     
-    m_converter->setType(Conversions::stringToType(formatString));
+    if (m_converter == nullptr)
+        m_converter = new glraw::Converter();
+    
+    glraw::Converter * converter = dynamic_cast<glraw::Converter *>(m_converter);
+    
+    if (converter == nullptr)
+    {
+        qDebug() << "You can either specify a compressed format or an uncompressed format and type.";
+        return false;
+    }
+    
+    converter->setType(Conversions::stringToType(formatString));
 
+    return true;
+}
+
+bool Builder::compressedFormat(const QString & name)
+{
+    QString formatString = m_parser.value(name);
+    
+    if (!Conversions::isCompressedFormat(formatString))
+    {
+        qDebug() << qPrintable(formatString) << "is not a compressed format.";
+        return false;
+    }
+    
+    if (m_converter == nullptr)
+        m_converter = new glraw::CompressionConverter();
+    
+    glraw::CompressionConverter * converter = dynamic_cast<glraw::CompressionConverter *>(m_converter);
+    
+    if (converter == nullptr)
+    {
+        qDebug() << "You can either specify a compressed format or an uncompressed format and type.";
+        return false;
+    }
+    
+    converter->setCompressedFormat(Conversions::stringToCompressedFormat(formatString));
+    
     return true;
 }
 

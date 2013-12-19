@@ -45,9 +45,12 @@ protected:
 
 protected:
     QString targetFilePath(const QString & sourcePath, const AssetInformation & info);
+    QString suffixesForImage(const AssetInformation & info);
+    QString suffixesForCompressedImage(const AssetInformation & info);
 
     static const QMap<GLenum, QString> s_formatSuffixes;
     static const QMap<GLenum, QString> s_typeSuffixes;
+    static const QMap<GLint, QString>  s_compressedFormatSuffixes;
 
 protected:
     bool m_headerEnabled;

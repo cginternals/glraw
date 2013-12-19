@@ -40,6 +40,24 @@ const QMap<GLenum, QString> FileWriter::s_typeSuffixes = {
     { GL_FLOAT, "f" }
 };
 
+const QMap<GLint, QString> FileWriter::s_compressedFormatSuffixes = {
+    { GL_COMPRESSED_RED, "cr" },
+    { GL_COMPRESSED_RG, "crg" },
+    { GL_COMPRESSED_RGB, "crgb" },
+    { GL_COMPRESSED_RGBA, "crgba" },
+    { GL_COMPRESSED_RED_RGTC1, "rgtc1-r" },
+    { GL_COMPRESSED_SIGNED_RED_RGTC1, "rgtc1-sr" },
+    { GL_COMPRESSED_RG_RGTC2, "rgtc2-rg" },
+    { GL_COMPRESSED_SIGNED_RG_RGTC2, "rgtc2-srg" },
+ // { GL_COMPRESSED_RGBA_BPTC_UNORM, "bptc-rgba-unorm" },
+ // { GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT, "bptc-rgb-sf" },
+ // { GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT, "bptc-rgb-uf" },
+    { GL_COMPRESSED_RGB_S3TC_DXT1_EXT, "dxt1-rgb" },
+    { GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, "dxt1-rgba" },
+    { GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, "dxt3-rgba" },
+    { GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, "dxt5-rgba" }
+};
+
 FileWriter::FileWriter(bool headerEnabled, bool suffixesEnabled)
 :   m_headerEnabled(headerEnabled)
 ,   m_suffixesEnabled(suffixesEnabled)
@@ -169,22 +187,40 @@ QString FileWriter::targetFilePath(const QString & sourcePath, const AssetInform
 {
     QFileInfo fileInfo(sourcePath);
 
-    const QString fileExtension = m_headerEnabled ? "glraw" : "raw";
+    const QString fileExtension = m_headerEnabled ? ".glraw" : ".raw";
     
     if (!m_suffixesEnabled)
         return fileInfo.absolutePath() + "/" + fileInfo.baseName() + "." + fileExtension;
     
+    QString suffixes;
+    if (info.propertyExists("compressedFormat"))
+        suffixes = suffixesForCompressedImage(info);
+    else
+        suffixes = suffixesForImage(info);
+    
+    return fileInfo.absolutePath() + "/" + fileInfo.baseName() + suffixes + fileExtension;
+}
+
+QString FileWriter::suffixesForImage(const AssetInformation & info)
+{
     GLenum format = static_cast<GLenum>(info.property("format").toInt());
     GLenum type = static_cast<GLenum>(info.property("type").toInt());
        
-    const QString suffixes = QString(".%1.%2.%3.%4.%5")
+    return QString(".%1.%2.%3.%4")
         .arg(info.property("width").toInt())
         .arg(info.property("height").toInt())
         .arg(s_formatSuffixes[format])
-        .arg(s_typeSuffixes[type])
-        .arg(fileExtension);
-    
-    return fileInfo.absolutePath() + "/" + fileInfo.baseName() + suffixes;
+        .arg(s_typeSuffixes[type]);
+}
+
+QString FileWriter::suffixesForCompressedImage(const AssetInformation & info)
+{
+    GLint compressedFormat = static_cast<GLint>(info.property("compressedFormat").toInt());
+       
+    return QString(".%1.%2.%3")
+        .arg(info.property("width").toInt())
+        .arg(info.property("height").toInt())
+        .arg(s_compressedFormatSuffixes[compressedFormat]);
 }
 
 } // namespace glraw

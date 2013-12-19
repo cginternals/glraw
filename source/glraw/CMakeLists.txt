@@ -27,7 +27,11 @@ set(api_includes
 
     ${header_path}/AssetInformation.h
     ${header_path}/ConvertManager.h
-    ${header_path}/RawConverter.h
+
+    ${header_path}/AbstractConverter.h
+    ${header_path}/Converter.h
+    ${header_path}/CompressionConverter.h
+
     ${header_path}/ImageEditorInterface.h
     ${header_path}/MirrorEditor.h
     ${header_path}/ScaleEditor.h
@@ -42,7 +46,11 @@ set(api_includes
 set(sources
     ${source_path}/AssetInformation.cpp
     ${source_path}/ConvertManager.cpp
-    ${source_path}/RawConverter.cpp
+    
+    ${source_path}/AbstractConverter.cpp
+    ${source_path}/Converter.cpp
+    ${source_path}/CompressionConverter.cpp
+    
     ${source_path}/MirrorEditor.cpp
     ${source_path}/ScaleEditor.cpp
 

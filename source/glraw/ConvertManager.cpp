@@ -1,6 +1,8 @@
 
 #include <glraw/ConvertManager.h>
 
+#include <cassert>
+
 #include <QDebug>
 #include <QFile>
 #include <QImage>
@@ -9,14 +11,14 @@
 #include <glraw/AssetInformation.h>
 #include <glraw/ImageEditorInterface.h>
 #include <glraw/FileWriter.h>
-#include <glraw/RawConverter.h>
+#include <glraw/AbstractConverter.h>
 
 namespace glraw
 {
 
-ConvertManager::ConvertManager(RawConverter * converter, FileWriter * writer)
-:   m_converter(converter)
-,   m_writer(writer)
+ConvertManager::ConvertManager(FileWriter * writer, AbstractConverter * converter)
+:   m_writer(writer)
+,   m_converter(converter)
 {
 }
     
@@ -27,6 +29,9 @@ ConvertManager::~ConvertManager()
 
 bool ConvertManager::process(const QString & sourcePath)
 {
+    assert(!m_converter.isNull());
+    assert(!m_writer.isNull());
+    
     if (!QFile::exists(sourcePath))
     {
         qDebug() << "Input file does not exist.";
@@ -60,6 +65,16 @@ bool ConvertManager::process(const QString & sourcePath)
 void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
 {
     m_editors.append(editor);
+}
+    
+void ConvertManager::setWriter(FileWriter * writer)
+{
+    m_writer.reset(writer);
+}
+    
+void ConvertManager::setConverter(AbstractConverter * converter)
+{
+    m_converter.reset(converter);
 }
 
 } // namespace glraw

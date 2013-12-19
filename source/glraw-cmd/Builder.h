@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QMap>
 #include <QCommandLineParser>
+#include <QScopedPointer>
 
 #include <glraw/ConvertManager.h>
 
@@ -13,7 +14,7 @@ namespace glraw
 {
     class ImageEditorInterface;
     class FileWriter;
-    class RawConverter;
+    class AbstractConverter;
 }
 
 struct CommandLineOption;
@@ -39,6 +40,7 @@ protected:
     bool noSuffixes(const QString & name);
     bool format(const QString & name);
     bool type(const QString & name);
+    bool compressedFormat(const QString & name);
     bool raw(const QString & name);
     bool mirrorVertical(const QString & name);
     bool mirrorHorizontal(const QString & name);
@@ -65,7 +67,7 @@ protected:
     QMap<QString, ConfigureMethod> m_configureMethods;
     
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
-    glraw::RawConverter * m_converter;
+    glraw::AbstractConverter * m_converter;
     glraw::FileWriter * m_writer;
     glraw::ConvertManager m_manager;
 

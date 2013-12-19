@@ -13,6 +13,9 @@ namespace Conversions
 
     bool isType(const QString & string);
     GLenum stringToType(const QString & string);
+    
+    bool isCompressedFormat(const QString & string);
+    GLint stringToCompressedFormat(const QString & string);
 
     bool isTransformationMode(const QString & string);
     Qt::TransformationMode stringToTransformationMode(const QString & string);

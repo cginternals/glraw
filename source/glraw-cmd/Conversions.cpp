@@ -36,6 +36,29 @@ QMap<QString, GLenum> types()
 
     return types;
 }
+    
+QMap<QString, GLint> compressedFormats()
+{
+    QMap<QString, GLint> formats = {
+        { "GL_COMPRESSED_RED", GL_COMPRESSED_RED },
+        { "GL_COMPRESSED_RG", GL_COMPRESSED_RG },
+        { "GL_COMPRESSED_RGB", GL_COMPRESSED_RGB },
+        { "GL_COMPRESSED_RGBA", GL_COMPRESSED_RGBA },
+        { "GL_COMPRESSED_RED_RGTC1", GL_COMPRESSED_RED_RGTC1 },
+        { "GL_COMPRESSED_SIGNED_RED_RGTC1", GL_COMPRESSED_SIGNED_RED_RGTC1 },
+        { "GL_COMPRESSED_RG_RGTC2", GL_COMPRESSED_RG_RGTC2 },
+        { "GL_COMPRESSED_SIGNED_RG_RGTC2", GL_COMPRESSED_SIGNED_RG_RGTC2 },
+     // { "GL_COMPRESSED_RGBA_BPTC_UNORM", GL_COMPRESSED_RGBA_BPTC_UNORM },
+     // { "GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT", GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT },
+     // { "GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT", GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT },
+        { "GL_COMPRESSED_RGB_S3TC_DXT1_EXT", GL_COMPRESSED_RGB_S3TC_DXT1_EXT },
+        { "GL_COMPRESSED_RGBA_S3TC_DXT1_EXT", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
+        { "GL_COMPRESSED_RGBA_S3TC_DXT3_EXT", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
+        { "GL_COMPRESSED_RGBA_S3TC_DXT5_EXT", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT }
+    };
+    
+    return formats;
+}
 
 QMap<QString, Qt::TransformationMode> transformationModes()
 {
@@ -87,6 +110,20 @@ GLenum stringToType(const QString & string)
     static auto t = types();
 
     return t.value(string);
+}
+    
+bool isCompressedFormat(const QString & string)
+{
+    static auto f = compressedFormats();
+    
+    return f.contains(string);
+}
+    
+GLint stringToCompressedFormat(const QString & string)
+{
+    static auto f = compressedFormats();
+    
+    return f.value(string);
 }
 
 bool isTransformationMode(const QString & string)
