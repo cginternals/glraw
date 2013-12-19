@@ -5,6 +5,7 @@
 
 #include <QWindow>
 #include <QOpenGLFunctions_3_2_Core>
+#include <qopenglfunctions_3_2_core.h>
 
 class QImage;
 class QByteArray;
@@ -22,6 +23,7 @@ public:
     
     void loadTextureFromImage(QImage & image);
     QByteArray imageFromTexture(GLenum format, GLenum type);
+    QByteArray compressedImageFromTexture(GLenum compressedInternalFormat);
     
     bool process(const QString & fragmentShader);
     

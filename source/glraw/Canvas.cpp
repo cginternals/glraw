@@ -113,6 +113,37 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     return imageData;
 }
     
+QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat)
+{
+    QByteArray uncompressedImageData = imageFromTexture(GL_RGBA, GL_UNSIGNED_BYTE);
+    
+    m_context.makeCurrent(this);
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    
+    GLint width, height;
+    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    
+    GLuint compressedTexture;
+    gl.glGenTextures(1, &compressedTexture);
+    gl.glBindTexture(GL_TEXTURE_2D, compressedTexture);
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat,
+                    width, height, 0,
+                    GL_RGBA, GL_UNSIGNED_BYTE,
+                    uncompressedImageData);
+    
+    GLint size;
+    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
+    
+    QByteArray compressedImageData;
+    compressedImageData.resize(size);
+    gl.glGetCompressedTexImage(GL_TEXTURE_2D, 0, compressedImageData.data());
+    
+    m_context.doneCurrent();
+    
+    return compressedImageData;
+}
+    
 bool Canvas::process(const QString & fragmentShader)
 {
     assert(textureLoaded());
