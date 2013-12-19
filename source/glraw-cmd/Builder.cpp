@@ -551,6 +551,21 @@ Formats:          Types:                     Transformation Modes:
   GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
   GL_BGR            GL_INT                     KeepAspectRatio
   GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
-  GL_BGRA       
+  GL_BGRA
+
+Compressed Formats:
+  GL_COMPRESSED_RED
+  GL_COMPRESSED_RG
+  GL_COMPRESSED_RGB
+  GL_COMPRESSED_RGBA
+  GL_COMPRESSED_RED_RGTC1
+  GL_COMPRESSED_SIGNED_RED_RGTC1
+  GL_COMPRESSED_RG_RGTC2
+  GL_COMPRESSED_SIGNED_RG_RGTC2
+  GL_COMPRESSED_RGB_S3TC_DXT1_EXT
+  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
+  GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
+  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
+
 )";
 }
