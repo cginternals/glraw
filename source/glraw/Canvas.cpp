@@ -72,20 +72,20 @@ void Canvas::initializeGL()
     m_context.doneCurrent();
 }
     
-void Canvas::loadTextureFromImage(QImage & image)
+void Canvas::loadTextureFromImage(const QImage & image)
 {
     m_context.makeCurrent(this);
     
-    image = QGLWidget::convertToGLFormat(image);
+    QImage glImage = QGLWidget::convertToGLFormat(image);
     
     if (!textureLoaded())
         gl.glGenTextures(1, &m_texture);
     
     gl.glBindTexture(GL_TEXTURE_2D, m_texture);
     gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                    image.width(), image.height(), 0,
+                    glImage.width(), glImage.height(), 0,
                     GL_RGBA, GL_UNSIGNED_BYTE,
-                    image.bits());
+                    glImage.bits());
     
     gl.glBindTexture(GL_TEXTURE_2D, 0);
     
@@ -105,6 +105,7 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
+    
     gl.glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
     gl.glBindTexture(GL_TEXTURE_2D, 0);

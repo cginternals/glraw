@@ -21,7 +21,7 @@ public:
 
     void initializeGL();
     
-    void loadTextureFromImage(QImage & image);
+    void loadTextureFromImage(const QImage & image);
     QByteArray imageFromTexture(GLenum format, GLenum type);
     QByteArray compressedImageFromTexture(GLenum compressedInternalFormat);
     
