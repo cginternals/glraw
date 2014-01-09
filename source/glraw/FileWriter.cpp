@@ -21,8 +21,8 @@ const QMap<QVariant::Type, RawFile::PropertyType> FileWriter::s_typeIndicators =
 
 const QMap<GLenum, QString> FileWriter::s_formatSuffixes = {
     { GL_RED, "r" },
-    { GL_RED, "g" },
-    { GL_RED, "b" },
+    { GL_GREEN, "g" },
+    { GL_BLUE, "b" },
     { GL_RG, "rg" },
     { GL_RGB, "rgb" },
     { GL_BGR, "bgr" },
@@ -70,7 +70,7 @@ bool FileWriter::write(const QByteArray & imageData,
         writeHeader(dataStream, file, info);
     }
 
-    dataStream.writeBytes(imageData.data(), imageData.length());
+    dataStream.writeRawData(imageData.data(), imageData.size());
 
     file.close();
     
