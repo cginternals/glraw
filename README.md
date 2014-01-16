@@ -36,5 +36,7 @@ The following dev-libraries and programs need to be provided for correct CMake c
 * CMake (>= 2.8.9): http://www.cmake.org/
 * Qt5 (>= 5.2): http://www.qt-project.org/
 
- 
+## More Documentation
+
+_Visit our [[wiki/Home]]._
 
