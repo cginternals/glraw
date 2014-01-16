@@ -38,5 +38,5 @@ The following dev-libraries and programs need to be provided for correct CMake c
 
 ## More Documentation
 
-_Visit our [[Home]]._
+_Visit our [wiki](https://github.com/hpicgs/glraw/wiki)._
 
