@@ -281,13 +281,26 @@ void Canvas::loadFile(const QString & filename)
 
     int w = rawFile.intProperty("width");
     int h = rawFile.intProperty("height");
-    GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
-    GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
-
+    
     m_context->makeCurrent(this);
-
+    
     gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
+    
+    if (rawFile.hasIntProperty("format"))
+    {
+        GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
+        GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
+        
+        gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
+    }
+    else
+    {
+        GLenum compressedFormat = static_cast<GLenum>(rawFile.intProperty("compressedFormat"));
+        GLenum size = rawFile.intProperty("size");
+        
+        gl.glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormat, w, h, 0, size, rawFile.data());
+    }
+    
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     gl.glBindTexture(GL_TEXTURE_2D, 0);
