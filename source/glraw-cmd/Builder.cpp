@@ -174,7 +174,7 @@ void Builder::initialize()
     m_parser.setApplicationDescription("Converts Qt supported images to an OpenGL compatible raw format.");
     m_parser.addVersionOption();
 
-    m_parser.addPositionalArgument("source", "Source file with Qt-supported image format.");
+    m_parser.addPositionalArgument("sources", "Source files with Qt-supported image format.");
 
     for (auto option : commandLineOptions())
     {
