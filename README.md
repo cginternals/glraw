@@ -28,8 +28,8 @@ Write your own fragment shader and apply e.g. a Gaussian blur.
 ## Wiki Docs
 
 __[Use Cases](https://github.com/hpicgs/glraw/wiki/Use-Cases)__  
-__[Supported Formats and Types](https://github.com/hpicgs/glraw/wiki/Supported-Formats-and-Types)__
-
+__[Supported Formats and Types](https://github.com/hpicgs/glraw/wiki/Supported-Formats-and-Types)__  
+__[GLraw File Format](https://github.com/hpicgs/glraw/wiki/GLRaw-File-Format)__  
 
 ## Development
 
