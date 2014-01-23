@@ -523,6 +523,9 @@ bool Builder::shader(const QString & name)
 {
     QString sourcePath = m_parser.value(name);
     
+    if(m_converter == nullptr)
+        m_converter = new glraw::Converter();
+    
     if (!m_converter->setFragmentShader(sourcePath))
         return false;
     
