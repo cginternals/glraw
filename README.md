@@ -25,6 +25,11 @@ __GLSL Fragment Shader__
 
 Write your own fragment shader and apply e.g. a Gaussian blur.
 
+## Wiki Docs
+
+__[Use Cases](https://github.com/hpicgs/glraw/wiki/Use-Cases)__  
+__[Supported Formats and Types](https://github.com/hpicgs/glraw/wiki/Supported-Formats-and-Types)__
+
 
 ## Development
 
@@ -35,8 +40,4 @@ The following dev-libraries and programs need to be provided for correct CMake c
 * C++11 compatible compiler (e.g. gcc 4.8, VS 2013)
 * CMake (>= 2.8.9): http://www.cmake.org/
 * Qt5 (>= 5.2): http://www.qt-project.org/
-
-## More Documentation
-
-_Visit our [wiki](https://github.com/hpicgs/glraw/wiki)._
 
