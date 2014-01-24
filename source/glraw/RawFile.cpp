@@ -94,19 +94,19 @@ double RawFile::doubleProperty(const std::string & key) const
 
 bool RawFile::hasStringProperty(const std::string & key) const
 {
-    return m_stringProperties.find(key) == m_stringProperties.end();
+    return m_stringProperties.find(key) != m_stringProperties.end();
 }
 
 
 bool RawFile::hasIntProperty(const std::string & key) const
 {
-    return m_intProperties.find(key) == m_intProperties.end();
+    return m_intProperties.find(key) != m_intProperties.end();
 }
 
 
 bool RawFile::hasDoubleProperty(const std::string & key) const
 {
-    return m_doubleProperties.find(key) == m_doubleProperties.end();
+    return m_doubleProperties.find(key) != m_doubleProperties.end();
 }
 
 

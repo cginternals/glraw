@@ -17,14 +17,17 @@ CompressionConverter::~CompressionConverter()
 
 QByteArray CompressionConverter::convert(QImage & image, AssetInformation & info)
 {
-    info.setProperty("compressedFormat", QVariant(static_cast<int>(m_compressedFormat)));
-    
     m_canvas.loadTextureFromImage(image);
     
     if (hasFragmentShader() && !m_canvas.process(m_fragmentShader))
         return QByteArray();
     
-    return m_canvas.compressedImageFromTexture(m_compressedFormat);
+    QByteArray imageData = m_canvas.compressedImageFromTexture(m_compressedFormat);
+    
+    info.setProperty("compressedFormat", QVariant(static_cast<int>(m_compressedFormat)));
+    info.setProperty("size", QVariant(imageData.size()));
+    
+    return imageData;
 }
 
 void CompressionConverter::setCompressedFormat(GLint compressedFormat)
