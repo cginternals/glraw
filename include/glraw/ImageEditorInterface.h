@@ -10,10 +10,12 @@ namespace glraw
 
 class AssetInformation;
 
-class ImageEditorInterface
+class GLRAW_API ImageEditorInterface
 {
 public:
-    virtual ~ImageEditorInterface() {};
+    virtual ~ImageEditorInterface() 
+    {
+    };
 
     virtual void editImage(QImage & image, AssetInformation & info) = 0;
 };

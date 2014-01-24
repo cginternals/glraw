@@ -6,10 +6,12 @@
 #include <vector>
 #include <map>
 
+#include <glraw/glraw.h>
+
 namespace glraw
 {
 
-class RawFile
+class GLRAW_API RawFile
 {
 public:
     static uint16_t s_magicNumber;

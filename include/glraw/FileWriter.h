@@ -2,13 +2,14 @@
 
 #include <cstdint>
 
+#include <QtGui/qopengl.h>
+#include <QMap>
+#include <QVariant>
+
 #include <glraw/glraw.h>
 
 #include <glraw/RawFile.h>
 
-#include <QtGui/qopengl.h>
-#include <QMap>
-#include <QVariant>
 
 class QFile;
 class QDataStream;
@@ -22,7 +23,7 @@ class GLRAW_API FileWriter
 {
 public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
-    ~FileWriter();
+    virtual ~FileWriter();
 
     virtual bool write(const QByteArray & imageData,
                        const QString & sourcePath, 
