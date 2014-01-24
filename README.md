@@ -15,7 +15,7 @@ When converting an input image, *glraw* allows basic operations on the input-ima
 
 * Scaling: Scale your images either to a choosen size in pixels or by a factor.
 
-* Arbitrary image processing: Provide your own GLSL shader for, e.g., blurring, sharpening, color conversion, data encoding.
+* Arbitrary image processing: Provide your own GLSL shader for, e.g., blurring, sharpening, color conversion, or data encoding.
 
 * Extensible file header: *glraw* supports two formats: 
   * .raw as a true raw format, where all asset meta information is either encoded in the file name or aggreed with the importer. 
