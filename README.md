@@ -17,7 +17,9 @@ When converting an input image, *glraw* allows basic operations on the input-ima
 
 * Arbitrary image processing: Provide your own GLSL shader for, e.g., blurring, sharpening, color conversion, data encoding.
 
-* Extensible file header: *glraw* supports two raw formats. First, `.raw` as a true raw format, where all asset meta information is either encoded in the file name or known by the importer. Second, `*.glraw`, which extends the raw data by an arbitrary file header of binary key-value pairs.
+* Extensible file header: *glraw* supports two formats: 
+  * .raw as a true raw format, where all asset meta information is either encoded in the file name or aggreed with the importer. 
+  * .glraw, which extends the raw data by an arbitrary file header of binary key-value pairs (e.g., width, height, compression).
 
 ## Further Reading
 
