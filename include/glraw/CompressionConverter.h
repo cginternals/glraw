@@ -1,0 +1,34 @@
+
+#pragma once
+
+#include <glraw/glraw.h>
+
+#include <QtGui/qopengl.h>
+#include <QString>
+
+#include <glraw/Canvas.h>
+#include <glraw/AbstractConverter.h>
+
+class QImage;
+
+namespace glraw
+{
+    
+class AssetInformation;
+
+class GLRAW_API CompressionConverter : public AbstractConverter
+{
+public:
+    CompressionConverter();
+    virtual ~CompressionConverter();
+
+    virtual QByteArray convert(QImage & image, AssetInformation & info);
+
+    void setCompressedFormat(GLint compressedFormat);
+
+protected:
+    GLint m_compressedFormat;
+
+};
+
+} // namespace glraw

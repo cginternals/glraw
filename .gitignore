@@ -11,8 +11,18 @@
 *.lai
 *.la
 *.a
+
+# Generated Raw Files
+*.raw
+*.glraw
+
 /build
 /_configure.bat
 /_open-project.bat
 /_start-cmake-gui.bat
 /_start-console.bat
+
+# QtCreator
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+*.autosave

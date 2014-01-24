@@ -25,11 +25,39 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}")
 set(api_includes
     ${header_path}/glraw.h
 
-    ${header_path}/DummyClass.h
+    ${header_path}/AssetInformation.h
+    ${header_path}/ConvertManager.h
+
+    ${header_path}/AbstractConverter.h
+    ${header_path}/Converter.h
+    ${header_path}/CompressionConverter.h
+
+    ${header_path}/ImageEditorInterface.h
+    ${header_path}/MirrorEditor.h
+    ${header_path}/ScaleEditor.h
+
+
+    ${header_path}/FileWriter.h
+    ${header_path}/RawFile.h
+
+    ${header_path}/Canvas.h
 )
 
 set(sources
-    ${source_path}/DummyClass.cpp
+    ${source_path}/AssetInformation.cpp
+    ${source_path}/ConvertManager.cpp
+    
+    ${source_path}/AbstractConverter.cpp
+    ${source_path}/Converter.cpp
+    ${source_path}/CompressionConverter.cpp
+    
+    ${source_path}/MirrorEditor.cpp
+    ${source_path}/ScaleEditor.cpp
+
+    ${source_path}/FileWriter.cpp
+    ${source_path}/RawFile.cpp
+
+    ${source_path}/Canvas.cpp
 )
 
 # Group source files
@@ -41,12 +69,17 @@ source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$"
     ${glraw_source_group} ${sources})
 
 # Build library
+
 if(OPTION_BUILD_STATIC)
     add_library(${target} ${api_includes} ${sources})
 else()
     add_library(${target} SHARED ${api_includes} ${sources})
 endif()
+
 target_link_libraries(${target} ${libs})
+
+qt5_use_modules(${target} OpenGL Gui Widgets)   
+
 set_target_properties(${target}
     PROPERTIES
     LINKER_LANGUAGE CXX
