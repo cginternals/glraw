@@ -9,7 +9,7 @@ Image to OpenGL texture conversion can be done either by *glraw*s command line i
 
 When converting an input image, *glraw* allows basic operations on the input-image and gives you full control over format and type of your targeted asset specification:
 
-* Output format and type: Choose either a format and a type (e.g., `GL_RGB` and `GL_UNSIGNED_BYTE`) or one of the supported compressed formats __ (e.g., `GL_COMPRESSED_RGBA_S3TC_DXT3_EXT`).
+* Output format and type: Choose either a format and a type (e.g., `GL_RGB` and `GL_UNSIGNED_BYTE`) or one of the supported compressed formats (e.g., `GL_COMPRESSED_RGBA_S3TC_DXT3_EXT`).
 
 * Mirroring: Mirror images horizontally or vertically.
 
