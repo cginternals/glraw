@@ -1,6 +1,4 @@
 
-#include <glraw/FileWriter.h>
-
 #include <QDebug>
 #include <QByteArray>
 #include <QString>
@@ -9,6 +7,8 @@
 #include <QFileInfo>
 
 #include <glraw/AssetInformation.h>
+
+#include <glraw/FileWriter.h>
 
 namespace glraw
 {
@@ -52,11 +52,11 @@ const QMap<GLint, QString> FileWriter::s_compressedFormatSuffixes = {
     , { GL_COMPRESSED_SIGNED_RG_RGTC2, "rgtc2-srg" }
 #endif
 #ifdef GL_ARB_texture_compression_bptc
-    , { GL_COMPRESSED_RGBA_BPTC_UNORM, "bptc-rgba-unorm" }
-    , { GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT, "bptc-rgb-sf" }
-    , { GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT, "bptc-rgb-uf" }
+    , { GL_COMPRESSED_RGBA_BPTC_UNORM_ARB, "bptc-rgba-unorm" }
+    , { GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB, "bptc-rgb-sf" }
+    , { GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB, "bptc-rgb-uf" }
 #endif
-#ifdef GL_EXT_texture_compression_s3tc
+#ifndef GL_EXT_texture_compression_s3tc
     , { GL_COMPRESSED_RGB_S3TC_DXT1_EXT, "dxt1-rgb" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, "dxt1-rgba" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, "dxt3-rgba" }
