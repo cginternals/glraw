@@ -1,4 +1,4 @@
-# glraw
+![glraw](https://raw.github.com/hpicgs/glraw/master/packages/glraw-logo.png)
 
 *glraw* is a utility that converts Qt-supported images into an OpenGL-compatible raw format. *glraw* reduces the process of loading textures at run-time to a minimum: A file-content dump into GPU memory. 
 
@@ -25,7 +25,7 @@ When converting an input image, *glraw* allows basic operations on the input-ima
 
  * [Use Cases](https://github.com/hpicgs/glraw/wiki/Use-Cases): Examples for using texture compression and user-defined image processing.
  * [Supported Formats and Types](https://github.com/hpicgs/glraw/wiki/Supported-Formats-and-Types): List of all currently supported OpenGL format-type combinations.
- * [GLraw File Format](https://github.com/hpicgs/glraw/wiki/GLRaw-File-Format): Description of the extended raw format (.glraw). 
+ * [glraw File Format](https://github.com/hpicgs/glraw/wiki/GLRaw-File-Format): Description of the extended raw format (.glraw). 
  * [Doxygen Documentation](http://libglow.org/glraw): A *glraw* source documentation.
 
 ## Development
