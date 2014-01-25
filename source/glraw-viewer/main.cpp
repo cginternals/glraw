@@ -4,6 +4,7 @@
 
 #include "Application.h"
 
+#include "DropFix.h"
 #include "Viewer.h"
 #include "Canvas.h"
 
@@ -19,13 +20,17 @@ int main(int argc, char* argv[])
     format.setProfile(QSurfaceFormat::CoreProfile);
 
     Canvas * canvas = new Canvas(format);
+
+    DropFix * dropfix = new DropFix(viewer.data());
     QWidget * widget = QWidget::createWindowContainer(canvas);
 
+    viewer->setAcceptDrops(true);
     widget->setAcceptDrops(true);
+
+    canvas->installEventFilter(dropfix);
 
     widget->setMinimumSize(1, 1);
     widget->setAutoFillBackground(false); // Important for overdraw, not occluding the scene.
-    widget->setFocusPolicy(Qt::TabFocus);
 
     QObject::connect(viewer.data(), &Viewer::fileDropped, canvas, &Canvas::loadFile);
 

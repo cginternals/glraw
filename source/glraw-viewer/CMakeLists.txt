@@ -12,6 +12,8 @@ set(sources
     Application.h
     Canvas.cpp
     Canvas.h
+    DropFix.cpp
+    DropFix.h
     Viewer.cpp
     Viewer.h
     Viewer.ui

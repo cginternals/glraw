@@ -52,17 +52,13 @@ Viewer::~Viewer()
 void Viewer::dragEnterEvent(QDragEnterEvent * event)
 {
     if (event->mimeData()->hasFormat("text/uri-list"))
-    {
         event->acceptProposedAction();
-    }
 }
 
 void Viewer::dragMoveEvent(QDragMoveEvent * event)
 {
     if (event->mimeData()->hasFormat("text/uri-list"))
-    {
         event->acceptProposedAction();
-    }
 }
 
 void Viewer::dropEvent(QDropEvent * event)

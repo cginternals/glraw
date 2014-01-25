@@ -53,7 +53,7 @@ bool ConvertManager::process(const QString & sourcePath)
         editor->editImage(image, info);
 
     QByteArray imageData = m_converter->convert(image, info);
-    
+
     if (imageData.isEmpty())
         return false;
     

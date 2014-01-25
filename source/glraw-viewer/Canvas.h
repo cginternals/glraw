@@ -38,6 +38,7 @@ protected:
 
 	virtual void resizeEvent(QResizeEvent * event);
     virtual void exposeEvent(QExposeEvent * event);
+    virtual void showEvent(QShowEvent * event);
 
     void printHardwareInfo();
     /** uses the context to verify existence/support of each mandatory extension

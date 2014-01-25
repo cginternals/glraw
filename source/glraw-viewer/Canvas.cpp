@@ -148,14 +148,18 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     m_context->doneCurrent();
 }
 
-void Canvas::resizeEvent(QResizeEvent * event)
+void Canvas::showEvent(QShowEvent *)
 {
-    /* Setting the viewport here is useless,
-       because QOpenGLContext::makeCurrent()
+    resize(size()); // fixes initial viewport size
+}
+
+void Canvas::resizeEvent(QResizeEvent *)
+{
+    /* Setting the viewport here is useless, because QOpenGLContext::makeCurrent
        calls internally glViewport() on OS X. */
 }
 
-void Canvas::exposeEvent(QExposeEvent * event)
+void Canvas::exposeEvent(QExposeEvent *)
 {
     if (isExposed())
         paintGL();
