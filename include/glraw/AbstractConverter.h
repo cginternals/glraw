@@ -1,10 +1,13 @@
 
 #pragma once
 
+#include <QtGui/qopengl.h>
+
+#include <QString>
+#include <QMap>
+
 #include <glraw/glraw.h>
 
-#include <QtGui/qopengl.h>
-#include <QString>
 #include <glraw/Canvas.h>
 
 class QImage;
@@ -25,9 +28,14 @@ public:
     bool hasFragmentShader() const;
     bool setFragmentShader(const QString & sourcePath);
 
+    uint numUniforms() const;
+    bool setUniform(const QString & assignment);
+
 protected:
     Canvas m_canvas;
     QString m_fragmentShader;
+
+    QMap<QString, QString> m_uniforms;
 };
 
 } // namespace glraw

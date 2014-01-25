@@ -23,41 +23,35 @@ set(header_path "${GLRAW_SOURCE_DIR}/include/glraw")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(api_includes
+
     ${header_path}/glraw.h
-
-    ${header_path}/AssetInformation.h
-    ${header_path}/ConvertManager.h
-
     ${header_path}/AbstractConverter.h
-    ${header_path}/Converter.h
+    ${header_path}/AssetInformation.h
+    ${header_path}/Canvas.h
     ${header_path}/CompressionConverter.h
-
+    ${header_path}/Converter.h
+    ${header_path}/ConvertManager.h
+    ${header_path}/FileWriter.h
     ${header_path}/ImageEditorInterface.h
     ${header_path}/MirrorEditor.h
-    ${header_path}/ScaleEditor.h
-
-
-    ${header_path}/FileWriter.h
     ${header_path}/RawFile.h
-
-    ${header_path}/Canvas.h
+    ${header_path}/ScaleEditor.h
 )
 
 set(sources
-    ${source_path}/AssetInformation.cpp
-    ${source_path}/ConvertManager.cpp
-    
+
     ${source_path}/AbstractConverter.cpp
-    ${source_path}/Converter.cpp
-    ${source_path}/CompressionConverter.cpp
-    
-    ${source_path}/MirrorEditor.cpp
-    ${source_path}/ScaleEditor.cpp
-
-    ${source_path}/FileWriter.cpp
-    ${source_path}/RawFile.cpp
-
+    ${source_path}/AssetInformation.cpp
     ${source_path}/Canvas.cpp
+    ${source_path}/CompressionConverter.cpp
+    ${source_path}/Converter.cpp
+    ${source_path}/ConvertManager.cpp
+    ${source_path}/FileWriter.cpp
+    ${source_path}/MirrorEditor.cpp
+    ${source_path}/RawFile.cpp
+    ${source_path}/ScaleEditor.cpp
+    ${source_path}/UniformParser.cpp
+    ${source_path}/UniformParser.h
 )
 
 # Group source files

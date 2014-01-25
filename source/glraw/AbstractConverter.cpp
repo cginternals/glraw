@@ -39,4 +39,27 @@ bool AbstractConverter::setFragmentShader(const QString & sourcePath)
     return true;
 }
 
+uint AbstractConverter::numUniforms() const
+{
+    return m_uniforms.size();
+}
+
+bool AbstractConverter::setUniform(const QString & assignment)
+{
+    QStringList terms = assignment.split("=");
+
+    // there should be "=" and exactly two non-empty terms
+    if (2 != terms.size() || terms[0].isEmpty() || terms[1].isEmpty())
+        return false;
+
+    // if identifier was alread defined, skip redifinitions
+    if (m_uniforms.contains(terms[0]))
+        return false;
+
+    // insert identifier with value
+    m_uniforms.insert(terms[0], terms[1]);
+
+    return true;
+}
+
 } // namespace glraw

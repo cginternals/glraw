@@ -2,7 +2,7 @@
 #pragma once
 
 #include <QWindow>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_3_2_Core>
 
 #include <QVector>
 #include <QVector2D>
@@ -14,7 +14,7 @@
 class QOpenGLContext;
 class QSurfaceFormat;
 
-class Canvas : public QWindow
+class Canvas : public QWindow, protected QOpenGLFunctions_3_2_Core
 {
     Q_OBJECT
 
@@ -47,8 +47,6 @@ protected:
 
 protected:
     QScopedPointer<QOpenGLContext> m_context;
-    QOpenGLFunctions_3_3_Core gl;
-
     GLuint m_texture;
 
     QOpenGLVertexArrayObject m_vao;

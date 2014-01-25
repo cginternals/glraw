@@ -19,7 +19,7 @@ QByteArray CompressionConverter::convert(QImage & image, AssetInformation & info
 {
     m_canvas.loadTextureFromImage(image);
     
-    if (hasFragmentShader() && !m_canvas.process(m_fragmentShader))
+    if (hasFragmentShader() && !m_canvas.process(m_fragmentShader, m_uniforms))
         return QByteArray();
     
     QByteArray imageData = m_canvas.compressedImageFromTexture(m_compressedFormat);

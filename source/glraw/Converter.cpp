@@ -20,7 +20,7 @@ QByteArray Converter::convert(QImage & image, AssetInformation & info)
 {
     m_canvas.loadTextureFromImage(image);
     
-    if (hasFragmentShader() && !m_canvas.process(m_fragmentShader))
+    if (hasFragmentShader() && !m_canvas.process(m_fragmentShader, m_uniforms))
         return QByteArray();
     
     info.setProperty("format", QVariant(static_cast<int>(m_format)));

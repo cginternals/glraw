@@ -10,13 +10,15 @@
 #include <QOpenGLShaderProgram>
 #include <QFile>
 
+#include "UniformParser.h"
+
 namespace
 {
     
     const char * vertexShaderSource = R"(
-    #version 330
+    #version 150
 
-    layout(location = 0) in vec2 a_vertex;
+    in vec2 a_vertex;
     out vec2 v_uv;
 
     void main()
@@ -45,7 +47,7 @@ Canvas::~Canvas()
     if (textureLoaded())
     {
         m_context.makeCurrent(this);
-        gl.glDeleteTextures(1, &m_texture);
+        glDeleteTextures(1, &m_texture);
         m_context.doneCurrent();
     }
 }
@@ -61,7 +63,7 @@ void Canvas::initializeGL()
 
     m_context.makeCurrent(this);
 
-    if (!gl.initializeOpenGLFunctions())
+    if (!initializeOpenGLFunctions())
     {
         qCritical() << "Initializing OpenGL failed.";
         return;
@@ -77,13 +79,13 @@ void Canvas::loadTextureFromImage(const QImage & image)
     QImage glImage = QGLWidget::convertToGLFormat(image);
     
     if (!textureLoaded())
-        gl.glGenTextures(1, &m_texture);
+        glGenTextures(1, &m_texture);
     
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8
         , glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
     
-    gl.glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     
     m_context.doneCurrent();
 }
@@ -93,18 +95,18 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     assert(textureLoaded());
     
     m_context.makeCurrent(this);
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
     
-    gl.glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
+    glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
-    gl.glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     m_context.doneCurrent();
     
     return imageData;
@@ -115,37 +117,41 @@ QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat)
     QByteArray uncompressedImageData = imageFromTexture(GL_RGBA, GL_UNSIGNED_BYTE);
     
     m_context.makeCurrent(this);
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     GLuint compressedTexture;
-    gl.glGenTextures(1, &compressedTexture);
-    gl.glBindTexture(GL_TEXTURE_2D, compressedTexture);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat, width, height, 0
+    glGenTextures(1, &compressedTexture);
+    glBindTexture(GL_TEXTURE_2D, compressedTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat, width, height, 0
         , GL_RGBA, GL_UNSIGNED_BYTE, uncompressedImageData);
     
     GLint size;
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
     
     QByteArray compressedImageData;
     compressedImageData.resize(size);
-    gl.glGetCompressedTexImage(GL_TEXTURE_2D, 0, compressedImageData.data());
+    glGetCompressedTexImage(GL_TEXTURE_2D, 0, compressedImageData.data());
     
     m_context.doneCurrent();
     
     return compressedImageData;
 }
     
-bool Canvas::process(const QString & fragmentShader)
+bool Canvas::process(
+    const QString & fragmentShader
+,   const QMap<QString, QString> & uniforms)
 {
     assert(textureLoaded());
     
     m_context.makeCurrent(this);
     
     QOpenGLShaderProgram program;
+    program.bindAttributeLocation("a_vertex", 0);
+
     program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
     
     if (!program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader))
@@ -159,62 +165,60 @@ bool Canvas::process(const QString & fragmentShader)
         qDebug() << program.log();
         return false;
     }
-    
+
+    UniformParser::setUniforms(*this, program, uniforms);
+
     program.bind();
-    
+
+
     GLint width, height;
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     GLuint processedTexture;
-    gl.glGenTextures(1, &processedTexture);
-    gl.glBindTexture(GL_TEXTURE_2D, processedTexture);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glGenTextures(1, &processedTexture);
+    glBindTexture(GL_TEXTURE_2D, processedTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     
     GLuint fbo;
-    gl.glGenFramebuffers(1, &fbo);
-    gl.glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    gl.glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
     
     GLuint vao;
-    gl.glGenVertexArrays(1, &vao);
-    gl.glBindVertexArray(vao);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
     
-    const QVector<QVector2D> quad = {
-        QVector2D(-1, -1),
-        QVector2D(1, -1),
-        QVector2D(1, 1),
-        QVector2D(-1, 1)
-    };
-    
+    static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
+
     GLuint buffer;
-    gl.glGenBuffers(1, &buffer);
-    gl.glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    gl.glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D) * quad.size(), quad.data(), GL_STATIC_DRAW);
-    gl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
-    gl.glEnableVertexAttribArray(0);
+    glGenBuffers(1, &buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, rawv, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
+    glEnableVertexAttribArray(0);
     
     
-    gl.glViewport(0, 0, width, height);
-    gl.glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, width, height);
+    glDisable(GL_DEPTH_TEST);
     
-    gl.glActiveTexture(GL_TEXTURE0);
-    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
     
-    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
     program.setUniformValue("src", 0);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     
-    gl.glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    
-    gl.glDeleteBuffers(1, &buffer);
-    gl.glDeleteVertexArrays(1, &vao);
-    gl.glDeleteFramebuffers(1, &fbo);
-    gl.glDeleteTextures(1, &m_texture);
+    glDeleteBuffers(1, &buffer);
+    glDeleteVertexArrays(1, &vao);
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteTextures(1, &m_texture);
     
     program.release();
     

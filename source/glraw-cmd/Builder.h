@@ -52,7 +52,8 @@ protected:
     bool transformMode(const QString & name);
     bool aspectRatioMode(const QString & name);
     bool shader(const QString & name);
-    
+    bool uniform(const QString & name);
+
 protected:
     bool editorExists(const QString & key);
     void appendEditor(const QString & key, glraw::ImageEditorInterface * editor);

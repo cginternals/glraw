@@ -144,26 +144,33 @@ QList<CommandLineOption> Builder::commandLineOptions()
 
     options.append({
         QStringList() << "transform-mode",
-        "Transformation mode used for resizing        "
-        "(default: nearest)",
+        "Transformation mode used for resizing "
+        "(default: nearest).",
         "mode",
         &Builder::transformMode
     });
     
     options.append({
         QStringList() << "aspect-ratio-mode",
-        "Aspect ratio mode used for resizing          "
-        "(default: IgnoreAspectRatio)",
+        "Aspect ratio mode used for resizing "
+        "(default: IgnoreAspectRatio).",
         "mode",
         &Builder::aspectRatioMode
     });
-    
+
     options.append({
         QStringList() << "shader",
-        "Applies a fragment shader before conversion  "
-        "(see for example data/grayscale.frag)",
+        "Applies a fragment shader before conversion "
+        "(see for example data/grayscale.frag).",
         "source",
         &Builder::shader
+    });
+
+    options.append({
+        QStringList() << "uniform",
+        "Specifies uniform <identifier>=<value> pair.",
+        "assignment",
+        &Builder::uniform
     });
 
     return options;
@@ -527,6 +534,21 @@ bool Builder::shader(const QString & name)
     if (!m_converter->setFragmentShader(sourcePath))
         return false;
     
+    return true;
+}
+
+bool Builder::uniform(const QString & name)
+{
+    std::string test = name.toStdString();
+
+    if (m_converter == nullptr)
+        m_converter = new glraw::Converter();
+
+    const QString assignment = m_parser.values(name)[m_converter->numUniforms()];
+
+    if (!m_converter->setUniform(assignment))
+        return false;
+
     return true;
 }
 
