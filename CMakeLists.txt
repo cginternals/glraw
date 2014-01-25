@@ -184,3 +184,7 @@ add_subdirectory(source/glraw-viewer)
 
 # Packaging
 add_subdirectory(packages)
+
+# DOXYGEN
+
+add_subdirectory(docs)
