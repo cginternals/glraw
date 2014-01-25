@@ -145,7 +145,7 @@ bool RawFile::readFile(bool parseProperties)
 
 void RawFile::readProperties(std::ifstream & ifs, uint64_t offset)
 {
-    while (ifs.tellg() < offset && ifs.good())
+    while (ifs.tellg() < static_cast<int64_t>(offset) && ifs.good())
     {
         uint8_t type = read<uint8_t>(ifs);
 

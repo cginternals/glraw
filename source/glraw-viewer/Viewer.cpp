@@ -9,6 +9,7 @@
 #include <QSettings>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QFileInfo>
 
 #include "Application.h"
 #include "Viewer.h"
@@ -31,13 +32,14 @@ Viewer::Viewer(
 {
     m_ui->setupUi(this);
     setWindowTitle(Application::title());
-    setAcceptDrops(true);
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
 
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
+
+    setAcceptDrops(true);
 }
 
 Viewer::~Viewer()
@@ -67,20 +69,14 @@ void Viewer::dropEvent(QDropEvent * event)
 {
     if (event->mimeData()->hasFormat("text/uri-list"))
     {
-        QStringList filenames = event->mimeData()->text().split("\n");
-        QString filename = filenames.first().trimmed();
+        const QStringList fileNames = event->mimeData()->text().split("\n");
+        QString fileName(fileNames.first());
 
-        if (filename.startsWith("file://"))
-        {
-            filename = filename.mid(7);
-        }
+        fileName.remove("file:///");
+        fileName.remove("file://");
 
-        emit fileDropped(filename);
+        emit fileDropped(fileName);
 
         event->acceptProposedAction();
-    }
-    else
-    {
-        return;
     }
 }

@@ -20,6 +20,9 @@ int main(int argc, char* argv[])
 
     Canvas * canvas = new Canvas(format);
     QWidget * widget = QWidget::createWindowContainer(canvas);
+
+    widget->setAcceptDrops(true);
+
     widget->setMinimumSize(1, 1);
     widget->setAutoFillBackground(false); // Important for overdraw, not occluding the scene.
     widget->setFocusPolicy(Qt::TabFocus);

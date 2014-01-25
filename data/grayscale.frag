@@ -1,17 +1,12 @@
 #version 330
 
-uniform sampler2D image;
-uniform int width;
-uniform int height;
+uniform sampler2D src;
 
-in vec2 texCoord;
-
-layout(location = 0) out vec4 fragColor;
+in vec2 v_uv;
+layout(location = 0) out vec4 dst;
 
 void main()
 {   
-    vec4 color = texture(image, texCoord);
-
-    float gray = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-    fragColor = vec4(gray, gray, gray, color.a);
+	vec4 color = texture(src, v_uv);
+	dst = vec4(vec3(0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b), color.a);
 }

@@ -23,11 +23,12 @@ ScaleEditor::~ScaleEditor()
 
 void ScaleEditor::editImage(QImage & image, AssetInformation & info)
 {
-    QSize size = this->newSize(image.size());
-    info.setProperty("width", size.width());
-    info.setProperty("height", size.height());
+    QSize size = newSize(image.size());
 
     image = image.scaled(size, m_aspectRatioMode, m_transformationMode);
+
+    info.setProperty("width", image.width());
+    info.setProperty("height", image.height());
 }
 
 void ScaleEditor::setAspectRatioMode(Qt::AspectRatioMode mode)

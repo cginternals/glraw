@@ -13,20 +13,18 @@
 namespace
 {
     
-const char * vertexShaderSource =
-R"(#version 330
+    const char * vertexShaderSource = R"(
+    #version 330
 
-layout(location = 0) in vec2 in_vertex;
-out vec2 texCoord;
+    layout(location = 0) in vec2 a_vertex;
+    out vec2 v_uv;
 
-void main()
-{
-    gl_Position = vec4(in_vertex, 0.0, 1.0);
-    texCoord = (in_vertex+vec2(1.0, 1.0))/2.0;
-}
-
-)";
-    
+    void main()
+    {
+        v_uv = a_vertex.xy * 0.5 + 0.5;    
+        gl_Position = vec4(a_vertex * 1.0, 0.0, 1.0);
+    }
+    )";
 }
 
 namespace glraw
@@ -82,10 +80,8 @@ void Canvas::loadTextureFromImage(const QImage & image)
         gl.glGenTextures(1, &m_texture);
     
     gl.glBindTexture(GL_TEXTURE_2D, m_texture);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                    glImage.width(), glImage.height(), 0,
-                    GL_RGBA, GL_UNSIGNED_BYTE,
-                    glImage.bits());
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8
+        , glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
     
     gl.glBindTexture(GL_TEXTURE_2D, 0);
     
@@ -128,10 +124,8 @@ QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat)
     GLuint compressedTexture;
     gl.glGenTextures(1, &compressedTexture);
     gl.glBindTexture(GL_TEXTURE_2D, compressedTexture);
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat,
-                    width, height, 0,
-                    GL_RGBA, GL_UNSIGNED_BYTE,
-                    uncompressedImageData);
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat, width, height, 0
+        , GL_RGBA, GL_UNSIGNED_BYTE, uncompressedImageData);
     
     GLint size;
     gl.glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
@@ -213,9 +207,7 @@ bool Canvas::process(const QString & fragmentShader)
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-    program.setUniformValue("image", 0);
-    program.setUniformValue("width", width);
-    program.setUniformValue("height", height);
+    program.setUniformValue("src", 0);
     
     gl.glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     

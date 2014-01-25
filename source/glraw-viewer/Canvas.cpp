@@ -9,11 +9,50 @@
 
 #include <glraw/RawFile.h>
 
+
+namespace 
+{
+
+const char* vertexShaderSource = R"(
+    #version 330
+
+    layout(location = 0) in vec2 a_vertex;
+    out vec2 v_uv;
+
+    void main()
+    {
+        v_uv = a_vertex.xy * 0.5 + 0.5;    
+        gl_Position = vec4(a_vertex * 0.96, 0.0, 1.0);
+    }
+    )";
+
+const char* fragmentShaderSource =  R"(
+    #version 330
+
+    uniform sampler2D src;
+    in vec2 v_uv;
+
+    layout(location = 0) out vec4 dst;
+
+    void main()
+    {
+        vec2 moduv = mod(ivec2(gl_FragCoord.xy * 0.125), ivec2(2));
+        float pattern = mix(0.8, 1.0, (moduv.x == moduv.y));
+        vec4 color = texture(src, v_uv);
+        dst = mix(vec4(vec3(pattern), 1.0), color, color.a);
+    }
+    )";
+}
+
+
 Canvas::Canvas(
     const QSurfaceFormat & format
 ,   QScreen * screen)
 : QWindow(screen)
 , m_context(new QOpenGLContext)
+, m_vertices(QOpenGLBuffer::VertexBuffer)
+, m_texture(-1)
+, m_validTexture(false)
 {
     setSurfaceType(OpenGLSurface);    
 
@@ -23,9 +62,7 @@ Canvas::Canvas(
 
 Canvas::~Canvas()
 {  
-    gl.glDeleteTextures(1, &m_textureHandle);
-    gl.glDeleteBuffers(1, &m_vboHandle);
-    gl.glDeleteVertexArrays(1, &m_vaoHandle);
+    gl.glDeleteTextures(1, &m_texture);
     delete m_program;
 }
 
@@ -51,47 +88,6 @@ const GLint Canvas::getInteger(const GLenum penum)
     return result;
 }
 
-namespace {
-
-const char* vertexShaderSource =
-R"(#version 330
-
-layout(location = 0) in vec2 in_vertex;
-out vec2 texCoord;
-
-void main()
-{
-    gl_Position = vec4(in_vertex, 0.0, 1.0);
-    texCoord = (in_vertex+vec2(1.0, 1.0))/2.0;
-}
-
-)";
-
-const char* fragmentShaderSource =
-R"(#version 330
-
-uniform sampler2D u_texture;
-in vec2 texCoord;
-
-layout(location = 0) out vec4 fragColor;
-
-void main()
-{
-    fragColor = texture(u_texture, texCoord);
-    //fragColor = vec4(texCoord, 0.0, 1.0);
-}
-
-)";
-
-}
-
-QVector<QVector2D> Canvas::m_quad = {
-    QVector2D(-1, -1),
-    QVector2D(1, -1),
-    QVector2D(1, 1),
-    QVector2D(-1, 1)
-};
-
 void Canvas::initializeGL(const QSurfaceFormat & format)
 {
     m_context->setFormat(format);
@@ -100,36 +96,41 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     m_context->makeCurrent(this);
     gl.initializeOpenGLFunctions();
 
-    gl.glGenTextures(1, &m_textureHandle);
-    gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+
+    m_vao.create();
+    m_vao.bind();
+
+    m_vertices.create();
+    m_vertices.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+    float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
+
+    m_vertices.bind();
+    m_vertices.allocate(rawv, sizeof(float) * 8);
+
+    gl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)* 0, nullptr);
+    gl.glEnableVertexAttribArray(0);
+
+    m_vao.release();
+
+
+    gl.glGenTextures(1, &m_texture);
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    int w = 10;
-    int h = 10;
-    int* data = new int[w*h*4];
-    for (int i=0; i<w*h*4; ++i)
-    {
-        data[i] = i/(w*h*4.0)*std::numeric_limits<int>::max();
-    }
-    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_INT, data);
-    delete data;
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_FLOAT, 0);
 
     gl.glBindTexture(GL_TEXTURE_2D, 0);
 
-    gl.glGenVertexArrays(1, &m_vaoHandle);
-    gl.glBindVertexArray(m_vaoHandle);
 
-    gl.glGenBuffers(1, &m_vboHandle);
-    gl.glBindBuffer(GL_ARRAY_BUFFER, m_vboHandle);
-    gl.glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*4, m_quad.constData(), GL_STATIC_DRAW);
-    
-    gl.glEnableVertexAttribArray(0);
-    gl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
 
     m_program = new QOpenGLShaderProgram(this);
+
     auto vertexShader = new QOpenGLShader(QOpenGLShader::Vertex);
     auto fragmentShader = new QOpenGLShader(QOpenGLShader::Fragment);
+
     vertexShader->compileSourceCode(vertexShaderSource);
     fragmentShader->compileSourceCode(fragmentShaderSource);
     m_program->addShader(vertexShader);
@@ -137,12 +138,12 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     m_program->link();
 
     m_program->bind();
-    m_program->setUniformValue("texture", 0);
+    m_program->setUniformValue("src", 0);
 
     printHardwareInfo();
     verifyExtensions(); // false if no painter ...
-    
-    gl.glClearColor(0.57f, 0.57f, 0.57f, 1.0f);
+
+    gl.glClearColor(0.16f, 0.16f, 0.16f, 1.f);
 
     m_context->doneCurrent();
 }
@@ -157,47 +158,42 @@ void Canvas::resizeEvent(QResizeEvent * event)
 void Canvas::exposeEvent(QExposeEvent * event)
 {
     if (isExposed())
-    {
         paintGL();
-    }
 }
 
 void Canvas::paintGL()
 {
     m_context->makeCurrent(this);
-    
-    if (!m_textureSize.isNull())
+
+    gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if (m_validTexture && !m_textureSize.isNull())
     {
         QSize size = m_textureSize.scaled(width(), height(), Qt::KeepAspectRatio);
         QPoint position((width() - size.width()) * 0.5f, (height() - size.height()) * 0.5f);
-        
+
         size *= devicePixelRatio();
         position *= devicePixelRatio();
-        
+
         gl.glViewport(position.x(), position.y(), size.width(), size.height());
+
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        gl.glActiveTexture(GL_TEXTURE0);
+        gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+
+        m_program->bind();
+
+        m_vao.bind();
+        gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        m_vao.release();
+
+        m_program->release();
+
+        gl.glBindTexture(GL_TEXTURE_2D, 0);
+        gl.glDisable(GL_BLEND);
     }
-
-    gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    gl.glEnable(GL_BLEND);
-    gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    gl.glActiveTexture(GL_TEXTURE0);
-    gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-
-    m_program->bind();
-
-    gl.glBindVertexArray(m_vaoHandle);
-
-    gl.glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-
-    gl.glBindVertexArray(0);
-
-    m_program->release();
-
-    gl.glBindTexture(GL_TEXTURE_2D, 0);
-    
-    gl.glDisable(GL_BLEND);
 
     m_context->swapBuffers(this);
     m_context->doneCurrent();
@@ -248,14 +244,7 @@ bool Canvas::verifyExtensions() const
     return false;
 }
 
-#include <QMessageBox>
-#include <QFileInfo>
-#include <QFile>
-#include <QDebug>
-//#include <glraw/RawFile.h>
-#include <iostream>
-
-void Canvas::loadFile(const QString & filename)
+void Canvas::loadFile(const QString & fileName)
 {
     /*// filename.2560.1920.rgba.i.glraw
     QRegExp regExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.glraw$)");
@@ -272,42 +261,47 @@ void Canvas::loadFile(const QString & filename)
     QString formatString = parts[3].toLower();
     QString typeString = parts[4].toLower();*/
     
-    glraw::RawFile rawFile(filename.toStdString());
+    gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    glraw::RawFile rawFile(fileName.toStdString());
     if (!rawFile.isValid())
     {
-        qWarning() << "Could not read file.";
+        qWarning() << "Reading raw file " << fileName << " failed.";
+
+        m_validTexture = false;
+        paintGL();
         return;
     }
 
     int w = rawFile.intProperty("width");
     int h = rawFile.intProperty("height");
-    
+
     m_context->makeCurrent(this);
     
-    gl.glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    
+    gl.glBindTexture(GL_TEXTURE_2D, m_texture);
+
     if (rawFile.hasIntProperty("format"))
     {
         GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
         GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
-        
+
         gl.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
     }
     else
     {
         GLenum compressedFormat = static_cast<GLenum>(rawFile.intProperty("compressedFormat"));
         GLenum size = rawFile.intProperty("size");
-        
+
         gl.glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormat, w, h, 0, size, rawFile.data());
     }
-    
-    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     gl.glBindTexture(GL_TEXTURE_2D, 0);
-    
-    m_textureSize = QSize(w, h);
+
+    m_textureSize = QSize(w, h); 
     
     m_context->doneCurrent();
-    
+
+    qWarning() << "Reading raw file " << fileName << " succeeded.";
+
+    m_validTexture = true;
     paintGL();
 }

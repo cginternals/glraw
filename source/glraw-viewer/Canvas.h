@@ -7,6 +7,9 @@
 #include <QVector>
 #include <QVector2D>
 #include <QOpenGLShaderProgram>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+
 
 class QOpenGLContext;
 class QSurfaceFormat;
@@ -45,10 +48,13 @@ protected:
     QScopedPointer<QOpenGLContext> m_context;
     QOpenGLFunctions_3_3_Core gl;
 
-    GLuint m_textureHandle;
-    GLuint m_vaoHandle;
-    GLuint m_vboHandle;
-    static QVector<QVector2D> m_quad;
-    QOpenGLShaderProgram* m_program;
+    GLuint m_texture;
+
+    QOpenGLVertexArrayObject m_vao;
+    QOpenGLBuffer m_vertices;
+
+    QOpenGLShaderProgram * m_program;
     QSize m_textureSize;
+
+    bool m_validTexture;
 };

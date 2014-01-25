@@ -52,17 +52,24 @@ QList<CommandLineOption> Builder::commandLineOptions()
     });
     
     options.append({
-        QStringList() << "q" << "quiet",
-        "Suppresses any output",
+        QStringList() << "r" << "raw",
+        "Writes files without header.",
         QString(),
-        &Builder::quiet
+        &Builder::raw
     });
-    
+
     options.append({
         QStringList() << "n" << "no-suffixes",
         "Disables file suffixes.",
         QString(),
         &Builder::noSuffixes
+    });
+
+    options.append({
+        QStringList() << "q" << "quiet",
+        "Suppresses any output",
+        QString(),
+        &Builder::quiet
     });
 
     options.append({
@@ -86,13 +93,6 @@ QList<CommandLineOption> Builder::commandLineOptions()
         &Builder::compressedFormat
     });
     
-    options.append({
-        QStringList() << "r" << "raw",
-        "Writes files without header.",
-        QString(),
-        &Builder::raw
-    });
-
     options.append({
         QStringList() << "mv" << "mirror-vertical",
         "Mirrors the image vertically.",
@@ -174,7 +174,7 @@ void Builder::initialize()
     m_parser.setApplicationDescription("Converts Qt supported images to an OpenGL compatible raw format.");
     m_parser.addVersionOption();
 
-    m_parser.addPositionalArgument("sources", "Source files with Qt-supported image format.");
+    m_parser.addPositionalArgument("sources", "Qt-supported image file(s).");
 
     for (auto option : commandLineOptions())
     {
@@ -511,10 +511,8 @@ bool Builder::aspectRatioMode(const QString & name)
         appendEditor(editorName, new glraw::ScaleEditor());
     
     auto e = editor<glraw::ScaleEditor>(editorName);
-    
     e->setAspectRatioMode(
-        Conversions::stringToAspectRatioMode(modeString)
-    );
+        Conversions::stringToAspectRatioMode(modeString));
 
     return true;
 }
@@ -546,39 +544,46 @@ void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * ed
 void Builder::showHelp() const
 {
    qDebug() << qPrintable(m_parser.helpText()) << R"(
-Formats:          Types:                     Transformation Modes:
-  GL_RED            GL_UNSIGNED_BYTE           nearest
-  GL_BLUE           GL_BYTE                    linear
-  GL_GREEN          GL_UNSIGNED_SHORT        
-  GL_RG             GL_SHORT                 Aspect Ratio Modes:
-  GL_RGB            GL_UNSIGNED_INT            IgnoreAspectRatio
-  GL_BGR            GL_INT                     KeepAspectRatio
-  GL_RGBA           GL_FLOAT                   KeepAspectRatioByExpanding
+Formats:        Types:                  Transformation Modes:
+  GL_RED          GL_UNSIGNED_BYTE        nearest
+  GL_BLUE         GL_BYTE                 linear
+  GL_GREEN        GL_UNSIGNED_SHORT        
+  GL_RG           GL_SHORT              Aspect Ratio Modes:
+  GL_RGB          GL_UNSIGNED_INT         IgnoreAspectRatio
+  GL_BGR          GL_INT                  KeepAspectRatio
+  GL_RGBA         GL_FLOAT                KeepAspectRatioByExpanding
   GL_BGRA
 
 Compressed Formats:
   GL_COMPRESSED_RED
   GL_COMPRESSED_RG
   GL_COMPRESSED_RGB
-  GL_COMPRESSED_RGBA)";
+  GL_COMPRESSED_RGBA
+)";
 #ifdef GL_ARB_texture_compression_rgtc
     qDebug() <<
 R"(  GL_COMPRESSED_RED_RGTC1
   GL_COMPRESSED_SIGNED_RED_RGTC1
   GL_COMPRESSED_RG_RGTC2
-  GL_COMPRESSED_SIGNED_RG_RGTC2)";
+  GL_COMPRESSED_SIGNED_RG_RGTC2
+)";
 #endif
+
 #ifdef GL_ARB_texture_compression_bptc
     qDebug() <<
 R"(  GL_COMPRESSED_RGBA_BPTC_UNORM
   GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT
-  GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT)";
+  GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT
+)";
 #endif
-#ifdef GL_EXT_texture_compression_s3tc
+
+#ifndef GL_EXT_texture_compression_s3tc
     qDebug() <<
 R"(  GL_COMPRESSED_RGB_S3TC_DXT1_EXT
   GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
   GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
-  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)";
+  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
+)";
 #endif
+
 }
