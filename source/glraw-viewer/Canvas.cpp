@@ -13,8 +13,8 @@
 namespace 
 {
 
-const char* vertexShaderSource = R"(
-    #version 150
+    const char* vertexShaderSource =
+    R"(#version 150
 
     in vec2 a_vertex;
     out vec2 v_uv;
@@ -26,8 +26,8 @@ const char* vertexShaderSource = R"(
     }
     )";
 
-const char* fragmentShaderSource =  R"(
-    #version 150
+    const char* fragmentShaderSource =
+    R"(#version 150
 
     uniform sampler2D src;
     in vec2 v_uv;

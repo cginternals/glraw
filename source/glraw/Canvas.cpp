@@ -15,8 +15,8 @@
 namespace
 {
     
-    const char * vertexShaderSource = R"(
-    #version 150
+    const char * vertexShaderSource = 
+    R"(#version 150
 
     in vec2 a_vertex;
     out vec2 v_uv;
