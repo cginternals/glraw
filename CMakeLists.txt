@@ -154,7 +154,9 @@ set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
 # good resource: http://www.kdab.com/using-cmake-with-qt-5/
 
 # http://qt-project.org/forums/viewthread/30006/
-cmake_policy(SET CMP0020 NEW)
+if (MSVC)
+	cmake_policy(SET CMP0020 NEW)
+endif ()
 
 
 find_package(Qt5Core    5.1 REQUIRED)
