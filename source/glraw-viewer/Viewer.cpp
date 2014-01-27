@@ -66,9 +66,8 @@ void Viewer::dropEvent(QDropEvent * event)
     if (event->mimeData()->hasFormat("text/uri-list"))
     {
         const QStringList fileNames = event->mimeData()->text().split("\n");
-        QString fileName(fileNames.first());
+        QString fileName(fileNames.first().trimmed());
 
-        fileName.remove("file:///");
         fileName.remove("file://");
 
         emit fileDropped(fileName);

@@ -21,7 +21,7 @@ const char* vertexShaderSource = R"(
 
     void main()
     {
-        v_uv = a_vertex.xy * 0.5 + 0.5;    
+        v_uv = a_vertex.xy * 0.5 + 0.5;
         gl_Position = vec4(a_vertex * 0.96, 0.0, 1.0);
     }
     )";
@@ -103,7 +103,7 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
     m_vertices.create();
     m_vertices.setUsagePattern(QOpenGLBuffer::StaticDraw);
 
-    static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
+    static const float rawv[] = { -1.f, +1.f, +1.f, +1.f, -1.f, -1.f, +1.f, -1.f };
 
     m_vertices.bind();
     m_vertices.allocate(rawv, sizeof(float) * 8);
@@ -266,7 +266,7 @@ void Canvas::loadFile(const QString & fileName)
     QString formatString = parts[3].toLower();
     QString typeString = parts[4].toLower();*/
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glraw::RawFile rawFile(fileName.toStdString());
     if (!rawFile.isValid())

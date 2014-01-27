@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <stdio.h>
 
 #include <glraw/RawFile.h>
 
@@ -109,14 +110,13 @@ bool RawFile::hasDoubleProperty(const std::string & key) const
     return m_doubleProperties.find(key) != m_doubleProperties.end();
 }
 
-
 bool RawFile::readFile(bool parseProperties)
 {
     std::ifstream ifs(m_filePath, std::ios::in | std::ios::binary);
 
     if (!ifs)
     {
-        std::cerr << "Reading from file \"" << m_filePath << "\" failed." << std::endl;
+        perror("Error");
         return false;
     }
     
