@@ -193,7 +193,7 @@ QString FileWriter::targetFilePath(const QString & sourcePath, const AssetInform
 {
     QFileInfo fileInfo(sourcePath);
 
-    const QString fileExtension = m_headerEnabled ? ".glraw" : ".raw";
+    const QString fileExtension = m_headerEnabled ? "glraw" : "raw";
     
     if (!m_suffixesEnabled)
         return fileInfo.absolutePath() + "/" + fileInfo.baseName() + "." + fileExtension;
@@ -204,7 +204,7 @@ QString FileWriter::targetFilePath(const QString & sourcePath, const AssetInform
     else
         suffixes = suffixesForImage(info);
     
-    return fileInfo.absolutePath() + "/" + fileInfo.baseName() + suffixes + fileExtension;
+    return fileInfo.absolutePath() + "/" + fileInfo.baseName() + suffixes + "." + fileExtension;
 }
 
 QString FileWriter::suffixesForImage(const AssetInformation & info)
