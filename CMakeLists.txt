@@ -159,10 +159,10 @@ if (MSVC)
 endif ()
 
 
-find_package(Qt5Core    5.1 REQUIRED)
-find_package(Qt5Gui     5.1 REQUIRED)
-find_package(Qt5Widgets 5.1 REQUIRED) # this is important in order to get uic working 
-find_package(Qt5OpenGL  5.1 REQUIRED)
+find_package(Qt5Core    5.2 REQUIRED)
+find_package(Qt5Gui     5.2 REQUIRED)
+find_package(Qt5Widgets 5.2 REQUIRED) # this is important in order to get uic working 
+find_package(Qt5OpenGL  5.2 REQUIRED)
 
 # deploy qt binaries (glraw debug target should not be deployed)
 if(WIN32)
