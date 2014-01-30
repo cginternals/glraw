@@ -65,6 +65,8 @@ Canvas::~Canvas()
 {  
     m_gl->glDeleteTextures(1, &m_texture);
     delete m_program;
+
+    delete m_gl;
 }
 
 QSurfaceFormat Canvas::format() const

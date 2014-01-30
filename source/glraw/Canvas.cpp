@@ -51,6 +51,7 @@ Canvas::~Canvas()
         m_gl->glDeleteTextures(1, &m_texture);
         m_context.doneCurrent();
     }
+    delete m_gl;
 }
 
 void Canvas::initializeGL()

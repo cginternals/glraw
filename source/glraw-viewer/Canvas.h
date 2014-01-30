@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include <memory>
-
 #include <QWindow>
 
 #include <QVector>
@@ -62,5 +60,5 @@ protected:
 
     // using gl as a memeber instead of inheritance 
     // probably resolves an deinitialization issue on os x
-    std::unique_ptr<QOpenGLFunctions_3_2_Core> m_gl;
+    QOpenGLFunctions_3_2_Core * m_gl;
 };
