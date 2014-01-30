@@ -1,29 +1,32 @@
+
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
 
-
-template<typename T>
 class RawFile
 {
 public:
     RawFile(const std::string & filePath);
     virtual ~RawFile();
 
-    const T * data() const;
+    const char * data() const;
     const size_t size() const;
 
-    bool valid() const;
+    bool isValid() const;
     const std::string & filePath() const;
 
-	bool read();
+protected:
+    bool readFile();
+    void readRawData(std::ifstream & ifs);
 
 protected:
-	const std::string m_filePath;
-    std::vector<T> m_data;
+    const std::string m_filePath;
+    std::vector<char> m_data;
 
     bool m_valid;
+
 };
 
-#include "RawFile.hpp"
