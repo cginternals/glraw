@@ -539,13 +539,11 @@ bool Builder::shader(const QString & name)
 
 bool Builder::uniform(const QString & name)
 {
-    std::string test = name.toStdString();
-
     if (m_converter == nullptr)
         m_converter = new glraw::Converter();
 
     const QString assignment = m_parser.values(name)[m_converter->numUniforms()];
-
+    
     if (!m_converter->setUniform(assignment))
         return false;
 
