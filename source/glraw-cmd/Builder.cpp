@@ -144,7 +144,7 @@ QList<CommandLineOption> Builder::commandLineOptions()
 
     options.append({
         QStringList() << "transform-mode",
-        "Transformation mode used for resizing "
+        "Transformation mode used for resizing        "
         "(default: nearest).",
         "mode",
         &Builder::transformMode
@@ -152,7 +152,7 @@ QList<CommandLineOption> Builder::commandLineOptions()
     
     options.append({
         QStringList() << "aspect-ratio-mode",
-        "Aspect ratio mode used for resizing "
+        "Aspect ratio mode used for resizing          "
         "(default: IgnoreAspectRatio).",
         "mode",
         &Builder::aspectRatioMode
@@ -160,7 +160,7 @@ QList<CommandLineOption> Builder::commandLineOptions()
 
     options.append({
         QStringList() << "shader",
-        "Applies a fragment shader before conversion "
+        "Applies a fragment shader before conversion  "
         "(see for example data/grayscale.frag).",
         "source",
         &Builder::shader
