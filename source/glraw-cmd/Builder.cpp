@@ -144,24 +144,24 @@ QList<CommandLineOption> Builder::commandLineOptions()
 
     options.append({
         QStringList() << "transform-mode",
-        "Transformation mode used for resizing "
-        "(default: nearest).",
+        "Transformation mode used for resizing        " // spaces are required for well formated output
+        "(default: nearest).",                          // since qt auto-line-breaks after 45 characters.
         "mode",
         &Builder::transformMode
     });
     
     options.append({
         QStringList() << "aspect-ratio-mode",
-        "Aspect ratio mode used for resizing "
-        "(default: IgnoreAspectRatio).",
+        "Aspect ratio mode used for resizing          " // spaces are required for well formated output
+        "(default: IgnoreAspectRatio).",                // since qt auto-line-breaks after 45 characters.
         "mode",
         &Builder::aspectRatioMode
     });
 
     options.append({
         QStringList() << "shader",
-        "Applies a fragment shader before conversion "
-        "(see for example data/grayscale.frag).",
+        "Applies a fragment shader before conversion  " // spaces are required for well formated output
+        "(see for example data/grayscale.frag).",       // since qt auto-line-breaks after 45 characters.
         "source",
         &Builder::shader
     });
