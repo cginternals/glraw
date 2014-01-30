@@ -1,8 +1,8 @@
 
+#include "DropFix.h"
+
 #include <QEvent>
 #include <QWidget>
-
-#include "DropFix.h"
 
 DropFix::DropFix(QWidget * parent)
 : QObject(parent)

@@ -1,4 +1,6 @@
 
+#include "Viewer.h"
+
 #include <sstream>
 #include <iomanip>
 
@@ -12,7 +14,6 @@
 #include <QFileInfo>
 
 #include "Application.h"
-#include "Viewer.h"
 
 #include "ui_Viewer.h"
 

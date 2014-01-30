@@ -1,8 +1,7 @@
 
-#include <version.h>
-
 #include "Application.h"
 
+#include <version.h>
 
 Application::Application(
     int & argc
