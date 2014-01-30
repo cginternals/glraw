@@ -28,7 +28,6 @@ public:
     bool hasFragmentShader() const;
     bool setFragmentShader(const QString & sourcePath);
 
-    unsigned int numUniforms() const;
     bool setUniform(const QString & assignment);
 
 protected:

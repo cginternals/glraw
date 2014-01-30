@@ -39,11 +39,6 @@ bool AbstractConverter::setFragmentShader(const QString & sourcePath)
     return true;
 }
 
-unsigned int AbstractConverter::numUniforms() const
-{
-    return m_uniforms.size();
-}
-
 bool AbstractConverter::setUniform(const QString & assignment)
 {
     QStringList terms = assignment.split("=");

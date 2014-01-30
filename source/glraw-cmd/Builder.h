@@ -60,13 +60,18 @@ protected:
     
     template <class Editor>
     Editor * editor(const QString & key);
+
+    bool configureShader();
     
     void showHelp() const;
 
 protected:
     QCommandLineParser m_parser;
     QMap<QString, ConfigureMethod> m_configureMethods;
-    
+
+    QString m_shaderSource;
+    QStringList m_uniformList;
+
     QMap<QString, glraw::ImageEditorInterface *> m_editors;
     glraw::AbstractConverter * m_converter;
     glraw::FileWriter * m_writer;

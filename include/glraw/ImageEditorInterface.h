@@ -13,9 +13,7 @@ class AssetInformation;
 class GLRAW_API ImageEditorInterface
 {
 public:
-    virtual ~ImageEditorInterface() 
-    {
-    };
+    virtual ~ImageEditorInterface() {};
 
     virtual void editImage(QImage & image, AssetInformation & info) = 0;
 };

@@ -222,6 +222,9 @@ void Builder::process(const QCoreApplication & app)
 
     if (m_converter == nullptr)
         m_converter = new glraw::Converter();
+
+    if (!configureShader())
+        return;
     
     m_manager.setConverter(m_converter);
 
@@ -526,26 +529,15 @@ bool Builder::aspectRatioMode(const QString & name)
 
 bool Builder::shader(const QString & name)
 {
-    QString sourcePath = m_parser.value(name);
-    
-    if(m_converter == nullptr)
-        m_converter = new glraw::Converter();
-    
-    if (!m_converter->setFragmentShader(sourcePath))
-        return false;
+    m_shaderSource = m_parser.value(name);
     
     return true;
 }
 
 bool Builder::uniform(const QString & name)
 {
-    if (m_converter == nullptr)
-        m_converter = new glraw::Converter();
-
-    const QString assignment = m_parser.values(name)[m_converter->numUniforms()];
-    
-    if (!m_converter->setUniform(assignment))
-        return false;
+    if (m_uniformList.isEmpty())
+        m_uniformList = m_parser.values(name);
 
     return true;
 }
@@ -559,6 +551,24 @@ void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * ed
 {
     m_manager.appendImageEditor(editor);
     m_editors.insert(key, editor);
+}
+
+bool Builder::configureShader()
+{
+    if (m_shaderSource.isEmpty())
+        return true;
+    
+    if (!m_converter->setFragmentShader(m_shaderSource))
+        return false;
+
+    for (auto & uniform : m_uniformList)
+    {
+        qDebug() << uniform;
+        if (!m_converter->setUniform(uniform))
+            return false;
+    }
+
+    return true;
 }
 
 void Builder::showHelp() const
