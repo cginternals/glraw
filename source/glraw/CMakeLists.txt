@@ -36,6 +36,7 @@ set(api_includes
     ${header_path}/MirrorEditor.h
     ${header_path}/RawFile.h
     ${header_path}/ScaleEditor.h
+    ${header_path}/S3TCExtensions.h
 )
 
 set(sources

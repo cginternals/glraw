@@ -7,8 +7,9 @@
 #include <QFileInfo>
 
 #include <glraw/AssetInformation.h>
-
 #include <glraw/FileWriter.h>
+
+#include <glraw/S3TCExtensions.h>
 
 namespace glraw
 {
@@ -56,7 +57,7 @@ const QMap<GLint, QString> FileWriter::s_compressedFormatSuffixes = {
     , { GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB, "bptc-rgb-sf" }
     , { GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB, "bptc-rgb-uf" }
 #endif
-#ifndef GL_EXT_texture_compression_s3tc
+#ifdef GLRAW_DXT // special treatment here - see S3TCExtensions.h
     , { GL_COMPRESSED_RGB_S3TC_DXT1_EXT, "dxt1-rgb" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, "dxt1-rgba" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, "dxt3-rgba" }

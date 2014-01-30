@@ -12,7 +12,7 @@
 #include <glraw/FileWriter.h>
 #include <glraw/Converter.h>
 #include <glraw/CompressionConverter.h>
-
+#include <glraw/S3TCExtensions.h>
 
 #include "CommandLineOption.h"
 #include "Conversions.h"
@@ -597,7 +597,7 @@ R"(  GL_COMPRESSED_RGBA_BPTC_UNORM
 )";
 #endif
 
-#ifndef GL_EXT_texture_compression_s3tc
+#ifdef GLRAW_DXT // special treatment here - see S3TCExtensions.h
     qDebug() <<
 R"(  GL_COMPRESSED_RGB_S3TC_DXT1_EXT
   GL_COMPRESSED_RGBA_S3TC_DXT1_EXT

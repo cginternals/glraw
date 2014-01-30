@@ -1,11 +1,11 @@
 
+#include "Canvas.h"
+
 #include <cassert>
 
 #include <QDebug>
 #include <QApplication>
 #include <QResizeEvent>
-
-#include "Canvas.h"
 
 #include <glraw/RawFile.h>
 

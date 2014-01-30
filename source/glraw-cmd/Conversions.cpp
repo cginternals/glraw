@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QString>
 
+#include <glraw/S3TCExtensions.h>
 
 namespace
 {
@@ -55,8 +56,8 @@ QMap<QString, GLint> compressedFormats()
         , { "GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT", GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB }
         , { "GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT", GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB }
 #endif
-#ifndef GL_EXT_texture_compression_s3tc
-        , { "GL_COMPRESSED_RGB_S3TC_DXT1_EXT",  GL_COMPRESSED_RGB_S3TC_DXT1_EXT }
+#ifdef GLRAW_DXT // special treatment here - see S3TCExtensions.h
+        , { "GL_COMPRESSED_RGB_S3TC_DXT1_EXT", GL_COMPRESSED_RGB_S3TC_DXT1_EXT }
         , { "GL_COMPRESSED_RGBA_S3TC_DXT1_EXT", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT }
         , { "GL_COMPRESSED_RGBA_S3TC_DXT3_EXT", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT }
         , { "GL_COMPRESSED_RGBA_S3TC_DXT5_EXT", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT }
