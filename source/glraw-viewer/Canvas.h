@@ -59,6 +59,6 @@ protected:
     bool m_validTexture;
 
     // using gl as a memeber instead of inheritance 
-    // probably resolves an deinitialization issue on os x
+    // probably resolves an deinitialization issue.
     QOpenGLFunctions_3_2_Core * m_gl;
 };
