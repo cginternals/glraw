@@ -1,0 +1,16 @@
+require "formula"
+
+class Glraw < Formula
+  homepage "https://github.com/hpicgs/glraw"
+  url "<insert *.tar.gz link"
+  sha1 "<insert sha1>"
+  head "https://github.com/hpicgs/glraw.git"
+
+  depends_on "cmake" => :build
+  depends_on "qt5"
+
+  def install
+    system "cmake", ".", "-DCMAKE_BUILD_TYPE=Release", *std_cmake_args
+    system "make", "install"
+  end
+end
