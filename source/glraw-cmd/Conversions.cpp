@@ -67,7 +67,7 @@ QMap<QString, Qt::TransformationMode> transformationModes()
 {
     QMap<QString, Qt::TransformationMode> modes;
     modes["nearest"] = Qt::FastTransformation;
-    modes["bilinear"] = Qt::SmoothTransformation;
+    modes["linear"] = Qt::SmoothTransformation;
 
     return modes;
 }
