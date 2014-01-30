@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <memory>
 
 #include <QWindow>
 #include <QOpenGLFunctions_3_2_Core>
@@ -10,21 +11,23 @@
 class QImage;
 class QByteArray;
 
+class QOpenGLFunctions_3_2_Core;
+
 namespace glraw
 {
 
-class GLRAW_API Canvas : public QWindow, protected QOpenGLFunctions_3_2_Core
+class GLRAW_API Canvas : public QWindow
 {
 public:
     Canvas();
     virtual ~Canvas();
 
     void initializeGL();
-    
+
     void loadTextureFromImage(const QImage & image);
     QByteArray imageFromTexture(GLenum format, GLenum type);
     QByteArray compressedImageFromTexture(GLenum compressedInternalFormat);
-    
+
     bool process(
         const QString & fragmentShader
     ,   const QMap<QString, QString> & uniforms);
@@ -36,7 +39,9 @@ protected:
     static int numberOfElementsFor(GLenum format);
     
     QOpenGLContext m_context;
-    GLuint m_texture;    
+    GLuint m_texture;   
+
+    std::unique_ptr<QOpenGLFunctions_3_2_Core> m_gl;
 };
 
 } // namespace glraw

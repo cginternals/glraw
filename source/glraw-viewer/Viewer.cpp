@@ -69,6 +69,7 @@ void Viewer::dropEvent(QDropEvent * event)
         const QStringList fileNames = event->mimeData()->text().split("\n");
         QString fileName(fileNames.first().trimmed());
 
+        fileName.remove("file:///"); // window fix
         fileName.remove("file://");
 
         emit fileDropped(fileName);

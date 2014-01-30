@@ -9,12 +9,12 @@
 #include <QImage>
 #include <QOpenGLShaderProgram>
 #include <QFile>
+#include <QOpenGLFunctions_3_2_Core>
 
 #include "UniformParser.h"
 
 namespace
-{
-    
+{    
     const char * vertexShaderSource = 
     R"(#version 150
 
@@ -35,6 +35,7 @@ namespace glraw
 Canvas::Canvas()
 :   QWindow((QScreen *)nullptr)
 ,   m_texture(0)
+,   m_gl(new QOpenGLFunctions_3_2_Core)
 {
     setSurfaceType(OpenGLSurface);
     create();
@@ -47,7 +48,7 @@ Canvas::~Canvas()
     if (textureLoaded())
     {
         m_context.makeCurrent(this);
-        glDeleteTextures(1, &m_texture);
+        m_gl->glDeleteTextures(1, &m_texture);
         m_context.doneCurrent();
     }
 }
@@ -63,7 +64,7 @@ void Canvas::initializeGL()
 
     m_context.makeCurrent(this);
 
-    if (!initializeOpenGLFunctions())
+    if (!m_gl->initializeOpenGLFunctions())
     {
         qCritical() << "Initializing OpenGL failed.";
         return;
@@ -79,13 +80,13 @@ void Canvas::loadTextureFromImage(const QImage & image)
     QImage glImage = QGLWidget::convertToGLFormat(image);
     
     if (!textureLoaded())
-        glGenTextures(1, &m_texture);
+        m_gl->glGenTextures(1, &m_texture);
     
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8
+    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8
         , glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    m_gl->glBindTexture(GL_TEXTURE_2D, 0);
     
     m_context.doneCurrent();
 }
@@ -95,18 +96,18 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     assert(textureLoaded());
     
     m_context.makeCurrent(this);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
     
-    glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
+    m_gl->glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    m_gl->glBindTexture(GL_TEXTURE_2D, 0);
     m_context.doneCurrent();
     
     return imageData;
@@ -117,24 +118,24 @@ QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat)
     QByteArray uncompressedImageData = imageFromTexture(GL_RGBA, GL_UNSIGNED_BYTE);
     
     m_context.makeCurrent(this);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     GLuint compressedTexture;
-    glGenTextures(1, &compressedTexture);
-    glBindTexture(GL_TEXTURE_2D, compressedTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat, width, height, 0
+    m_gl->glGenTextures(1, &compressedTexture);
+    m_gl->glBindTexture(GL_TEXTURE_2D, compressedTexture);
+    m_gl->glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat, width, height, 0
         , GL_RGBA, GL_UNSIGNED_BYTE, uncompressedImageData);
     
     GLint size;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
     
     QByteArray compressedImageData;
     compressedImageData.resize(size);
-    glGetCompressedTexImage(GL_TEXTURE_2D, 0, compressedImageData.data());
+    m_gl->glGetCompressedTexImage(GL_TEXTURE_2D, 0, compressedImageData.data());
     
     m_context.doneCurrent();
     
@@ -166,59 +167,59 @@ bool Canvas::process(
         return false;
     }
 
-    UniformParser::setUniforms(*this, program, uniforms);
+    UniformParser::setUniforms(*m_gl, program, uniforms);
 
     program.bind();
 
 
     GLint width, height;
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     
     GLuint processedTexture;
-    glGenTextures(1, &processedTexture);
-    glBindTexture(GL_TEXTURE_2D, processedTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    m_gl->glGenTextures(1, &processedTexture);
+    m_gl->glBindTexture(GL_TEXTURE_2D, processedTexture);
+    m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     
     GLuint fbo;
-    glGenFramebuffers(1, &fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
+    m_gl->glGenFramebuffers(1, &fbo);
+    m_gl->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    m_gl->glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
     
     GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    m_gl->glGenVertexArrays(1, &vao);
+    m_gl->glBindVertexArray(vao);
     
     static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
 
     GLuint buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, rawv, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
-    glEnableVertexAttribArray(0);
+    m_gl->glGenBuffers(1, &buffer);
+    m_gl->glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 8, rawv, GL_STATIC_DRAW);
+    m_gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
+    m_gl->glEnableVertexAttribArray(0);
     
     
-    glViewport(0, 0, width, height);
-    glDisable(GL_DEPTH_TEST);
+    m_gl->glViewport(0, 0, width, height);
+    m_gl->glDisable(GL_DEPTH_TEST);
     
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    m_gl->glActiveTexture(GL_TEXTURE0);
+    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
     program.setUniformValue("src", 0);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     
-    glDeleteBuffers(1, &buffer);
-    glDeleteVertexArrays(1, &vao);
-    glDeleteFramebuffers(1, &fbo);
-    glDeleteTextures(1, &m_texture);
+    m_gl->glDeleteBuffers(1, &buffer);
+    m_gl->glDeleteVertexArrays(1, &vao);
+    m_gl->glDeleteFramebuffers(1, &fbo);
+    m_gl->glDeleteTextures(1, &m_texture);
     
     program.release();
     

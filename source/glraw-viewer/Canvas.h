@@ -1,8 +1,9 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QWindow>
-#include <QOpenGLFunctions_3_2_Core>
 
 #include <QVector>
 #include <QVector2D>
@@ -11,10 +12,12 @@
 #include <QOpenGLBuffer>
 
 
+class QOpenGLFunctions_3_2_Core;
+
 class QOpenGLContext;
 class QSurfaceFormat;
 
-class Canvas : public QWindow, protected QOpenGLFunctions_3_2_Core
+class Canvas : public QWindow
 {
     Q_OBJECT
 
@@ -56,4 +59,6 @@ protected:
     QSize m_textureSize;
 
     bool m_validTexture;
+
+    std::unique_ptr<QOpenGLFunctions_3_2_Core> m_gl;
 };
