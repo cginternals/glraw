@@ -39,7 +39,7 @@ bool AbstractConverter::setFragmentShader(const QString & sourcePath)
     return true;
 }
 
-uint AbstractConverter::numUniforms() const
+unsigned int AbstractConverter::numUniforms() const
 {
     return m_uniforms.size();
 }
@@ -56,7 +56,6 @@ bool AbstractConverter::setUniform(const QString & assignment)
     if (m_uniforms.contains(terms[0]))
         return false;
 
-    // insert identifier with value
     m_uniforms.insert(terms[0], terms[1]);
 
     return true;
