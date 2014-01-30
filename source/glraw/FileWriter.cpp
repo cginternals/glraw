@@ -42,23 +42,25 @@ const QMap<GLenum, QString> FileWriter::s_typeSuffixes = {
 };
 
 const QMap<GLint, QString> FileWriter::s_compressedFormatSuffixes = {
-      { GL_COMPRESSED_RED, "cr" }
-    , { GL_COMPRESSED_RG, "crg" }
-    , { GL_COMPRESSED_RGB, "crgb" }
-    , { GL_COMPRESSED_RGBA, "crgba" }
 #ifdef GL_ARB_texture_compression_rgtc
-    , { GL_COMPRESSED_RED_RGTC1, "rgtc1-r" }
+      { GL_COMPRESSED_RED_RGTC1, "rgtc1-r" }
     , { GL_COMPRESSED_SIGNED_RED_RGTC1, "rgtc1-sr" }
     , { GL_COMPRESSED_RG_RGTC2, "rgtc2-rg" }
     , { GL_COMPRESSED_SIGNED_RG_RGTC2, "rgtc2-srg" }
 #endif
 #ifdef GL_ARB_texture_compression_bptc
-    , { GL_COMPRESSED_RGBA_BPTC_UNORM_ARB, "bptc-rgba-unorm" }
+#ifdef GL_ARB_texture_compresseion_rgtc
+    ,
+#endif
+      { GL_COMPRESSED_RGBA_BPTC_UNORM_ARB, "bptc-rgba-unorm" }
     , { GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB, "bptc-rgb-sf" }
     , { GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB, "bptc-rgb-uf" }
 #endif
 #ifdef GLRAW_DXT // special treatment here - see S3TCExtensions.h
-    , { GL_COMPRESSED_RGB_S3TC_DXT1_EXT, "dxt1-rgb" }
+#if defined(GL_ARB_texture_compression_rgtc) || defined(GL_ARB_texture_compression_bptc)
+    ,
+#endif
+      { GL_COMPRESSED_RGB_S3TC_DXT1_EXT, "dxt1-rgb" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, "dxt1-rgba" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, "dxt3-rgba" }
     , { GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, "dxt5-rgba" }

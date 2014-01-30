@@ -584,12 +584,8 @@ Formats:        Types:                  Transformation Modes:
   GL_RGBA         GL_FLOAT                KeepAspectRatioByExpanding
   GL_BGRA
 
-Compressed Formats:
-  GL_COMPRESSED_RED
-  GL_COMPRESSED_RG
-  GL_COMPRESSED_RGB
-  GL_COMPRESSED_RGBA
-)";
+Compressed Formats:)";
+
 #ifdef GL_ARB_texture_compression_rgtc
     qDebug() <<
 R"(  GL_COMPRESSED_RED_RGTC1
