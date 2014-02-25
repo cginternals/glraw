@@ -139,7 +139,7 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
     set(CPACK_INSTALL_CMAKE_PROJECTS        "${CMAKE_BINARY_DIR};glraw;ALL;/")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY     "${package_name}")
     set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY  "${package_name}")
-    if(LINUX)
+    if(NOT WIN32 AND NOT OPTION_LOCAL_INSTALL)
         set(CPACK_INSTALL_PREFIX            "/usr/")
     endif()
 
