@@ -31,7 +31,7 @@ When converting an input image, *glraw* allows basic operations on the input-ima
  * [Supported Formats and Types](https://github.com/hpicgs/glraw/wiki/Supported-Formats-and-Types): List of all currently supported OpenGL format-type combinations.
  * [glraw File Format](https://github.com/hpicgs/glraw/wiki/GLRaw-File-Format): Description of the extended raw format (.glraw).
  * [Installation on Mac OS X](https://github.com/hpicgs/glraw/wiki/Installation): Explanation about how to install *glraw* on Mac OS X with Homebrew
- * [Doxygen Documentation](http://libglow.org/glraw): A *glraw* source documentation.
+ * [Doxygen Documentation](http://libglow.org/glraw/doxygen-master/index.html): A *glraw* source documentation.
 
 ## Development
 
