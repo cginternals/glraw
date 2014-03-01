@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glraw/glraw.h>
+
 #include <glraw/ImageEditorInterface.h>
 
 namespace glraw

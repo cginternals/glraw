@@ -1,11 +1,11 @@
 
+#include <glraw/RawFile.h>
+
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <stdio.h>
-
-#include <glraw/RawFile.h>
 
 namespace
 {

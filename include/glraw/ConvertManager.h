@@ -1,11 +1,11 @@
 
 #pragma once
 
-#include <glraw/glraw.h>
-
 #include <QString>
 #include <QScopedPointer>
 #include <QLinkedList>
+
+#include <glraw/glraw.h>
 
 namespace glraw
 {

@@ -1,4 +1,6 @@
 
+#include <glraw/FileWriter.h>
+
 #include <QDebug>
 #include <QByteArray>
 #include <QString>
@@ -7,8 +9,6 @@
 #include <QFileInfo>
 
 #include <glraw/AssetInformation.h>
-#include <glraw/FileWriter.h>
-
 #include <glraw/S3TCExtensions.h>
 
 namespace glraw

@@ -1,8 +1,9 @@
 
+#include "UniformParser.h"
+
 #include <QOpenGLShaderProgram>
 #include <QOpenGLFunctions_3_2_Core>
 
-#include "UniformParser.h"
 
 namespace glraw
 {

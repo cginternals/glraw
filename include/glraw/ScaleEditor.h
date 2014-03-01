@@ -1,10 +1,12 @@
 
 #pragma once
 
+#include <functional>
+
+#include <Qt>
+
 #include <glraw/glraw.h>
 
-#include <functional>
-#include <Qt>
 #include <glraw/ImageEditorInterface.h>
 
 class QSize;

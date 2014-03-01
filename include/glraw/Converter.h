@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include <glraw/glraw.h>
-
 #include <QtGui/qopengl.h>
 #include <QString>
+
+#include <glraw/glraw.h>
 
 #include <glraw/Canvas.h>
 #include <glraw/AbstractConverter.h>
