@@ -4,7 +4,7 @@
 
 ## Features
 
-With *glraw* you can preconvert your texture assets and load them without the need of any image library. The generated raw files can easily be read with one of the prepared Raw-File classes which you can either source-copy or integrate as C++ library into your project.
+With *glraw* you can preconvert your texture assets and load them without the need of any image library. The generated raw files can easily be read. For this, glraw also provides a minimal Raw-File reader that you can either source-copy or integrate as C++ library into your project.
 Image to OpenGL texture conversion can be done either by *glraw*s command line interface, e.g., within an existing tool-chain, or at run-time with *glraw* linked as asset library (requires linking Qt).
 
 When converting an input image, *glraw* allows basic operations on the input-image and gives you full control over format and type of your targeted asset specification:
