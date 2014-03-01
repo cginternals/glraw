@@ -7,6 +7,9 @@
 With *glraw* you can preconvert your texture assets and load them without the need of any image library. The generated raw files can easily be read. For this, glraw also provides a minimal Raw-File reader that you can either source-copy or integrate as C++ library into your project.
 Image to OpenGL texture conversion can be done either by *glraw*s command line interface, e.g., within an existing tool-chain, or at run-time with *glraw* linked as asset library (requires linking Qt).
 
+Using the command line interface to create, e.g., an uncompressed 8bit rgb-texture looks like this:
+`>glraw-cmd -f GL_RGB -t GL_UNSIGNED_BYTE image.png`
+
 When converting an input image, *glraw* allows basic operations on the input-image and gives you full control over format and type of your targeted asset specification:
 
 * Output format and type: Choose either a format and a type (e.g., `GL_RGB` and `GL_UNSIGNED_BYTE`) or one of the supported compressed formats (e.g., `GL_COMPRESSED_RGBA_S3TC_DXT3_EXT`).
