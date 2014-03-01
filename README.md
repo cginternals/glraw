@@ -2,8 +2,6 @@
 
 *glraw* is an utility that converts Qt-supported images into an OpenGL-compatible raw format. *glraw* reduces the process of loading textures at run-time to a minimum: A file-content dump into GPU memory. 
 
-Download the latest release [glraw 1.0.1](https://github.com/hpicgs/glraw/releases).
-
 ## Features
 
 With *glraw* you can preconvert your texture assets and load them without the need of any image library. The generated raw files can easily be read. For this, glraw also provides a minimal Raw-File reader that you can either source-copy or integrate as C++ library into your project.
