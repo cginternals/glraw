@@ -58,24 +58,24 @@ void ScaleEditor::setHeight(int height)
 void ScaleEditor::setWidthScale(float scale)
 {
     m_widthScaling = [scale](int width) {
-        return scale * width;
+        return static_cast<int>(scale * width);
     };
 }
 
 void ScaleEditor::setHeightScale(float scale)
 {
     m_widthScaling = [scale](int height) {
-        return scale * height;
+        return static_cast<int>(scale * height);
     };
 }
 
 void ScaleEditor::setScale(float scale)  
 {
     m_widthScaling = [scale](int width) {
-        return scale * width;
+        return static_cast<int>(scale * width);
     };
     m_heightScaling = [scale](int height) {
-        return scale * height;
+        return static_cast<int>(scale * height);
     };
 }
 
