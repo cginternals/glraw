@@ -1,4 +1,4 @@
-![glraw](https://raw.github.com/hpicgs/glraw/master/packages/glraw-logo.png)
+<!--![glraw](https://raw.github.com/hpicgs/glraw/master/packages/glraw-logo.png)-->
 
 *glraw* is an utility that converts Qt-supported images into an OpenGL-compatible raw format. *glraw* reduces the process of loading textures at run-time to a minimum: A file-content dump into GPU memory. 
 
