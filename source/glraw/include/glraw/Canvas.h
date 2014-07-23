@@ -4,7 +4,7 @@
 #include <QWindow>
 #include <QOpenGLFunctions_3_2_Core>
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 class QImage;
 class QByteArray;

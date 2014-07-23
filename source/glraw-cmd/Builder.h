@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <QStringList>
@@ -7,6 +6,7 @@
 #include <QScopedPointer>
 
 #include <glraw/ConvertManager.h>
+
 
 class QCoreApplication;
 

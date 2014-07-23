@@ -3,7 +3,7 @@
 
 #include <QVariant>
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 namespace glraw
 {

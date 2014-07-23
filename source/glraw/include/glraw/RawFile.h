@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 namespace glraw
 {

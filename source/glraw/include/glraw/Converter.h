@@ -1,10 +1,9 @@
-
 #pragma once
+
+#include <glraw/glraw_api.h>
 
 #include <QtGui/qopengl.h>
 #include <QString>
-
-#include <glraw/glraw.h>
 
 #include <glraw/Canvas.h>
 #include <glraw/AbstractConverter.h>
@@ -16,18 +15,20 @@ namespace glraw
     
 class AssetInformation;
 
-class GLRAW_API CompressionConverter : public AbstractConverter
+class GLRAW_API Converter : public AbstractConverter
 {
 public:
-    CompressionConverter();
-    virtual ~CompressionConverter();
+    Converter();
+    virtual ~Converter();
 
     virtual QByteArray convert(QImage & image, AssetInformation & info);
 
-    void setCompressedFormat(GLint compressedFormat);
+    void setFormat(GLenum format);
+    void setType(GLenum type);
 
 protected:
-    GLint m_compressedFormat;
+    GLenum m_format;
+    GLenum m_type;
 
 };
 

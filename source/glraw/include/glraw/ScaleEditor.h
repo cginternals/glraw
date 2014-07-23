@@ -5,7 +5,7 @@
 
 #include <Qt>
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 #include <glraw/ImageEditorInterface.h>
 

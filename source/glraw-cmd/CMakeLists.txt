@@ -1,12 +1,58 @@
 
-# Target
-set(target glraw-cmd)
-message(STATUS "Configuring ${target}")
 
-# Generate meta header
-configure_file(glraw-cmd-version.h.in glraw-cmd-version.h)
+set(target glraw-cmd)
+message(STATUS "App ${target}")
+
+#
+# External libraries
+#
+
+find_package(OpenGL REQUIRED)
+
+find_package(Qt5OpenGL  5.1 REQUIRED)
+find_package(Qt5Core    5.1 REQUIRED)
+find_package(Qt5Gui     5.1 REQUIRED)
+#find_package(Qt5Widgets 5.1 REQUIRED)
+
+
+#
+# Includes
+#
+
+include_directories(
+    # e.g., ${TRDP_INCLUDE_DIR}
+
+)
+
+include_directories(
+    BEFORE
+    ${CMAKE_SOURCE_DIR}/source/glraw/include
+)
+
+#
+# Libraries
+#
+
+set(libs
+    ${OPENGL_LIBRARIES}
+    glraw
+)
+
+#
+# Compiler definitions
+#
+
+if (OPTION_BUILD_STATIC)
+    add_definitions("-D${META_PROJECT_NAME_UPPER}_STATIC")
+endif()
+
+#
+# Sources
+#
 
 set(sources
+    main.cpp
+
     Application.cpp
     Application.h
     Builder.cpp
@@ -15,36 +61,21 @@ set(sources
     CommandLineOption.h
     Conversions.h
     Conversions.cpp
-    main.cpp
 )
 
-# Group source files
-set(GLRAW_SOURCE_GROUP "Source Files")
-source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
-    ${GLRAW_SOURCE_GROUP} ${sources})
+#
+# Build executable
+#
 
-# wrap ui files and group wrap headers
-list_extract(uis "\\\\.ui$" ${sources})
-qt5_wrap_ui(uihs ${uis})
+add_executable(${target} ${sources})
 
-source_group_by_path(${CMAKE_CURRENT_BINARY_DIR} "\\\\.h$" 
-    ${GLRAW_SOURCE_GROUP} ${uihs})
-
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR})
-
-
-# Build library
-add_executable(${target} ${sources} ${uihs})
-
-qt5_use_modules(${target} OpenGL Gui Widgets)
-
-target_link_libraries(${target}
-	glraw)
+target_link_libraries(${target} ${libs})
+qt5_use_modules(${target} OpenGL Core Gui)
 
 set_target_properties(${target}
     PROPERTIES
-    LINKER_LANGUAGE CXX
+    LINKER_LANGUAGE              CXX
+    FOLDER                      "${IDE_FOLDER}"
     COMPILE_DEFINITIONS_DEBUG   "${DEFAULT_COMPILE_DEFS_DEBUG}"
     COMPILE_DEFINITIONS_RELEASE "${DEFAULT_COMPILE_DEFS_RELEASE}"
     COMPILE_FLAGS               "${DEFAULT_COMPILE_FLAGS}"
@@ -52,9 +83,12 @@ set_target_properties(${target}
     LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
     DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
 
+#
 # Deployment
+#
+
 install(TARGETS ${target}
     RUNTIME DESTINATION ${INSTALL_BIN}
-#    LIBRARY DESTINATION ${INSTALL_SHARED}
-#    ARCHIVE DESTINATION ${INSTALL_LIB}
+#   LIBRARY DESTINATION ${INSTALL_SHARED}
+#   ARCHIVE DESTINATION ${INSTALL_LIB}
 )

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 class QImage;
 

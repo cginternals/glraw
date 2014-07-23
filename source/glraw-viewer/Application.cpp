@@ -1,7 +1,7 @@
 
 #include "Application.h"
 
-#include <version.h>
+#include <glraw-version.h>
 
 Application::Application(
     int & argc

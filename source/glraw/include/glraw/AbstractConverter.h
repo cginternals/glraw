@@ -6,7 +6,7 @@
 #include <QString>
 #include <QMap>
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 #include <glraw/Canvas.h>
 

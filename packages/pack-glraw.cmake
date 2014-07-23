@@ -1,21 +1,19 @@
 
-message(STATUS "Configuring pack")
-
 # CPack configuration
 
 if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
-    
+
     # Options
-    
-    if(LINUX)
-        set(OPTION_PACK_GENERATOR "ZIP;TGZ;DEB" CACHE STRING "Package targets")
-    else()
+
+    if(WIN32)
         set(OPTION_PACK_GENERATOR "ZIP;NSIS" CACHE STRING "Package targets")
+    else()
+        set(OPTION_PACK_GENERATOR "ZIP;TGZ;DEB" CACHE STRING "Package targets")
     endif()
 
-    
+
     # Initialize
-    
+
     # Reset CPack configuration
     if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
         set(CPACK_IGNORE_FILES "")
@@ -31,28 +29,28 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
     get_filename_component(CPACK_PATH ${CMAKE_COMMAND} PATH)
     set(CPACK_COMMAND "${CPACK_PATH}/cpack")
 
-    
+
     # Package project
-    
-    set(project_name "glraw")   # Name of package project
-    set(project_root "glraw")   # Name of root project that is to be installed
 
-    
+    set(project_name ${META_PROJECT_NAME})   # Name of package project
+    set(project_root ${META_PROJECT_NAME})   # Name of root project that is to be installed
+
+
     # Package information
-    
-    string(TOLOWER ${META_PROJECT_NAME} package_name)                       # Package name
-    set(package_description     "OpenGL Raw Asset Converter")               # Package description
-    set(package_vendor          "hpicgs group")                             # Package vendor
-    set(package_maintainer      "daniel.limberger@hpi.uni-potsdam.de")      # Package maintainer
 
-    
+    string(TOLOWER ${META_PROJECT_NAME} package_name)          # Package name
+    set(package_description     "${META_PROJECT_DESCRIPTION}") # Package description
+    set(package_vendor          "${META_AUTHOR_ORGANIZATION}") # Package vendor
+    set(package_maintainer      "${META_AUTHOR_MAINTAINER}")   # Package maintainer
+
+
     # Package specific options
 
-    set(CMAKE_MODULE_PATH                   ${GLRAW_SOURCE_DIR}/packages/${project_name})
+    set(CMAKE_MODULE_PATH                   ${CMAKE_SOURCE_DIR}/packages/${project_name})
 
-    
+
     # Package information
-    
+
     set(CPACK_PACKAGE_NAME                  "${package_name}")
     set(CPACK_PACKAGE_VENDOR                "${package_vendor}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${package_description}")
@@ -60,18 +58,39 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
     set(CPACK_PACKAGE_VERSION_MAJOR         "${META_VERSION_MAJOR}")
     set(CPACK_PACKAGE_VERSION_MINOR         "${META_VERSION_MINOR}")
     set(CPACK_PACKAGE_VERSION_PATCH         "${META_VERSION_PATCH}")
-    set(CPACK_RESOURCE_FILE_LICENSE         "${GLRAW_SOURCE_DIR}/LICENSE")
-    set(CPACK_RESOURCE_FILE_README          "${GLRAW_SOURCE_DIR}/README.md")
-    set(CPACK_RESOURCE_FILE_WELCOME         "${GLRAW_SOURCE_DIR}/README.md")
-    set(CPACK_PACKAGE_DESCRIPTION_FILE      "${GLRAW_SOURCE_DIR}/README.md")
+    set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/LICENSE")
+    set(CPACK_RESOURCE_FILE_README          "${CMAKE_SOURCE_DIR}/README.md")
+    set(CPACK_RESOURCE_FILE_WELCOME         "${CMAKE_SOURCE_DIR}/README.md")
+    set(CPACK_PACKAGE_DESCRIPTION_FILE      "${CMAKE_SOURCE_DIR}/README.md")
     set(CPACK_PACKAGE_ICON                  "")
     set(CPACK_PACKAGE_RELOCATABLE           OFF)
 
-    #set(CPACK_NSIS_DISPLAY_NAME             "${package_name}-${META_VERSION}")
+    # NSIS package information
 
-    
+    if(WIN32 AND CPACK_PACKAGE_ICON)
+        # NOTE: for using MUI (UN)WELCOME images we suggest to replace nsis defaults,
+        # since there is currently no way to do so without manipulating the installer template (which we won't).
+        # http://public.kitware.com/pipermail/cmake-developers/2013-January/006243.html
+
+        # SO the following only works for the installer icon, not for the welcome image.
+
+        # NSIS requires "\\" - escaped backslash to work properly. We probably won't rely on this feature, 
+        # so just replacing / with \\ manually.
+
+        #file(TO_NATIVE_PATH "${CPACK_PACKAGE_ICON}" CPACK_PACKAGE_ICON) 
+        string(REGEX REPLACE "/" "\\\\\\\\" CPACK_PACKAGE_ICON "${CPACK_PACKAGE_ICON}")
+    endif()
+
+    if(X64)
+        # http://public.kitware.com/Bug/view.php?id=9094
+        set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+    endif()
+    #set(CPACK_NSIS_DISPLAY_NAME             "${package_name}-${META_VERSION}")
+    #set(CPACK_NSIS_MUI_ICON    "${CMAKE_SOURCE_DIR}/packages/logo.ico")
+    #set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/packages/logo.ico")
+
     # Debian package information
-    
+
     set(CPACK_DEBIAN_PACKAGE_NAME           "${package_name}")
     set(CPACK_DEBIAN_PACKAGE_VERSION        "${CPACK_PACKAGE_VERSION}")
     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE   "all")
@@ -84,9 +103,9 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 #   set(CPACK_DEBIAN_PACKAGE_SUGGESTS       "")
     set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA  "")
 
-    
+
     # RPM package information
-    
+
     set(CPACK_RPM_PACKAGE_NAME                           "${package_name}")
     set(CPACK_RPM_PACKAGE_VERSION                        "${CPACK_PACKAGE_VERSION}")
     set(CPACK_RPM_PACKAGE_RELEASE                        1)
@@ -105,17 +124,11 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 #   set(CPACK_RPM_<POST/PRE>_<UN>INSTALL_SCRIPT_FILE     "")
 #   set(CPACK_RPM_PACKAGE_DEBUG                          1)
     set(CPACK_RPM_PACKAGE_RELOCATABLE                    OFF)
-    
+
 
     # Package name
-    
+
     set(CPACK_PACKAGE_FILE_NAME "${package_name}-${CPACK_PACKAGE_VERSION}")
-
-    # NOTE: for using MUI (UN)WELCOME images and isntaller icon we suggest to replace nsis defautls,
-    # since there is currently no way to do so without manipulating the installer template (which we won't).
-
-    #string(REGEX REPLACE "/" "\\\\\\\\" CPACK_PACKAGE_ICON ${CPACK_PACKAGE_ICON})
-
 
     # Optional Preliminaries (i.e., silent Visual Studio Redistributable install)
 
@@ -133,29 +146,29 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
             Delete \\\"$TEMP\\\\${MSVC_REDIST_NAME}\\\"
             ")
     endif()
-    
+
     # Install files
-    
-    set(CPACK_INSTALL_CMAKE_PROJECTS        "${CMAKE_BINARY_DIR};glraw;ALL;/")
+
+    set(CPACK_INSTALL_CMAKE_PROJECTS        "${CMAKE_BINARY_DIR};${project_root};ALL;/")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY     "${package_name}")
     set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY  "${package_name}")
-    if(NOT WIN32 AND NOT OPTION_LOCAL_INSTALL)
+    if(NOT WIN32 AND NOT OPTION_PORTABLE_INSTALL)
         set(CPACK_INSTALL_PREFIX            "/usr/")
     endif()
 
-    
-    # Set generator
-    
-    set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/CPackConfig-${project_name}.cmake")
-    set(CPACK_GENERATOR     "ZIP;TGZ;DEB;NSIS;")
 
+    # Set generator
+
+    set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/CPackConfig-${project_name}.cmake")
     set(CPACK_GENERATOR ${OPTION_PACK_GENERATOR})
 
-    
+
     # CPack
-    
+
     if(NOT WIN32)
-        set(CPACK_SET_DESTDIR ON)   # Important: Must be set to install files to absolute path (e.g., /etc) -> CPACK_[RPM_]PACKAGE_RELOCATABLE = OFF
+        # Important: Must be set to install files to absolute path (e.g., /etc)
+        # -> CPACK_[RPM_]PACKAGE_RELOCATABLE = OFF
+        set(CPACK_SET_DESTDIR ON)
     endif()
     set(CPack_CMake_INCLUDED FALSE)
     include(CPack)
@@ -165,12 +178,16 @@ endif()
 # Package target
 
 add_custom_target(
-    pack
+    pack-${project_name}
     COMMAND ${CPACK_COMMAND} --config ${CMAKE_BINARY_DIR}/CPackConfig-${project_name}.cmake
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
-set_target_properties(pack PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+set_target_properties(pack-${project_name} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 
 # Dependencies
-add_dependencies(pack glraw glraw-cmd glraw-viewer)
+
+if(MSVC)
+    add_dependencies(pack-${project_name} ALL_BUILD)
+endif()
+add_dependencies(pack pack-${project_name})

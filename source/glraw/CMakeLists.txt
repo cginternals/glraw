@@ -1,16 +1,45 @@
 
-# Target
 set(target glraw)
-message(STATUS "Configuring ${target}")
+message(STATUS "Lib ${target}")
 
-# Libraries
-set(libs
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARY}
+#
+# External libraries
+#
+
+find_package(OpenGL REQUIRED)
+
+find_package(Qt5OpenGL  5.1 REQUIRED)
+find_package(Qt5Core    5.1 REQUIRED)
+find_package(Qt5Gui     5.1 REQUIRED)
+#find_package(Qt5Widgets 5.1 REQUIRED)
+
+
+#
+# Includes
+#
+
+include_directories(
+    BEFORE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Definitions
-add_definitions("-DGLRAW_EXPORTS")
+#
+# Libraries
+#
+
+set(libs
+    ${OPENGL_LIBRARIES}
+)
+
+#
+# Compiler definitions
+#
+
+if (OPTION_BUILD_STATIC)
+    add_definitions("-D${META_PROJECT_NAME_UPPER}_STATIC")
+else()
+    add_definitions("-DGLRAW_EXPORTS")
+endif()
 
 if (OPTION_ERRORS_AS_EXCEPTION)
     add_definitions("-DGLRAW_GL_ERROR_RAISE_EXCEPTION")
@@ -18,29 +47,32 @@ else()
     add_definitions("-D_HAS_EXCEPTIONS=0")
 endif()
 
+
+#
 # Sources
-set(header_path "${GLRAW_SOURCE_DIR}/include/glraw")
-set(source_path "${CMAKE_CURRENT_SOURCE_DIR}")
+#
+
+set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
+set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(api_includes
+    ${include_path}/glraw_api.h
 
-    ${header_path}/glraw.h
-    ${header_path}/AbstractConverter.h
-    ${header_path}/AssetInformation.h
-    ${header_path}/Canvas.h
-    ${header_path}/CompressionConverter.h
-    ${header_path}/Converter.h
-    ${header_path}/ConvertManager.h
-    ${header_path}/FileWriter.h
-    ${header_path}/ImageEditorInterface.h
-    ${header_path}/MirrorEditor.h
-    ${header_path}/RawFile.h
-    ${header_path}/ScaleEditor.h
-    ${header_path}/S3TCExtensions.h
+    ${include_path}/AbstractConverter.h
+    ${include_path}/AssetInformation.h
+    ${include_path}/Canvas.h
+    ${include_path}/CompressionConverter.h
+    ${include_path}/Converter.h
+    ${include_path}/ConvertManager.h
+    ${include_path}/FileWriter.h
+    ${include_path}/ImageEditorInterface.h
+    ${include_path}/MirrorEditor.h
+    ${include_path}/RawFile.h
+    ${include_path}/ScaleEditor.h
+    ${include_path}/S3TCExtensions.h
 )
 
 set(sources
-
     ${source_path}/AbstractConverter.cpp
     ${source_path}/AssetInformation.cpp
     ${source_path}/Canvas.cpp
@@ -56,24 +88,21 @@ set(sources
 )
 
 # Group source files
-set(glraw_header_group "Header Files (API)")
-set(glraw_source_group "Source Files")
-source_group_by_path(${header_path} "\\\\.h$|\\\\.hpp$" 
-    ${glraw_header_group} ${api_includes})
+set(header_group "Header Files (API)")
+set(source_group "Source Files")
+source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$" 
+    ${header_group} ${api_includes})
 source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
-    ${glraw_source_group} ${sources})
+    ${source_group} ${sources})
 
+#
 # Build library
+#
 
-if(OPTION_BUILD_STATIC)
-    add_library(${target} ${api_includes} ${sources})
-else()
-    add_library(${target} SHARED ${api_includes} ${sources})
-endif()
+add_library(${target} ${api_includes} ${sources})
 
-target_link_libraries(${target} ${libs})
-
-qt5_use_modules(${target} OpenGL Gui Widgets)   
+target_link_libraries(${target} ${libs} ${EXTRA_LIBS})
+qt5_use_modules(${target} OpenGL Core Gui)
 
 set_target_properties(${target}
     PROPERTIES
@@ -86,9 +115,21 @@ set_target_properties(${target}
     DEBUG_POSTFIX               "d${DEBUG_POSTFIX}"
     INCLUDE_PATH                "${GLRAW_SOURCE_DIR}/include")
 
+#
 # Deployment
+#
+
+# Library
 install(TARGETS ${target}
     RUNTIME DESTINATION ${INSTALL_BIN}
     LIBRARY DESTINATION ${INSTALL_SHARED}
     ARCHIVE DESTINATION ${INSTALL_LIB}
 )
+
+# deploy qt binaries (glraw debug target should not be deployed)
+if(WIN32)
+    install_qt(${INSTALL_BIN} Core Gui Widgets OpenGL)
+endif()
+
+# Header files
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/${target} DESTINATION ${INSTALL_INCLUDE})

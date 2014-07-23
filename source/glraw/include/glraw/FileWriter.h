@@ -6,7 +6,7 @@
 #include <QMap>
 #include <QVariant>
 
-#include <glraw/glraw.h>
+#include <glraw/glraw_api.h>
 
 #include <glraw/RawFile.h>
 

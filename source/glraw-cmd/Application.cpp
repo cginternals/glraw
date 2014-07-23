@@ -2,7 +2,9 @@
 #include "Application.h"
 
 #include <QFileInfo>
-#include "glraw-cmd-version.h"
+
+#include <glraw-version.h>
+
 
 Application::Application(int & argc, char ** argv)
 :   QApplication(argc, argv)

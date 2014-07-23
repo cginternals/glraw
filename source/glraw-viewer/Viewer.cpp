@@ -15,7 +15,7 @@
 
 #include "Application.h"
 
-#include "ui_Viewer.h"
+#include <ui_Viewer.h>
 
 
 namespace 
