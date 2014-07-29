@@ -1,4 +1,6 @@
 
+#include <QShortcut>
+#include <QKeySequence>
 #include <QSurfaceFormat>
 #include <QWidget>
 
@@ -32,7 +34,11 @@ int main(int argc, char* argv[])
     widget->setMinimumSize(1, 1);
     widget->setAutoFillBackground(false); // Important for overdraw, not occluding the scene.
 
+    QShortcut * resShortcut = new QShortcut(QKeySequence("Ctrl+R"), viewer.data());
+    resShortcut->setContext(Qt::ApplicationShortcut);
+
     QObject::connect(viewer.data(), &Viewer::fileDropped, canvas, &Canvas::loadFile);
+    QObject::connect(resShortcut, &QShortcut::activated, canvas, &Canvas::toggleResolution);
 
     viewer->setCentralWidget(widget);
     viewer->show();
