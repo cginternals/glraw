@@ -29,6 +29,7 @@ public:
     virtual QSurfaceFormat format() const;
 
     void loadFile(const QString & filename);
+    void toggleResolution();
 
 protected:
     const QString getString(const GLenum penum);
@@ -57,6 +58,7 @@ protected:
     QSize m_textureSize;
 
     bool m_validTexture;
+    bool m_actualResolution;
 
     // using gl as a memeber instead of inheritance 
     // probably resolves an deinitialization issue.

@@ -22,7 +22,7 @@ namespace
     void main()
     {
         v_uv = a_vertex.xy * 0.5 + 0.5;
-        gl_Position = vec4(a_vertex * 0.96, 0.0, 1.0);
+        gl_Position = vec4(a_vertex, 0.0, 1.0);
     }
     )";
 
@@ -53,6 +53,7 @@ Canvas::Canvas(
 , m_vertices(QOpenGLBuffer::VertexBuffer)
 , m_texture(-1)
 , m_validTexture(false)
+, m_actualResolution(false)
 , m_gl(new QOpenGLFunctions_3_2_Core)
 {
     setSurfaceType(OpenGLSurface);    
@@ -177,13 +178,27 @@ void Canvas::paintGL()
 
     if (m_validTexture && !m_textureSize.isNull())
     {
-        QSize size = m_textureSize.scaled(width(), height(), Qt::KeepAspectRatio);
-        QPoint position((width() - size.width()) * 0.5f, (height() - size.height()) * 0.5f);
+        QSize imageSize;
+        QPoint position;
+        
+        if (m_actualResolution)
+        {
+            imageSize = m_textureSize.scaled(size() * 0.96, Qt::KeepAspectRatio);
+            position = QPoint((width() - imageSize.width()) * 0.5f, (height() - imageSize.height()) * 0.5f);
 
-        size *= devicePixelRatio();
-        position *= devicePixelRatio();
-
-        m_gl->glViewport(position.x(), position.y(), size.width(), size.height());
+            imageSize *= devicePixelRatio();
+            position *= devicePixelRatio();
+        }
+        else
+        {
+            imageSize = m_textureSize;
+            QSize windowSize = size() * devicePixelRatio();
+            
+            QSize positionSize = (windowSize - imageSize) / 2;
+            position = QPoint(positionSize.width(), positionSize.height());
+        }
+        
+        m_gl->glViewport(position.x(), position.y(), imageSize.width(), imageSize.height());
 
         m_gl->glEnable(GL_BLEND);
         m_gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -311,5 +326,11 @@ void Canvas::loadFile(const QString & fileName)
     qWarning() << "Reading raw file " << fileName << " succeeded.";
 
     m_validTexture = true;
+    paintGL();
+}
+
+void Canvas::toggleResolution()
+{
+    m_actualResolution = !m_actualResolution;
     paintGL();
 }
