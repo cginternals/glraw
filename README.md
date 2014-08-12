@@ -2,8 +2,6 @@
 
 # glraw
 
-nightly build status (master): ![status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw)
-
 *glraw* is an utility that converts Qt-supported images into an OpenGL-compatible raw format. *glraw* reduces the process of loading textures at run-time to a minimum: A file-content dump into GPU memory. 
 
 ## Features
@@ -37,9 +35,12 @@ When converting an input image, *glraw* allows basic operations on the input-ima
  * [Installation on Mac OS X](https://github.com/hpicgs/glraw/wiki/Installation): Explanation about how to install *glraw* on Mac OS X with Homebrew
  * [Doxygen Documentation](http://libglow.org/glraw/doxygen-master/index.html): A *glraw* source documentation.
 
-## Development
 
-### Dependencies
+## Status
+
+build status (@hourly for master): ![status](http://jenkins.hpi3d.de/buildStatus/icon?job=glbinding)
+
+## Dependencies
 
 The following dev-libraries and programs need to be provided for correct project configuration:
 
