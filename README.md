@@ -38,7 +38,7 @@ When converting an input image, *glraw* allows basic operations on the input-ima
 
 ## Status
 
-build status (@hourly for master): ![status](http://jenkins.hpi3d.de/buildStatus/icon?job=glbinding)
+build status (@hourly for master): ![status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw)
 
 ## Dependencies
 
