@@ -44,6 +44,49 @@ macro(install_qt DEST)
     foreach(target ${args})
         get_target_property(qtrelease Qt5::${target} LOCATION_RELEASE)
         install(FILES ${qtrelease} DESTINATION ${DEST})
-    endforeach()
+    endforeach() 
+
+    get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
+    get_filename_component(qtdir ${qtrelease} DIRECTORY)
+
+    install(FILES 
+        ${qtdir}/icudt52.dll
+        ${qtdir}/icuin52.dll
+        ${qtdir}/icuuc52.dll
+        DESTINATION ${DEST})
+
+endmacro()
+
+
+macro(install_qt_platforms DEST)
+
+    set(args ${ARGV})
+    list(REMOVE_AT args 0)
+
+    get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
+    get_filename_component(qtdir ${qtrelease} DIRECTORY)
+
+    foreach(target ${args})
+        install(FILES "${qtdir}/../plugins/platforms/${target}.dll" DESTINATION ${DEST}/plugins/platforms)
+    endforeach()    
+
+    install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST})
+
+endmacro()
+
+
+macro(install_qt_imageformats DEST)
+
+    set(args ${ARGV})
+    list(REMOVE_AT args 0)
+
+    get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
+    get_filename_component(qtdir ${qtrelease} DIRECTORY)
+
+    foreach(target ${args})
+        install(FILES "${qtdir}/../plugins/imageformats/${target}.dll" DESTINATION ${DEST}/plugins/imageformats)
+    endforeach()    
+
+    install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST})
 
 endmacro()

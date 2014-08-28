@@ -32,7 +32,6 @@ include_directories(
 
 set(libs
     # e.g., ${TRDP_LIBRARIES}
-    ${OPENGL_LIBRARIES}
     glraw
 )
 

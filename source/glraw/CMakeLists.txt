@@ -129,6 +129,8 @@ install(TARGETS ${target}
 # deploy qt binaries (glraw debug target should not be deployed)
 if(WIN32)
     install_qt(${INSTALL_BIN} Core Gui Widgets OpenGL)
+    install_qt_platforms(${INSTALL_BIN} qwindows)
+    install_qt_imageformats(${INSTALL_BIN} qdds qgif qicns qico qjp2 qjpeg qmng qsvg qtga qtiff qwbmp qwebp)
 endif()
 
 # Header files
