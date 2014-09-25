@@ -31,6 +31,17 @@ const QMap<GLenum, QString> FileWriter::s_formatSuffixes = {
     { GL_BGRA, "bgra" }
 };
 
+const QMap<QString, GLenum> FileWriter::s_fromFormatSuffixes = {
+    { "r", GL_RED },
+    { "g", GL_GREEN },
+    { "b", GL_BLUE },
+    { "rg", GL_RG },
+    { "rgb", GL_RGB },
+    { "bgr", GL_BGR },
+    { "rgba", GL_RGBA },
+    { "bgra", GL_BGRA }
+};
+
 const QMap<GLenum, QString> FileWriter::s_typeSuffixes = {
     { GL_UNSIGNED_BYTE, "ub" },
     { GL_BYTE, "b" },
@@ -39,6 +50,16 @@ const QMap<GLenum, QString> FileWriter::s_typeSuffixes = {
     { GL_UNSIGNED_INT, "ui" },
     { GL_INT, "i" },
     { GL_FLOAT, "f" }
+};
+
+const QMap<QString, GLenum> FileWriter::s_fromTypeSuffixes = {
+    { "ub", GL_UNSIGNED_BYTE },
+    { "b", GL_BYTE },
+    { "us", GL_UNSIGNED_SHORT },
+    { "s", GL_SHORT },
+    { "ui", GL_UNSIGNED_INT },
+    { "i", GL_INT },
+    { "f", GL_FLOAT }
 };
 
 const QMap<GLint, QString> FileWriter::s_compressedFormatSuffixes = {
@@ -230,6 +251,16 @@ QString FileWriter::suffixesForCompressedImage(const AssetInformation & info)
         .arg(info.property("width").toInt())
         .arg(info.property("height").toInt())
         .arg(s_compressedFormatSuffixes[compressedFormat]);
+}
+
+GLenum FileWriter::formatFromSuffix(const QString & suffix)
+{
+    return s_fromFormatSuffixes.value(suffix, GL_NONE);
+}
+
+GLenum FileWriter::typeFromSuffix(const QString & suffix)
+{
+    return s_fromTypeSuffixes.value(suffix, GL_NONE);
 }
 
 } // namespace glraw

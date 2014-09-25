@@ -23,6 +23,7 @@ bool DropFix::eventFilter(QObject * obj, QEvent * event)
     case QEvent::Drop:
         parent()->event(event);
         return true;
+    default:
+        return QObject::eventFilter(obj, event);
     }
-    return QObject::eventFilter(obj, event);
 }

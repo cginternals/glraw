@@ -6,9 +6,11 @@
 #include <QDebug>
 #include <QApplication>
 #include <QResizeEvent>
+#include <QFileInfo>
 #include <QOpenGLFunctions_3_2_Core>
 
 #include <glraw/RawFile.h>
+#include <glraw/FileWriter.h>
 
 
 namespace 
@@ -50,8 +52,8 @@ Canvas::Canvas(
 ,   QScreen * screen)
 : QWindow(screen)
 , m_context(new QOpenGLContext)
-, m_vertices(QOpenGLBuffer::VertexBuffer)
 , m_texture(-1)
+, m_vertices(QOpenGLBuffer::VertexBuffer)
 , m_validTexture(false)
 , m_actualResolution(false)
 , m_gl(new QOpenGLFunctions_3_2_Core)
@@ -269,63 +271,106 @@ bool Canvas::verifyExtensions() const
 
 void Canvas::loadFile(const QString & fileName)
 {
-    /*// filename.2560.1920.rgba.i.glraw
-    QRegExp regExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.glraw$)");
+    QFileInfo fileInfo(fileName);
 
-    bool match = regExp.exactMatch(filename);
-
-    if (!match)
-        return;
-
-    QStringList parts = regExp.capturedTexts();
-
-    int w = parts[1].toInt();
-    int h = parts[2].toInt();
-    QString formatString = parts[3].toLower();
-    QString typeString = parts[4].toLower();*/
-    
-    m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glraw::RawFile rawFile(fileName.toStdString());
-    if (!rawFile.isValid())
+    if (fileInfo.suffix() == "glraw")
     {
-        qWarning() << "Reading raw file " << fileName << " failed.";
+        glraw::RawFile rawFile(fileName.toStdString());
 
-        m_validTexture = false;
-        paintGL();
-        return;
+        if (rawFile.isValid())
+        {
+            int w = rawFile.intProperty("width");
+            int h = rawFile.intProperty("height");
+
+            m_context->makeCurrent(this);
+
+            m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+
+            if (rawFile.hasIntProperty("format"))
+            {
+                GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
+                GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
+
+                m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
+            }
+            else
+            {
+                GLenum compressedFormat = static_cast<GLenum>(rawFile.intProperty("compressedFormat"));
+                GLenum size = rawFile.intProperty("size");
+
+                m_gl->glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormat, w, h, 0, size, rawFile.data());
+            }
+            m_gl->glBindTexture(GL_TEXTURE_2D, 0);
+
+            m_textureSize = QSize(w, h);
+
+            m_context->doneCurrent();
+
+            qWarning() << "Reading raw file " << fileName << " succeeded.";
+
+            m_validTexture = true;
+        }
+        else
+        {
+            qWarning() << "Reading raw file " << fileName << " failed.";
+
+            m_validTexture = false;
+        }
     }
-
-    int w = rawFile.intProperty("width");
-    int h = rawFile.intProperty("height");
-
-    m_context->makeCurrent(this);
-    
-    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
-
-    if (rawFile.hasIntProperty("format"))
+    else if (fileInfo.suffix() == "raw")
     {
-        GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
-        GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
+        // filename.2560.1920.rgba.i.raw
+        QRegExp regExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.raw$)");
 
-        m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
+        if (regExp.exactMatch(fileName))
+        {
+            QStringList parts = regExp.capturedTexts();
+
+            int w = parts[1].toInt();
+            int h = parts[2].toInt();
+            QString formatString = parts[3].toLower();
+            QString typeString = parts[4].toLower();
+
+            GLenum format = glraw::FileWriter::formatFromSuffix(formatString);
+            GLenum type = glraw::FileWriter::typeFromSuffix(typeString);
+
+            QFile file(fileName);
+
+            if (file.open(QIODevice::ReadOnly))
+            {
+                QByteArray data = file.readAll();
+
+                m_context->makeCurrent(this);
+
+                m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+
+                m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, data.data());
+
+                m_context->doneCurrent();
+
+                m_textureSize = QSize(w, h);
+
+                m_validTexture = true;
+            }
+            else // TODO: handle compressed textures
+            {
+                qWarning() << "Could not open file " << fileName;
+
+                m_validTexture = false;
+            }
+        }
+        else
+        {
+            qWarning() << "Mismatching filename " << fileName;
+
+            m_validTexture = false;
+        }
     }
     else
     {
-        GLenum compressedFormat = static_cast<GLenum>(rawFile.intProperty("compressedFormat"));
-        GLenum size = rawFile.intProperty("size");
-
-        m_gl->glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormat, w, h, 0, size, rawFile.data());
+        m_validTexture = false;
     }
-    m_gl->glBindTexture(GL_TEXTURE_2D, 0);
 
-    m_textureSize = QSize(w, h); 
-
-    m_context->doneCurrent();
-
-    qWarning() << "Reading raw file " << fileName << " succeeded.";
-
-    m_validTexture = true;
     paintGL();
 }
 
