@@ -10,7 +10,7 @@
 #include <QOpenGLFunctions_3_2_Core>
 
 #include <glraw/RawFile.h>
-#include <glraw/FileWriter.h>
+#include <glraw/glraw.h>
 
 
 namespace 
@@ -319,49 +319,51 @@ void Canvas::loadFile(const QString & fileName)
     }
     else if (fileInfo.suffix() == "raw")
     {
-        // filename.2560.1920.rgba.i.raw
-        QRegExp regExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.raw$)");
+        QFile file(fileName);
 
-        if (regExp.exactMatch(fileName))
+        if (file.open(QIODevice::ReadOnly))
         {
-            QStringList parts = regExp.capturedTexts();
+            QByteArray data = file.readAll();
 
-            int w = parts[1].toInt();
-            int h = parts[2].toInt();
-            QString formatString = parts[3].toLower();
-            QString typeString = parts[4].toLower();
+            int width = 0;
+            int height = 0;
+            GLenum format = 0;
+            GLenum type = 0;
+            GLenum compressedType = 0;
 
-            GLenum format = glraw::FileWriter::formatFromSuffix(formatString);
-            GLenum type = glraw::FileWriter::typeFromSuffix(typeString);
-
-            QFile file(fileName);
-
-            if (file.open(QIODevice::ReadOnly))
+            switch (glraw::extractFromFilename(fileName, &width, &height, &format, &type, &compressedType))
             {
-                QByteArray data = file.readAll();
-
+            case glraw::TextureType::Normal:
                 m_context->makeCurrent(this);
 
                 m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
-
-                m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, data.data());
+                m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, type, data.data());
 
                 m_context->doneCurrent();
 
-                m_textureSize = QSize(w, h);
-
+                m_textureSize = QSize(width, height);
                 m_validTexture = true;
-            }
-            else // TODO: handle compressed textures
-            {
-                qWarning() << "Could not open file " << fileName;
 
-                m_validTexture = false;
+                break;
+            case glraw::TextureType::Compressed:
+                m_context->makeCurrent(this);
+
+                m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+                m_gl->glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, compressedType, data.data());
+
+                m_context->doneCurrent();
+
+                m_textureSize = QSize(width, height);
+                m_validTexture = true;
+
+                break;
+            default:
+                qWarning() << "Mismatching filename " << fileName;
             }
         }
-        else
+        else // TODO: handle compressed textures
         {
-            qWarning() << "Mismatching filename " << fileName;
+            qWarning() << "Could not open file " << fileName;
 
             m_validTexture = false;
         }

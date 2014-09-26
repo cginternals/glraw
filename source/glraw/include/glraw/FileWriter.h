@@ -35,9 +35,6 @@ public:
     bool suffixesEnabled() const;
     void setSuffixesEnabled(bool b);
 
-    static GLenum formatFromSuffix(const QString & suffix);
-    static GLenum typeFromSuffix(const QString & suffix);
-
 protected:
     void writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info);
 
@@ -51,12 +48,6 @@ protected:
     QString targetFilePath(const QString & sourcePath, const AssetInformation & info);
     QString suffixesForImage(const AssetInformation & info);
     QString suffixesForCompressedImage(const AssetInformation & info);
-
-    static const QMap<GLenum, QString> s_formatSuffixes;
-    static const QMap<QString, GLenum> s_fromFormatSuffixes;
-    static const QMap<GLenum, QString> s_typeSuffixes;
-    static const QMap<QString, GLenum> s_fromTypeSuffixes;
-    static const QMap<GLint, QString>  s_compressedFormatSuffixes;
 
 protected:
     bool m_headerEnabled;

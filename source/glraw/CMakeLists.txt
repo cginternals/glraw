@@ -70,6 +70,7 @@ set(api_includes
     ${include_path}/RawFile.h
     ${include_path}/ScaleEditor.h
     ${include_path}/S3TCExtensions.h
+    ${include_path}/glraw.h
 )
 
 set(sources
@@ -85,6 +86,7 @@ set(sources
     ${source_path}/ScaleEditor.cpp
     ${source_path}/UniformParser.cpp
     ${source_path}/UniformParser.h
+    ${source_path}/glraw.cpp
 )
 
 # Group source files
