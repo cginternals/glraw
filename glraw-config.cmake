@@ -4,12 +4,10 @@
 # GLRAW_LIBRARIES
 # GLRAW_INCLUDES
 
-
 # GLRAW_LIBRARY
 # GLRAW_LIBRARY_RELEASE
 # GLRAW_LIBRARY_DEBUG
 # GLRAW_INCLUDE_DIR
-
 
 
 # Definition of function "find" with two mandatory arguments, "LIB_NAME" and "HEADER".
