@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <cstdint>
@@ -8,19 +7,21 @@
 
 #include <glraw/glraw_api.h>
 
+
 namespace glraw
 {
 
 class GLRAW_API RawFile
 {
 public:
-    static uint16_t s_magicNumber;
+    static uint16_t s_signature;
 
-    enum PropertyType {
-        Unknown = 0,
-        IntType = 1,
-        DoubleType = 2,
-        StringType = 3
+    enum class PropertyType 
+	{
+        Unknown	= 0,
+        Int		= 1,
+        Double	= 2,
+        String	= 3
     };
 
     RawFile(const std::string & filePath, bool parseProperties = true);

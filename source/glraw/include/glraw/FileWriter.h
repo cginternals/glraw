@@ -14,6 +14,7 @@
 class QFile;
 class QDataStream;
 
+
 namespace glraw
 {
 
@@ -25,9 +26,10 @@ public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
     virtual ~FileWriter();
 
-    virtual bool write(const QByteArray & imageData,
-                       const QString & sourcePath, 
-                       AssetInformation & info);
+    virtual bool write(
+		const QByteArray & imageData,
+		const QString & sourcePath,
+		AssetInformation & info);
 
     bool headerEnabled() const;
     void setHeaderEnabled(bool b);
@@ -36,27 +38,24 @@ public:
     void setSuffixesEnabled(bool b);
 
 protected:
-    void writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info);
+    void writeHeader(
+		QDataStream & dataStream,
+		QFile & file,
+		AssetInformation & info);
 
-    static RawFile::PropertyType typeIndicator(QVariant::Type type);
-    static void writeValue(QDataStream & dataStream, const QVariant & value);
+    static RawFile::PropertyType propertyType(QVariant::Type type);
+
+	static void writeValue(QDataStream & dataStream, const QVariant & value);
     static void writeString(QDataStream & dataStream, const QString & string);
-
-    static const QMap<QVariant::Type, RawFile::PropertyType> s_typeIndicators;
 
 protected:
     QString targetFilePath(const QString & sourcePath, const AssetInformation & info);
     QString suffixesForImage(const AssetInformation & info);
     QString suffixesForCompressedImage(const AssetInformation & info);
 
-    static const QMap<GLenum, QString> s_formatSuffixes;
-    static const QMap<GLenum, QString> s_typeSuffixes;
-    static const QMap<GLint, QString>  s_compressedFormatSuffixes;
-
 protected:
     bool m_headerEnabled;
     bool m_suffixesEnabled;
-
 };
 
 } // namespace glraw

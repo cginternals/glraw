@@ -1,9 +1,9 @@
-
 #pragma once
 
 #include <QVariant>
 
 #include <glraw/glraw_api.h>
+
 
 namespace glraw
 {

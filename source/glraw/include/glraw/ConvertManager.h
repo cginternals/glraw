@@ -17,8 +17,10 @@ class AbstractConverter;
 class GLRAW_API ConvertManager
 {
 public:
-    ConvertManager(FileWriter * writer = nullptr,
-                   AbstractConverter * converter = nullptr);
+    ConvertManager(
+		FileWriter * writer = nullptr,
+		AbstractConverter * converter = nullptr);
+
     ~ConvertManager();
 
     bool process(const QString & sourcePath);

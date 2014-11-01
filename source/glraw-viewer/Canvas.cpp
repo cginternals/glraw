@@ -6,9 +6,12 @@
 #include <QDebug>
 #include <QApplication>
 #include <QResizeEvent>
+#include <QFileInfo>
+#include <QImageReader>
 #include <QOpenGLFunctions_3_2_Core>
 
 #include <glraw/RawFile.h>
+#include <glraw/FileNameSuffix.h>
 
 
 namespace 
@@ -50,9 +53,9 @@ Canvas::Canvas(
 ,   QScreen * screen)
 : QWindow(screen)
 , m_context(new QOpenGLContext)
-, m_vertices(QOpenGLBuffer::VertexBuffer)
 , m_texture(-1)
-, m_validTexture(false)
+, m_vertices(QOpenGLBuffer::VertexBuffer)
+, m_valid(false)
 , m_actualResolution(false)
 , m_gl(new QOpenGLFunctions_3_2_Core)
 {
@@ -176,7 +179,7 @@ void Canvas::paintGL()
 
     m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (m_validTexture && !m_textureSize.isNull())
+    if (m_valid && !m_textureSize.isNull())
     {
         QSize imageSize;
         QPoint position;
@@ -267,65 +270,147 @@ bool Canvas::verifyExtensions() const
     return false;
 }
 
+void Canvas::invalidate()
+{
+	m_valid = false;
+	paintGL();
+}
+
+bool Canvas::loadGLRawImage(const QString & fileName)
+{
+	const QFileInfo fi(fileName);
+	if (fi.suffix() != "glraw")
+		return false;
+
+	glraw::RawFile rawFile(fileName.toStdString());
+
+	if (!rawFile.isValid())
+		return false;
+
+	const int w = rawFile.intProperty("width");
+	const int h = rawFile.intProperty("height");
+
+
+	m_context->makeCurrent(this);
+	m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+
+	if (rawFile.hasIntProperty("format"))
+	{
+		const GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
+		const GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
+
+		m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, format, type, rawFile.data());
+	}
+	else
+	{
+		const GLenum compressedFormat = static_cast<GLenum>(rawFile.intProperty("compressedFormat"));
+		const GLenum size = rawFile.intProperty("size");
+
+		m_gl->glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormat, w, h, 0, size, rawFile.data());
+	}
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
+	m_context->doneCurrent();
+
+	m_textureSize = QSize(w, h);
+
+	return true;
+}
+
+bool Canvas::loadRawImage(const QString & fileName)
+{
+	const QFileInfo fi(fileName);
+	if (fi.suffix() != "raw")
+		return false;
+
+	QFile file(fileName);
+
+	if (!file.open(QIODevice::ReadOnly))
+		return false;
+
+	QByteArray data = file.readAll();
+
+	const glraw::FileNameSuffix suffix(fileName);
+	if (!suffix.isValid())
+	{
+		qWarning() << "Cannot read suffix of \"" << fileName << "\".";
+		return false;
+	}
+
+	m_context->makeCurrent(this);
+	m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+
+	if (suffix.compressed())
+		m_gl->glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+			suffix.width(), suffix.height(), 0, suffix.type(), data.data());
+	else
+		m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+			suffix.width(), suffix.height(), 0, suffix.format(), suffix.type(), data.data());
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
+	m_context->doneCurrent();
+
+	m_textureSize = QSize(suffix.width(), suffix.height());
+
+	return true;
+}
+
+bool Canvas::loadQImage(const QString & fileName)
+{
+	static QSet<QString> suffixes;
+
+	if (suffixes.isEmpty())
+	{
+		const QList<QByteArray> supported = QImageReader::supportedImageFormats();
+		for (const QByteArray & i : supported)
+			suffixes.insert(i.toLower());
+	}
+
+	const QFileInfo fi(fileName);
+	if (!suffixes.contains(fi.suffix()))
+	{
+		qWarning() << "Format of \"" << fileName << "\" not supported by Qt\" (based on file name suffix).";
+		return false;
+	}
+
+	QImage image(fileName);
+	if (image.isNull())
+		return false;
+
+	image = image.convertToFormat(QImage::Format::Format_ARGB32).rgbSwapped().mirrored();
+	if (image.isNull())
+		return false;
+
+	m_context->makeCurrent(this);
+	m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+		image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
+	m_context->doneCurrent();
+
+	m_textureSize = image.size();
+
+	return true;
+}
+
 void Canvas::loadFile(const QString & fileName)
 {
-    /*// filename.2560.1920.rgba.i.glraw
-    QRegExp regExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.glraw$)");
+    QFileInfo fi(fileName);
 
-    bool match = regExp.exactMatch(filename);
+	invalidate();
 
-    if (!match)
-        return;
+	if (fi.suffix() == "glraw")
+		m_valid = loadGLRawImage(fileName);
+	else if (fi.suffix() == "raw")
+		m_valid = loadRawImage(fileName);
+	else
+		m_valid = loadQImage(fileName);
 
-    QStringList parts = regExp.capturedTexts();
+	if (!m_valid)
+		qWarning() << "Loading file \"" << fileName << "\" failed.";
 
-    int w = parts[1].toInt();
-    int h = parts[2].toInt();
-    QString formatString = parts[3].toLower();
-    QString typeString = parts[4].toLower();*/
-    
-    m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glraw::RawFile rawFile(fileName.toStdString());
-    if (!rawFile.isValid())
-    {
-        qWarning() << "Reading raw file " << fileName << " failed.";
-
-        m_validTexture = false;
-        paintGL();
-        return;
-    }
-
-    int w = rawFile.intProperty("width");
-    int h = rawFile.intProperty("height");
-
-    m_context->makeCurrent(this);
-    
-    m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
-
-    if (rawFile.hasIntProperty("format"))
-    {
-        GLenum format = static_cast<GLenum>(rawFile.intProperty("format"));
-        GLenum type = static_cast<GLenum>(rawFile.intProperty("type"));
-
-        m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, format, type, rawFile.data());
-    }
-    else
-    {
-        GLenum compressedFormat = static_cast<GLenum>(rawFile.intProperty("compressedFormat"));
-        GLenum size = rawFile.intProperty("size");
-
-        m_gl->glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormat, w, h, 0, size, rawFile.data());
-    }
-    m_gl->glBindTexture(GL_TEXTURE_2D, 0);
-
-    m_textureSize = QSize(w, h); 
-
-    m_context->doneCurrent();
-
-    qWarning() << "Reading raw file " << fileName << " succeeded.";
-
-    m_validTexture = true;
     paintGL();
 }
 

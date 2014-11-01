@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <functional>
@@ -10,6 +9,7 @@
 #include <glraw/ImageEditorInterface.h>
 
 class QSize;
+
 
 namespace glraw
 {

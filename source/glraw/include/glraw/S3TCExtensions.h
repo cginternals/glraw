@@ -1,4 +1,3 @@
-
 #pragma once 
 
 #include <QtGui/qopengl.h>

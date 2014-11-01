@@ -13,6 +13,7 @@
 
 #include "UniformParser.h"
 
+
 namespace
 {    
     const char * vertexShaderSource = 

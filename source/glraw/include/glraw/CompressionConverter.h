@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <QtGui/qopengl.h>
@@ -10,6 +9,7 @@
 #include <glraw/AbstractConverter.h>
 
 class QImage;
+
 
 namespace glraw
 {

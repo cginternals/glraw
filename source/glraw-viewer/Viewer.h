@@ -27,7 +27,7 @@ protected:
     virtual void dropEvent(QDropEvent * event);
 
 signals:
-    void fileDropped(const QString & filename);
+    void fileDropped(const QString & fileName);
 
 protected:
 	const QScopedPointer<Ui_Viewer> m_ui;

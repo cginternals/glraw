@@ -28,7 +28,7 @@ public:
     // from QWindow
     virtual QSurfaceFormat format() const;
 
-    void loadFile(const QString & filename);
+    void loadFile(const QString & fileName);
     void toggleResolution();
 
 protected:
@@ -47,6 +47,12 @@ protected:
     */
     bool verifyExtensions() const;
 
+	void invalidate();
+
+	bool loadGLRawImage(const QString & fileName);
+	bool loadRawImage(const QString & fileName);
+	bool loadQImage(const QString & fileName);
+
 protected:
     QScopedPointer<QOpenGLContext> m_context;
     GLuint m_texture;
@@ -57,7 +63,7 @@ protected:
     QOpenGLShaderProgram * m_program;
     QSize m_textureSize;
 
-    bool m_validTexture;
+    bool m_valid;
     bool m_actualResolution;
 
     // using gl as a memeber instead of inheritance 

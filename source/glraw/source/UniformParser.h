@@ -7,6 +7,7 @@
 class QOpenGLFunctions_3_2_Core;
 class QOpenGLShaderProgram;
 
+
 namespace glraw
 {
 
