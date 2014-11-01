@@ -9,7 +9,8 @@
 #include <QFileInfo>
 
 #include <glraw/AssetInformation.h>
-#include <glraw/glraw.h>
+#include <glraw/FileNameSuffix.h>
+
 
 namespace glraw
 {

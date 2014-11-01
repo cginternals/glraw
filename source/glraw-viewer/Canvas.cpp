@@ -10,7 +10,7 @@
 #include <QOpenGLFunctions_3_2_Core>
 
 #include <glraw/RawFile.h>
-#include <glraw/glraw.h>
+#include <glraw/FileNameSuffix.h>
 
 
 namespace 

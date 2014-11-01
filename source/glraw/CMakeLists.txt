@@ -64,13 +64,13 @@ set(api_includes
     ${include_path}/CompressionConverter.h
     ${include_path}/Converter.h
     ${include_path}/ConvertManager.h
+    ${include_path}/FileNameSuffix.h
     ${include_path}/FileWriter.h
     ${include_path}/ImageEditorInterface.h
     ${include_path}/MirrorEditor.h
     ${include_path}/RawFile.h
     ${include_path}/ScaleEditor.h
     ${include_path}/S3TCExtensions.h
-    ${include_path}/glraw.h
 )
 
 set(sources
@@ -80,13 +80,13 @@ set(sources
     ${source_path}/CompressionConverter.cpp
     ${source_path}/Converter.cpp
     ${source_path}/ConvertManager.cpp
+    ${source_path}/FileNameSuffix.cpp
     ${source_path}/FileWriter.cpp
     ${source_path}/MirrorEditor.cpp
     ${source_path}/RawFile.cpp
     ${source_path}/ScaleEditor.cpp
     ${source_path}/UniformParser.cpp
     ${source_path}/UniformParser.h
-    ${source_path}/glraw.cpp
 )
 
 # Group source files
