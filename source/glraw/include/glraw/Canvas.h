@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <QWindow>
@@ -10,6 +9,7 @@ class QImage;
 class QByteArray;
 
 class QOpenGLFunctions_3_2_Core;
+
 
 namespace glraw
 {

@@ -3,6 +3,7 @@
 
 #include <QImage>
 
+
 namespace glraw
 {
 

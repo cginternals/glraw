@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <QtGui/qopengl.h>
@@ -11,6 +10,7 @@
 #include <glraw/Canvas.h>
 
 class QImage;
+
 
 namespace glraw
 {

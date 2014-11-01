@@ -3,6 +3,7 @@
 
 #include <assert.h>
 
+
 namespace glraw
 {
     

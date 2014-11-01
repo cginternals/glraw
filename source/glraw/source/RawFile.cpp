@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 
+
 namespace
 {
 
@@ -41,7 +42,7 @@ namespace glraw
 {
 
 
-uint16_t RawFile::s_magicNumber = 0xC6F5;
+uint16_t RawFile::s_signature = 0xC6F5;
 
 
 RawFile::RawFile(const std::string & filePath, bool parseProperties)
@@ -122,7 +123,7 @@ bool RawFile::readFile(bool parseProperties)
     
     uint64_t offset = 0;
 
-    if (read<uint16_t>(ifs) == s_magicNumber)
+    if (read<uint16_t>(ifs) == s_signature)
     {
         offset = read<uint64_t>(ifs);
 
@@ -151,19 +152,22 @@ void RawFile::readProperties(std::ifstream & ifs, uint64_t offset)
 
         std::string key = readString(ifs);
 
-        switch (type)
+		switch (static_cast<PropertyType>(type))
         {
-            case IntType:
-                m_intProperties[key] = read<int32_t>(ifs);
-                break;
-            case DoubleType:
-                m_doubleProperties[key] = read<double>(ifs);
-                break;
-            case StringType:
-                m_stringProperties[key] = readString(ifs);
-                break;
-            default:
-                return;
+		case PropertyType::Int:
+            m_intProperties[key] = read<int32_t>(ifs);
+            break;
+
+		case PropertyType::Double:
+            m_doubleProperties[key] = read<double>(ifs);
+            break;
+
+		case PropertyType::String:
+            m_stringProperties[key] = readString(ifs);
+            break;
+
+        default:
+            return;
         }
     }
 }

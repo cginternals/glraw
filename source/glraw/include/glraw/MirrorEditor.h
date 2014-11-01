@@ -4,6 +4,7 @@
 
 #include <glraw/ImageEditorInterface.h>
 
+
 namespace glraw
 {
 

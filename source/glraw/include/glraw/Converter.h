@@ -10,6 +10,7 @@
 
 class QImage;
 
+
 namespace glraw
 {
     
