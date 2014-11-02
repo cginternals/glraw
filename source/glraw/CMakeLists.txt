@@ -2,38 +2,32 @@
 set(target glraw)
 message(STATUS "Lib ${target}")
 
-#
+
 # External libraries
-#
 
 find_package(OpenGL REQUIRED)
 
-find_package(Qt5OpenGL  5.1 REQUIRED)
-find_package(Qt5Core    5.1 REQUIRED)
-find_package(Qt5Gui     5.1 REQUIRED)
-#find_package(Qt5Widgets 5.1 REQUIRED)
+find_package(Qt5OpenGL   5.1 REQUIRED)
+find_package(Qt5Core     5.1 REQUIRED)
+find_package(Qt5Gui      5.1 REQUIRED)
 
 
-#
 # Includes
-#
 
 include_directories(
     BEFORE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-#
+
 # Libraries
-#
 
 set(libs
     ${OPENGL_LIBRARIES}
 )
 
-#
+
 # Compiler definitions
-#
 
 if (OPTION_BUILD_STATIC)
     add_definitions("-D${META_PROJECT_NAME_UPPER}_STATIC")
@@ -48,9 +42,7 @@ else()
 endif()
 
 
-#
 # Sources
-#
 
 set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
@@ -97,9 +89,8 @@ source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$"
 source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
     ${source_group} ${sources})
 
-#
+
 # Build library
-#
 
 add_library(${target} ${api_includes} ${sources})
 
@@ -117,23 +108,42 @@ set_target_properties(${target}
     DEBUG_POSTFIX               "d${DEBUG_POSTFIX}"
     INCLUDE_PATH                "${GLRAW_SOURCE_DIR}/include")
 
-#
+
 # Deployment
-#
+
 
 # Library
-install(TARGETS ${target}
-    RUNTIME DESTINATION ${INSTALL_BIN}
-    LIBRARY DESTINATION ${INSTALL_SHARED}
-    ARCHIVE DESTINATION ${INSTALL_LIB}
-)
+
+if(NOT OPTION_BUILD_STATIC)
+    install(TARGETS ${target} COMPONENT runtime
+        RUNTIME DESTINATION ${INSTALL_BIN}
+        LIBRARY DESTINATION ${INSTALL_SHARED})
+else()
+    install(TARGETS ${target} COMPONENT dev
+        ARCHIVE DESTINATION ${INSTALL_LIB})
+endif()
+
 
 # deploy qt binaries (glraw debug target should not be deployed)
+
+if(WIN32 AND NOT OPTION_BUILD_STATIC) # on windows, provide self contained zip files (dev contains the run-time)
+
+    install(TARGETS ${target} COMPONENT dev
+        RUNTIME DESTINATION ${INSTALL_BIN}
+        LIBRARY DESTINATION ${INSTALL_SHARED}
+        ARCHIVE DESTINATION ${INSTALL_LIB})
+
+    install_qt(dev ${INSTALL_BIN} Core Gui OpenGL)
+    install_qt_platforms(dev ${INSTALL_BIN} qwindows)
+    install_qt_imageformats(dev ${INSTALL_BIN} qdds qgif qicns qico qjp2 qjpeg qmng qsvg qtga qtiff qwbmp qwebp)
+
+endif()
+
 if(WIN32)
-    install_qt(${INSTALL_BIN} Core Gui Widgets OpenGL)
-    install_qt_platforms(${INSTALL_BIN} qwindows)
-    install_qt_imageformats(${INSTALL_BIN} qdds qgif qicns qico qjp2 qjpeg qmng qsvg qtga qtiff qwbmp qwebp)
+    install_qt(runtime ${INSTALL_BIN} Core Gui OpenGL)
+    install_qt_platforms(runtime ${INSTALL_BIN} qwindows)
+    install_qt_imageformats(runtime ${INSTALL_BIN} qdds qgif qicns qico qjp2 qjpeg qmng qsvg qtga qtiff qwbmp qwebp)
 endif()
 
 # Header files
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/${target} DESTINATION ${INSTALL_INCLUDE})
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/${target} DESTINATION ${INSTALL_INCLUDE} COMPONENT dev)

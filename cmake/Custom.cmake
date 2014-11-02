@@ -36,14 +36,16 @@ function (list_extract OUTPUT REGEX)
 endfunction (list_extract)
 
 
-macro(install_qt DEST)
+macro(install_qt COMP DEST)
 
     set(args ${ARGV})
     list(REMOVE_AT args 0)
+    list(REMOVE_AT args 0)
+
 
     foreach(target ${args})
         get_target_property(qtrelease Qt5::${target} LOCATION_RELEASE)
-        install(FILES ${qtrelease} DESTINATION ${DEST})
+        install(FILES ${qtrelease} DESTINATION ${DEST} COMPONENT ${COMP})
     endforeach() 
 
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
@@ -53,40 +55,43 @@ macro(install_qt DEST)
         ${qtdir}/icudt52.dll
         ${qtdir}/icuin52.dll
         ${qtdir}/icuuc52.dll
-        DESTINATION ${DEST})
+        DESTINATION ${DEST}
+        COMPONENT ${COMP})
 
 endmacro()
 
 
-macro(install_qt_platforms DEST)
+macro(install_qt_platforms COMP DEST)
 
     set(args ${ARGV})
+    list(REMOVE_AT args 0)
     list(REMOVE_AT args 0)
 
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
     get_filename_component(qtdir ${qtrelease} DIRECTORY)
 
     foreach(target ${args})
-        install(FILES "${qtdir}/../plugins/platforms/${target}.dll" DESTINATION ${DEST}/plugins/platforms)
+        install(FILES "${qtdir}/../plugins/platforms/${target}.dll" DESTINATION ${DEST}/plugins/platforms COMPONENT ${COMP})
     endforeach()    
 
-    install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST})
+    install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST} COMPONENT ${COMP})
 
 endmacro()
 
 
-macro(install_qt_imageformats DEST)
+macro(install_qt_imageformats COMP DEST)
 
     set(args ${ARGV})
+    list(REMOVE_AT args 0)
     list(REMOVE_AT args 0)
 
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
     get_filename_component(qtdir ${qtrelease} DIRECTORY)
 
     foreach(target ${args})
-        install(FILES "${qtdir}/../plugins/imageformats/${target}.dll" DESTINATION ${DEST}/plugins/imageformats)
+        install(FILES "${qtdir}/../plugins/imageformats/${target}.dll" DESTINATION ${DEST}/plugins/imageformats COMPONENT ${COMP})
     endforeach()    
 
-    install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST})
+    install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST} COMPONENT ${COMP})
 
 endmacro()

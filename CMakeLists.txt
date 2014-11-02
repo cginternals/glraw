@@ -1,17 +1,14 @@
 
-# Test for minimum required CMake version 2.8.12
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
 
-#
 # Project description and (meta) information
-#
 
 set(META_PROJECT_NAME        "glraw")
 set(META_PROJECT_DESCRIPTION "Converts images to OpenGL compatible raw files")
 set(META_VERSION_MAJOR       "1")
 set(META_VERSION_MINOR       "0")
-set(META_VERSION_PATCH       "3")
+set(META_VERSION_PATCH       "4")
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
 set(META_AUTHOR_ORGANIZATION "hpicgs group")
 set(META_AUTHOR_DOMAIN       "https://github.com/hpicgs/glraw")
@@ -27,15 +24,11 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Limited Configs" FOR
 project(${META_PROJECT_NAME} C CXX)
 
 
-
-
-#
 # Configuration options
-#
 
 option(OPTION_PORTABLE_INSTALL  "Install into a self-contained directory." OFF)
 option(OPTION_BUILD_STATIC      "Build static libraries." OFF)
-option(OPTION_BUILD_TESTS       "Build tests (if gmock and gtest are found)." ON)
+#option(OPTION_BUILD_TESTS       "Build tests (if gmock and gtest are found)." ON)
 
 
 if(OPTION_BUILD_STATIC)
@@ -46,9 +39,7 @@ else()
 endif()
 
 
-#
 # CMake configuration:
-# 
 
 # Append the path to the custom cmake modules from this project to the CMAKE_MODULE_PATH.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -70,11 +61,7 @@ include(cmake/Custom.cmake)
 include(cmake/GitRevision.cmake)
 
 
-
-
-#
 # Platform and architecture setup
-#
 
 # Architecture (32/64 bit)
 set(X64 OFF)
@@ -104,11 +91,7 @@ else()
 endif()
 
 
-
-
-#
 # Deployment/installation setup
-#
 
 set(project ${META_PROJECT_NAME})
 if(WIN32)
@@ -138,39 +121,41 @@ else()
     # Adjust target paths for portable installs
     if(OPTION_PORTABLE_INSTALL)
         # Put binaries in root directory and keep data directory name
-        set(INSTALL_ROOT  ".")                    # /<INSTALL_PREFIX>
-        set(INSTALL_DATA  ".")                    # /<INSTALL_PREFIX>
-        set(INSTALL_BIN   ".")                    # /<INSTALL_PREFIX>
+        set(INSTALL_ROOT      ".") # <INSTALL_PREFIX>/
+        set(INSTALL_UTILITIES ".") # <INSTALL_PREFIX>/
+        set(INSTALL_DATA      ".") # <INSTALL_PREFIX>/
+        set(INSTALL_BIN       ".") # <INSTALL_PREFIX>/
 
         # We have to change the RPATH of binaries to achieve a usable local install.
         # [TODO] For binaries, "$ORIGIN/lib" is right, so that libraries are found in ./lib.
-        # However, I have not yet tested what happens when libraries use other libraries.
-        # In that case, they might need the rpath $ORIGIN instead ...
-        set(CMAKE_SKIP_BUILD_RPATH FALSE)            # Use automatic rpath for build
-        set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)    # Use specific rpath for INSTALL
-        set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # NO automatic rpath for INSTALL
-        set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")       # Libraries are relative to binary
+        #        However, I have not yet tested what happens when libraries use other libraries.
+        #        In that case, they might need the rpath $ORIGIN instead ...
+        set(CMAKE_SKIP_BUILD_RPATH            FALSE)         # Use automatic rpath for build
+        set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE)         # Use specific rpath for INSTALL
+        set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)         # NO automatic rpath for INSTALL
+        set(CMAKE_INSTALL_RPATH               "$ORIGIN/lib") # Libraries are relative to binary
     endif()
 endif()
 
-# Install the project meta files
-install(FILES glraw-config.cmake DESTINATION    ${INSTALL_ROOT})
-install(FILES AUTHORS DESTINATION               ${INSTALL_ROOT})
-install(FILES LICENSE DESTINATION               ${INSTALL_ROOT})
+# Global deployment
 
-# Install the data directory including the data files it contains.
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/data DESTINATION ${INSTALL_DATA})
-
-# Add a revision file containing the git-head tag for cpack and install. The function
-# "create_revision_file (...)" is defined in cmake/GitRevision.cmake
+# Add a revision file containing the git-head tag for cpack and install
 create_revision_file(${CMAKE_BINARY_DIR}/revision ${INSTALL_ROOT})
 
+# Project meta files
+install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION ${INSTALL_ROOT} COMPONENT dev)
+if(NOT OPTION_BUILD_STATIC)
+    install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION ${INSTALL_ROOT} COMPONENT runtime)
+endif()
+install(FILES AUTHORS DESTINATION               ${INSTALL_ROOT} COMPONENT dev)
+install(FILES LICENSE DESTINATION               ${INSTALL_ROOT} COMPONENT dev)
+install(FILES glraw-config.cmake DESTINATION    ${INSTALL_ROOT} COMPONENT dev)
 
 
+# Data files
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/data DESTINATION ${INSTALL_DATA} COMPONENT runtime)
 
-#
-# Include subdirectories that contain project sources, documentation files, and packaging scripts
-#
+# Include projects
 
 add_subdirectory(source)
 add_subdirectory(docs)

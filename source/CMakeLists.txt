@@ -11,9 +11,7 @@ include_directories(
 )
 
 
-#
 # Qt5
-#
 
 # good resource: http://www.kdab.com/using-cmake-with-qt-5/
 

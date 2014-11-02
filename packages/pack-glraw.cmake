@@ -5,6 +5,7 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     # Options
 
+    set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
     if(WIN32)
         set(OPTION_PACK_GENERATOR "ZIP;NSIS" CACHE STRING "Package targets")
     else()
@@ -39,7 +40,7 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     # Package information
 
-    string(TOLOWER ${META_PROJECT_NAME} package_name)          # Package name
+    string(TOLOWER ${META_PROJECT_NAME} package_name)
     set(package_description ${META_PROJECT_DESCRIPTION})
     set(package_vendor      ${META_AUTHOR_ORGANIZATION})
     set(package_maintainer  ${META_AUTHOR_MAINTAINER}) 
@@ -68,27 +69,14 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     # NSIS package information
 
-    if(WIN32 AND CPACK_PACKAGE_ICON)
-        # NOTE: for using MUI (UN)WELCOME images we suggest to replace nsis defaults,
-        # since there is currently no way to do so without manipulating the installer template (which we won't).
-        # http://public.kitware.com/pipermail/cmake-developers/2013-January/006243.html
-
-        # SO the following only works for the installer icon, not for the welcome image.
-
-        # NSIS requires "\\" - escaped backslash to work properly. We probably won't rely on this feature, 
-        # so just replacing / with \\ manually.
-
-        #file(TO_NATIVE_PATH "${CPACK_PACKAGE_ICON}" CPACK_PACKAGE_ICON) 
-        string(REGEX REPLACE "/" "\\\\\\\\" CPACK_PACKAGE_ICON "${CPACK_PACKAGE_ICON}")
-    endif()
-
     if(X64)
         # http://public.kitware.com/Bug/view.php?id=9094
         set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
-    endif()
-    #set(CPACK_NSIS_DISPLAY_NAME             "${package_name}-${META_VERSION}")
-    #set(CPACK_NSIS_MUI_ICON    "${CMAKE_SOURCE_DIR}/packages/logo.ico")
-    #set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/packages/logo.ico")
+    endif() 
+    #set(CPACK_NSIS_DISPLAY_NAME            "${package_name}-${META_VERSION}")
+    #set(CPACK_NSIS_MUI_ICON                "${CMAKE_SOURCE_DIR}/packages/logo.ico")
+    #set(CPACK_NSIS_MUI_UNIICON             "${CMAKE_SOURCE_DIR}/packages/logo.ico")
+
 
     # Debian package information
 
@@ -131,6 +119,12 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     set(CPACK_PACKAGE_FILE_NAME "${package_name}-${CPACK_PACKAGE_VERSION}")
 
+    # NOTE: for using MUI (UN)WELCOME images and installer icon we suggest to replace nsis defaults,
+    # since there is currently no way to do so without manipulating the installer template (which we won't).
+
+    #string(REGEX REPLACE "/" "\\\\\\\\" CPACK_PACKAGE_ICON ${CPACK_PACKAGE_ICON})
+
+
     # Optional Preliminaries (i.e., silent Visual Studio Redistributable install)
 
     if(NOT INSTALL_MSVC_REDIST_FILEPATH)
@@ -172,7 +166,24 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
         set(CPACK_SET_DESTDIR ON)
     endif()
     set(CPack_CMake_INCLUDED FALSE)
+
+    # this is good: http://www.cmake.org/Wiki/CMake:Component_Install_With_CPack
+
+    set(CPACK_ALL_INSTALL_TYPES Full)
+    if(NOT OPTION_BUILD_STATIC)
+        set(CPACK_COMPONENT_RUN-TIME_INSTALL_TYPES Full)
+    endif()
+    set(CPACK_COMPONENT_DEV_INSTALL_TYPES Full)
+
+    if(NOT OPTION_BUILD_STATIC)
+        set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Run-Time (Binaries)")
+        set(CPACK_COMPONENT_RUNTIME_REQUIRED ON)
+        set(CPACK_COMPONENT_DEV_DISPLAY_NAME "Headers and Libraries")
+        set(CPACK_COMPONENT_DEV_DEPENDS runtime)
+    endif()
+
     include(CPack)
+
 endif()
 
 
