@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <QDebug>
+#include <QDir>
 #include <QCoreApplication>
 #include <QCommandLineOption>
 
@@ -49,6 +50,13 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "Displays this help.",
         QString(),
         &Builder::help
+    });
+    
+    options.append({
+        QStringList() << "o" << "output",
+        "Output Path (default: same as input).",
+        "path",
+        &Builder::outputPath
     });
     
     options.append({
@@ -244,6 +252,20 @@ bool Builder::help(const QString & name)
 {
     showHelp();
     return false;
+}
+
+bool Builder::outputPath(const QString & name)
+{
+    QString path = m_parser.value(name);
+    
+    if (!QDir(path).exists())
+    {
+        qDebug() << "Path" << path << "does not exist.";
+        return false;
+    }
+    
+    m_writer->setOutputPath(path);
+    return true;
 }
 
 bool Builder::quiet(const QString & name)

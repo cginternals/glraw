@@ -36,6 +36,7 @@ protected:
     void initialize();
     
     bool help(const QString & name);
+    bool outputPath(const QString & name);
     bool quiet(const QString & name);
     bool noSuffixes(const QString & name);
     bool format(const QString & name);
