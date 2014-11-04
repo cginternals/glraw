@@ -73,6 +73,16 @@ void FileWriter::setSuffixesEnabled(bool b)
     m_suffixesEnabled = b;
 }
 
+bool FileWriter::outputPathSet() const
+{
+    return !m_outputPath.isEmpty();
+}
+
+void FileWriter::setOutputPath(const QString & path)
+{
+    m_outputPath = path;
+}
+
 void FileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info)
 {
     if (info.properties().empty())
@@ -156,8 +166,10 @@ QString FileWriter::targetFilePath(const QString & sourcePath, const AssetInform
 
     const QString fileExtension = m_headerEnabled ? "glraw" : "raw";
     
+    const QString path = outputPathSet() ? m_outputPath : fileInfo.absolutePath();
+    
     if (!m_suffixesEnabled)
-        return fileInfo.absolutePath() + "/" + fileInfo.baseName() + "." + fileExtension;
+        return path + "/" + fileInfo.baseName() + "." + fileExtension;
     
     QString suffixes;
     if (info.propertyExists("compressedFormat"))
@@ -165,7 +177,7 @@ QString FileWriter::targetFilePath(const QString & sourcePath, const AssetInform
     else
         suffixes = suffixesForImage(info);
     
-    return fileInfo.absolutePath() + "/" + fileInfo.baseName() + suffixes + "." + fileExtension;
+    return path + "/" + fileInfo.baseName() + suffixes + "." + fileExtension;
 }
 
 QString FileWriter::suffixesForImage(const AssetInformation & info)

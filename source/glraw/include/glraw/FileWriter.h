@@ -4,6 +4,7 @@
 
 #include <QtGui/qopengl.h>
 #include <QMap>
+#include <QString>
 #include <QVariant>
 
 #include <glraw/glraw_api.h>
@@ -36,6 +37,9 @@ public:
 
     bool suffixesEnabled() const;
     void setSuffixesEnabled(bool b);
+    
+    bool outputPathSet() const;
+    void setOutputPath(const QString & path);
 
 protected:
     void writeHeader(
@@ -56,6 +60,7 @@ protected:
 protected:
     bool m_headerEnabled;
     bool m_suffixesEnabled;
+    QString m_outputPath;
 };
 
 } // namespace glraw
