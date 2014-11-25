@@ -1,10 +1,9 @@
 
-# Define function "source_group_by_path with three mandatory arguments (PARENT_PATH, REGEX, GROUP, ...)
-# to group source files in folders (e.g. for MSVC solutions).
-#
-# Example:
-# source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src" "\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.ui$|\\\\.qrc$" "Source Files" ${sources})
-function (source_group_by_path PARENT_PATH REGEX GROUP)
+# Group source files in folders (e.g. for MSVC solutions)
+# Example: source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src" 
+#   "\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.ui$|\\\\.qrc$" "Source Files" ${sources})
+
+function(source_group_by_path PARENT_PATH REGEX GROUP)
 
     foreach (FILENAME ${ARGN})
         
@@ -18,14 +17,12 @@ function (source_group_by_path PARENT_PATH REGEX GROUP)
 
     endforeach()
 
-endfunction (source_group_by_path)
+endfunction()
 
 
+# Extract entries matching a given regex from a list
 
-
-# Function that extract entries matching a given regex from a list. ${OUTPUT} will store
-# the list of matching filenames.
-function (list_extract OUTPUT REGEX)
+function(list_extract OUTPUT REGEX)
 
     foreach(FILENAME ${ARGN})
         if(${FILENAME} MATCHES "${REGEX}")
@@ -33,19 +30,18 @@ function (list_extract OUTPUT REGEX)
         endif()
     endforeach()
 
-endfunction (list_extract)
+endfunction()
 
 
-macro(install_qt COMP DEST)
+function(install_qt COMP DEST)
 
-    set(args ${ARGV})
-    list(REMOVE_AT args 0)
-    list(REMOVE_AT args 0)
+    if(WIN32)
 
-
-    foreach(target ${args})
+    foreach(target ${ARGN})
         get_target_property(qtrelease Qt5::${target} LOCATION_RELEASE)
-        install(FILES ${qtrelease} DESTINATION ${DEST} COMPONENT ${COMP})
+        install(FILES ${qtrelease} DESTINATION ${DEST} CONFIGURATIONS Release COMPONENT ${COMP})
+        get_target_property(qtdebug Qt5::${target} LOCATION_DEBUG)
+        install(FILES ${qtdebug} DESTINATION ${DEST}  CONFIGURATIONS Debug COMPONENT ${COMP})
     endforeach() 
 
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
@@ -58,40 +54,56 @@ macro(install_qt COMP DEST)
         DESTINATION ${DEST}
         COMPONENT ${COMP})
 
-endmacro()
+    endif()
+
+endfunction()
 
 
-macro(install_qt_platforms COMP DEST)
+function(install_qt_platforms COMP DEST)
 
-    set(args ${ARGV})
-    list(REMOVE_AT args 0)
-    list(REMOVE_AT args 0)
+    if(WIN32)
 
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
-    get_filename_component(qtdir ${qtrelease} DIRECTORY)
+    get_filename_component(qtrelease_dir ${qtrelease} DIRECTORY)
 
-    foreach(target ${args})
-        install(FILES "${qtdir}/../plugins/platforms/${target}.dll" DESTINATION ${DEST}/plugins/platforms COMPONENT ${COMP})
+    # eventhoug it is the same directory, this script should not rely on it
+    get_target_property(qtdebug Qt5::Core LOCATION_DEBUG)
+    get_filename_component(qtdebug_dir ${qtdebug} DIRECTORY)
+
+    foreach(target ${ARGN})
+        install(FILES "${qtrelease_dir}/../plugins/platforms/${target}.dll" DESTINATION ${DEST}/plugins/platforms 
+            CONFIGURATIONS Release COMPONENT ${COMP})
+        install(FILES "${qtdebug_dir}/../plugins/platforms/${target}d.dll" DESTINATION ${DEST}/plugins/platforms 
+            CONFIGURATIONS Debug COMPONENT ${COMP})
     endforeach()    
 
     install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST} COMPONENT ${COMP})
 
-endmacro()
+    endif()
+
+endfunction()
 
 
-macro(install_qt_imageformats COMP DEST)
+function(install_qt_imageformats COMP DEST)
 
-    set(args ${ARGV})
-    list(REMOVE_AT args 0)
-    list(REMOVE_AT args 0)
+    if(WIN32)
 
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
-    get_filename_component(qtdir ${qtrelease} DIRECTORY)
+    get_filename_component(qtrelease_dir ${qtrelease} DIRECTORY)
 
-    foreach(target ${args})
-        install(FILES "${qtdir}/../plugins/imageformats/${target}.dll" DESTINATION ${DEST}/plugins/imageformats COMPONENT ${COMP})
-    endforeach()    
+    # eventhoug it is the same directory, this script should not rely on it
+    get_target_property(qtdebug Qt5::Core LOCATION_DEBUG)
+    get_filename_component(qtdebug_dir ${qtdebug} DIRECTORY)
+
+    foreach(target ${ARGN})
+        install(FILES "${qtrelease_dir}/../plugins/imageformats/${target}.dll" DESTINATION ${DEST}/plugins/imageformats 
+            CONFIGURATIONS Release COMPONENT ${COMP})
+        install(FILES "${qtdebug_dir}/../plugins/imageformats/${target}d.dll" DESTINATION ${DEST}/plugins/imageformats 
+            CONFIGURATIONS Debug COMPONENT ${COMP})
+    endforeach()
 
     install(FILES ${CMAKE_SOURCE_DIR}/packages/qt.conf DESTINATION ${DEST} COMPONENT ${COMP})
 
-endmacro()
+    endif()
+
+endfunction()

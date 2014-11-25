@@ -9,9 +9,11 @@
 # GLRAW_LIBRARY_DEBUG
 # GLRAW_INCLUDE_DIR
 
+# GLRAW_BINARIES (win32 only)
+# GLRAW_BINARY_RELEASE (win32 only)
+# GLRAW_BINARY_DEBUG (win32 only)
 
-# Definition of function "find" with two mandatory arguments, "LIB_NAME" and "HEADER".
-function (find LIB_NAME HEADER)
+macro (find LIB_NAME HEADER)
 
     set(HINT_PATHS ${ARGN})
 
@@ -71,17 +73,8 @@ function (find LIB_NAME HEADER)
 #    message("${LIB_NAME_UPPER}_LIBRARY_DEBUG   = ${${LIB_NAME_UPPER}_LIBRARY_DEBUG}")
 #    message("${LIB_NAME_UPPER}_LIBRARY         = ${${LIB_NAME_UPPER}_LIBRARY}")
 
-endfunction(find)
+endmacro()
 
-
-
-
-
-
-
-
-# load standard CMake arguments (c.f. http://stackoverflow.com/questions/7005782/cmake-include-findpackagehandlestandardargs-cmake)
-include(FindPackageHandleStandardArgs)
 
 if(CMAKE_CURRENT_LIST_FILE)
     get_filename_component(GLRAW_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
@@ -110,13 +103,44 @@ set(LIB_PATHS
 )
 
 
-# Find libraries
 find(glraw glraw/glraw_api.h ${LIB_PATHS})
 
+if (GLRAW_LIBRARY AND WIN32)
+    set(GLRAW_BINARIES "")
+
+    find_file(GLRAW_BINARY_RELEASE
+        NAMES glraw.dll
+        PATHS
+        ${GLRAW_DIR}/bin
+        ${GLRAW_DIR}/build/Release
+        ${GLRAW_DIR}/build-release
+        DOC "The glraw binary")
+
+    find_file(GLRAW_BINARY_DEBUG
+        NAMES glrawd.dll
+        PATHS
+        ${GLRAW_DIR}/bin
+        ${GLRAW_DIR}/build/Debug
+        ${GLRAW_DIR}/build-debug
+        DOC "The glraw debug binary")
+
+    if(NOT GLRAW_BINARY_RELEASE STREQUAL "GLRAW_BINARY_RELEASE-NOTFOUND")
+        list(APPEND GLRAW_BINARIES ${GLRAW_BINARY_RELEASE})
+    endif()
+
+    if(NOT GLRAW_BINARY_DEBUG STREQUAL "GLRAW_BINARY_DEBUG-NOTFOUND")
+        list(APPEND GLRAW_BINARIES ${GLRAW_BINARY_DEBUG})
+    endif()
+
+    # DEBUG
+    # message("${LIB_NAME_UPPER}_BINARIES         = ${${LIB_NAME_UPPER}_BINARIES}")
+
+endif()
 
 # DEBUG
 #message("GLRAW_INCLUDES  = ${GLRAW_INCLUDES}")
 #message("GLRAW_LIBRARIES = ${GLRAW_LIBRARIES}")
 
+include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GLRAW DEFAULT_MSG GLRAW_LIBRARIES GLRAW_INCLUDES)
 mark_as_advanced(GLRAW_FOUND)
