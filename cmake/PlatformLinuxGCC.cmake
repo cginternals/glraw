@@ -49,9 +49,8 @@ set(LINUX_COMPILE_FLAGS
     # -Wshadow      # -> e.g. when a parameter is named like a member, too many warnings, disabled for now
 )
 
-
 set(DEFAULT_COMPILE_FLAGS
-    ${WIN32_COMPILE_FLAGS}
+    ${LINUX_COMPILE_FLAGS}
     $<$<CONFIG:Debug>:   
     >
     $<$<CONFIG:Release>: 
@@ -59,8 +58,6 @@ set(DEFAULT_COMPILE_FLAGS
 )
 
 set(LINUX_LINKER_FLAGS "-pthread")
-
-set(DEFAULT_COMPILE_FLAGS ${LINUX_COMPILE_FLAGS})
 
 set(DEFAULT_LINKER_FLAGS_RELEASE ${LINUX_LINKER_FLAGS})
 set(DEFAULT_LINKER_FLAGS_DEBUG ${LINUX_LINKER_FLAGS})
