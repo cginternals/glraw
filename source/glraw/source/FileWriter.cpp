@@ -25,8 +25,7 @@ FileWriter::~FileWriter()
 {
 }
 
-bool FileWriter::write(const QByteArray & imageData,
-    const QString & sourcePath, AssetInformation & info)
+bool FileWriter::write(QByteArray && imageData, const QString & sourcePath, AssetInformation && info)
 {
     QString target = targetFilePath(sourcePath, info);
     QFile file(target);

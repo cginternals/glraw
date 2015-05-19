@@ -2,6 +2,7 @@
 #include <glraw/ConvertManager.h>
 
 #include <cassert>
+#include <utility>
 
 #include <QDebug>
 #include <QFile>
@@ -39,6 +40,7 @@ bool ConvertManager::process(const QString & sourcePath)
         return false;
     }
     
+	//TODO input from memory & filesystem + virtual
     QImage image(sourcePath);
     if (image.isNull())
     {
@@ -50,17 +52,17 @@ bool ConvertManager::process(const QString & sourcePath)
     info.setProperty("width", image.width());
     info.setProperty("height", image.height());
 
+	//TODO hardwarebeschleunigung
     for (auto editor : m_editors)
         editor->editImage(image, info);
 
+	//TODO multi + gl context nur einmal.
     QByteArray imageData = m_converter->convert(image, info);
 
     if (imageData.isEmpty())
         return false;
     
-    m_writer->write(imageData, sourcePath, info);
-
-    return true;
+	return m_writer->write( std::move( imageData ), sourcePath, std::move( info ) );
 }
 
 void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
