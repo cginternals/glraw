@@ -47,38 +47,13 @@ endif()
 set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
-set(api_includes
-    ${include_path}/glraw_api.h
-
-    ${include_path}/AbstractConverter.h
-    ${include_path}/AssetInformation.h
-    ${include_path}/Canvas.h
-    ${include_path}/CompressionConverter.h
-    ${include_path}/Converter.h
-    ${include_path}/ConvertManager.h
-    ${include_path}/FileNameSuffix.h
-    ${include_path}/FileWriter.h
-    ${include_path}/ImageEditorInterface.h
-    ${include_path}/MirrorEditor.h
-    ${include_path}/RawFile.h
-    ${include_path}/ScaleEditor.h
-    ${include_path}/S3TCExtensions.h
+file( GLOB api_includes
+    ${include_path}/*.h*
 )
 
-set(sources
-    ${source_path}/AbstractConverter.cpp
-    ${source_path}/AssetInformation.cpp
-    ${source_path}/Canvas.cpp
-    ${source_path}/CompressionConverter.cpp
-    ${source_path}/Converter.cpp
-    ${source_path}/ConvertManager.cpp
-    ${source_path}/FileNameSuffix.cpp
-    ${source_path}/FileWriter.cpp
-    ${source_path}/MirrorEditor.cpp
-    ${source_path}/RawFile.cpp
-    ${source_path}/ScaleEditor.cpp
-    ${source_path}/UniformParser.cpp
-    ${source_path}/UniformParser.h
+file( GLOB sources
+    ${source_path}/*.cpp
+    ${source_path}/*.h*
 )
 
 # Group source files
