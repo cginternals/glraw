@@ -34,6 +34,7 @@ bool ConvertManager::process(const QString & sourcePath)
     assert(!m_converter.isNull());
     assert(!m_writer.isNull());
     
+	//TODO fix loading error for "source".
     if (!QFile::exists(sourcePath))
     {
         qDebug() << "Input file does not exist.";
