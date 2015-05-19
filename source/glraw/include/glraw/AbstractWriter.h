@@ -2,8 +2,8 @@
 
 #include <glraw/glraw_api.h>
 
-#include <QString>
-
+class QString;
+class QByteArray;
 
 namespace glraw
 {
