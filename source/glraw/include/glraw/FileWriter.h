@@ -7,11 +7,11 @@
 #include <QString>
 #include <QVariant>
 
-#include <glraw/glraw_api.h>
+//#include <glraw/glraw_api.h>
 
 #include <glraw/RawFile.h>
 
-#include "AbstractWriter.h"
+#include <glraw/AbstractWriter.h>
 
 class QFile;
 class QDataStream;

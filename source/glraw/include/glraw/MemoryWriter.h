@@ -1,6 +1,9 @@
 #pragma once
 
-#include "AbstractWriter.h"
+#include <glraw/AbstractWriter.h>
+#include <glraw/AssetInformation.h>
+
+#include <QString>
 
 namespace glraw
 {
@@ -14,12 +17,12 @@ public:
     virtual bool write(
 		QByteArray && imageData,
 		const QString & sourcePath,
-		AssetInformation && info) = 0;
+		AssetInformation && info);
 
 private:
 
 	QByteArray mImageData;
-	AssetInformation mInto;
+	AssetInformation mInfo;
 };
 
 } // namespace glraw

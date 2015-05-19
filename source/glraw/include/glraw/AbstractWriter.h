@@ -1,7 +1,8 @@
 #pragma once
 
-class QByteArray;
-class QString;
+#include <glraw/glraw_api.h>
+
+#include <QString>
 
 
 namespace glraw
