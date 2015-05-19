@@ -33,6 +33,4 @@ set(IDE_FOLDER "")
 add_subdirectory(glraw)
 
 # Applications
-set(IDE_FOLDER "Applications")
 add_subdirectory(glraw-cmd)
-add_subdirectory(glraw-viewer)
