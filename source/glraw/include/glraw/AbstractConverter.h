@@ -23,7 +23,7 @@ public:
     AbstractConverter();
     virtual ~AbstractConverter();
 
-    virtual QByteArray convert(QImage & image, AssetInformation & info) = 0;
+	virtual QByteArray convert(Canvas & image, AssetInformation & info) = 0;
 
     bool hasFragmentShader() const;
     bool setFragmentShader(const QString & sourcePath);
@@ -31,7 +31,6 @@ public:
     bool setUniform(const QString & assignment);
 
 protected:
-    Canvas m_canvas;
     QString m_fragmentShader;
 
     QMap<QString, QString> m_uniforms;

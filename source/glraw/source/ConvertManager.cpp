@@ -18,7 +18,7 @@
 namespace glraw
 {
 
-ConvertManager::ConvertManager(FileWriter * writer, AbstractConverter * converter)
+ConvertManager::ConvertManager(AbstractWriter * writer, AbstractConverter * converter)
 :   m_writer(writer)
 ,   m_converter(converter)
 {
@@ -58,7 +58,8 @@ bool ConvertManager::process(const QString & sourcePath)
         editor->editImage(image, info);
 
 	//TODO multi + gl context nur einmal.
-    QByteArray imageData = m_converter->convert(image, info);
+	m_canvas.loadTextureFromImage(image);
+    QByteArray imageData = m_converter->convert(m_canvas, info);
 
     if (imageData.isEmpty())
         return false;
@@ -71,7 +72,7 @@ void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
     m_editors.append(editor);
 }
     
-void ConvertManager::setWriter(FileWriter * writer)
+void ConvertManager::setWriter(AbstractWriter * writer)
 {
     m_writer.reset(writer);
 }

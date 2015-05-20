@@ -22,7 +22,7 @@ public:
     Converter();
     virtual ~Converter();
 
-    virtual QByteArray convert(QImage & image, AssetInformation & info);
+    virtual QByteArray convert(Canvas & image, AssetInformation & info);
 
     void setFormat(GLenum format);
     void setType(GLenum type);
@@ -30,7 +30,6 @@ public:
 protected:
     GLenum m_format;
     GLenum m_type;
-
 };
 
 } // namespace glraw

@@ -22,13 +22,12 @@ public:
     CompressionConverter();
     virtual ~CompressionConverter();
 
-    virtual QByteArray convert(QImage & image, AssetInformation & info);
+    virtual QByteArray convert(Canvas & image, AssetInformation & info);
 
     void setCompressedFormat(GLint compressedFormat);
 
 protected:
     GLint m_compressedFormat;
-
 };
 
 } // namespace glraw
