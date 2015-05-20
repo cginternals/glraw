@@ -11,8 +11,9 @@
 
 #include <glraw/AssetInformation.h>
 #include <glraw/ImageEditorInterface.h>
-#include <glraw/FileWriter.h>
+#include <glraw/AbstractWriter.h>
 #include <glraw/AbstractConverter.h>
+#include <glraw/AbstractFilter.h>
 
 
 namespace glraw
@@ -26,7 +27,8 @@ ConvertManager::ConvertManager(AbstractWriter * writer, AbstractConverter * conv
     
 ConvertManager::~ConvertManager()
 {
-    qDeleteAll(m_editors);
+	qDeleteAll(m_editors);
+	qDeleteAll(m_filters);
 }
 
 bool ConvertManager::process(const QString & sourcePath)
@@ -53,12 +55,15 @@ bool ConvertManager::process(const QString & sourcePath)
     info.setProperty("width", image.width());
     info.setProperty("height", image.height());
 
-	//TODO hardwarebeschleunigung
+	//TODO move to filters
     for (auto editor : m_editors)
         editor->editImage(image, info);
 
-	//TODO multi + gl context nur einmal.
 	m_canvas.loadTextureFromImage(image);
+
+	for (auto filter : m_filters)
+		filter->process(m_canvas, info);
+
     QByteArray imageData = m_converter->convert(m_canvas, info);
 
     if (imageData.isEmpty())

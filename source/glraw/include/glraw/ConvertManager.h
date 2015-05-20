@@ -14,6 +14,7 @@ namespace glraw
 class ImageEditorInterface;
 class AbstractWriter;
 class AbstractConverter;
+class AbstractFilter;
 
 class GLRAW_API ConvertManager
 {
@@ -26,13 +27,15 @@ public:
 
     bool process(const QString & sourcePath);
 
-    void appendImageEditor(ImageEditorInterface * editor);
+	void appendImageEditor(ImageEditorInterface * editor);
+	void appendFilter(AbstractFilter * filter);
     
 	void setWriter(AbstractWriter * writer);
     void setConverter(AbstractConverter * converter);
 
 protected:
     QLinkedList<ImageEditorInterface *> m_editors;
+	QLinkedList<AbstractFilter*> m_filters;
     
     QScopedPointer<AbstractWriter> m_writer;
     QScopedPointer<AbstractConverter> m_converter;
