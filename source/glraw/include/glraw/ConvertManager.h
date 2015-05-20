@@ -25,7 +25,8 @@ public:
 
     ~ConvertManager();
 
-    bool process(const QString & sourcePath);
+	bool process(const QString & sourcePath);
+	bool process(const QImage & sourcePath);
 
 	void appendImageEditor(ImageEditorInterface * editor);
 	void appendFilter(AbstractFilter * filter);

@@ -33,23 +33,28 @@ ConvertManager::~ConvertManager()
 
 bool ConvertManager::process(const QString & sourcePath)
 {
+	if (!QFile::exists(sourcePath))
+	{
+		qDebug() << "Input file does not exist.";
+		return false;
+	}
+
+	//TODO input from QByteArray
+	QImage image(sourcePath);
+
+	return process(image);
+}
+
+bool ConvertManager::process(const QImage & image)
+{
     assert(!m_converter.isNull());
     assert(!m_writer.isNull());
-    
-	//TODO fix loading error for "source".
-    if (!QFile::exists(sourcePath))
-    {
-        qDebug() << "Input file does not exist.";
-        return false;
-    }
-    
-	//TODO input from memory & filesystem + virtual
-    QImage image(sourcePath);
-    if (image.isNull())
-    {
-        qDebug() << "Loading image from input file failed.";
-        return false;
-    }
+
+	if (image.isNull())
+	{
+		qDebug() << "Loading image from input file failed.";
+		return false;
+	}
 
     AssetInformation info;
     info.setProperty("width", image.width());
