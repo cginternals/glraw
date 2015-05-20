@@ -245,7 +245,12 @@ void Builder::process(const QCoreApplication & app)
     }
     
     for (auto source : sources)
-        m_manager.process(source);
+    {
+        if( source != "sources" )
+        {
+            m_manager.process(source);
+        }
+    }
 }
 
 bool Builder::help(const QString & name)
