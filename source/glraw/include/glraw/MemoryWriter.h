@@ -19,6 +19,9 @@ public:
 		const QString & sourcePath,
 		AssetInformation && info);
 
+	const QByteArray& getImageData();
+	const AssetInformation& getAssetInformation();
+
 private:
 
 	QByteArray mImageData;

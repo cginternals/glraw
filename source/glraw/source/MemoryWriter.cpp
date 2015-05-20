@@ -20,5 +20,14 @@ bool MemoryWriter::write( QByteArray && imageData, const QString & sourcePath, A
 	return true;
 }
 
+const QByteArray& MemoryWriter::getImageData()
+{
+	return mImageData;
+}
+
+const AssetInformation& MemoryWriter::getAssetInformation()
+{
+	return mInfo;
+}
 
 } // namespace glraw
