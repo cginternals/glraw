@@ -25,9 +25,9 @@ FileWriter::~FileWriter()
 {
 }
 
-bool FileWriter::write(QByteArray && imageData, const QString & sourcePath, AssetInformation && info)
+bool FileWriter::write(QByteArray && imageData, AssetInformation && info)
 {
-    QString target = targetFilePath(sourcePath, info);
+    QString target = targetFilePath(m_inputPath, info);
     QFile file(target);
 
     if(!file.open(QIODevice::WriteOnly))
@@ -80,6 +80,11 @@ bool FileWriter::outputPathSet() const
 void FileWriter::setOutputPath(const QString & path)
 {
     m_outputPath = path;
+}
+
+void FileWriter::setInputPath(const QString & path)
+{
+	m_inputPath = path;
 }
 
 void FileWriter::writeHeader(QDataStream & dataStream, QFile & file, AssetInformation & info)

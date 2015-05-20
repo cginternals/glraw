@@ -26,7 +26,7 @@ public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
     virtual ~FileWriter();
 
-    virtual bool write(QByteArray && imageData, const QString & sourcePath, AssetInformation && info);
+    virtual bool write(QByteArray && imageData, AssetInformation && info);
 
     bool headerEnabled() const;
     void setHeaderEnabled(bool b);
@@ -36,6 +36,8 @@ public:
     
     bool outputPathSet() const;
     void setOutputPath(const QString & path);
+
+	void setInputPath(const QString & path);
 
 protected:
     void writeHeader(
@@ -57,6 +59,7 @@ protected:
     bool m_headerEnabled;
     bool m_suffixesEnabled;
     QString m_outputPath;
+	QString m_inputPath;
 };
 
 } // namespace glraw

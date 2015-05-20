@@ -14,10 +14,7 @@ public:
 	MemoryWriter();
 	virtual ~MemoryWriter();
 
-    virtual bool write(
-		QByteArray && imageData,
-		const QString & sourcePath,
-		AssetInformation && info);
+    virtual bool write(QByteArray && imageData, AssetInformation && info);
 
 	const QByteArray& getImageData();
 	const AssetInformation& getAssetInformation();

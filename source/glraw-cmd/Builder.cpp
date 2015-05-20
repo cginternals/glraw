@@ -248,6 +248,7 @@ void Builder::process(const QCoreApplication & app)
     {
         if( source != "sources" )
         {
+			m_writer->setInputPath(source);
             m_manager.process(source);
         }
     }

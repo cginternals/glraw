@@ -12,7 +12,7 @@ MemoryWriter::~MemoryWriter()
 {
 }
 
-bool MemoryWriter::write( QByteArray && imageData, const QString & sourcePath, AssetInformation && info )
+bool MemoryWriter::write( QByteArray && imageData, AssetInformation && info )
 {
 	mImageData = imageData;
 	mInfo = info;

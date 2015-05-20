@@ -16,7 +16,7 @@ public:
 	AbstractWriter() = default;
 	virtual ~AbstractWriter() = default;
 
-    virtual bool write(QByteArray && imageData, const QString & sourcePath, AssetInformation && info) = 0;
+    virtual bool write(QByteArray && imageData, AssetInformation && info) = 0;
 };
 
 } // namespace glraw

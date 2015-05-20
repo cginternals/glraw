@@ -61,8 +61,8 @@ bool ConvertManager::process(const QImage & image)
     info.setProperty("height", image.height());
 
 	//TODO move to filters
-    for (auto editor : m_editors)
-        editor->editImage(image, info);
+    //for (auto editor : m_editors)
+    //   editor->editImage(image, info);
 
 	m_canvas.loadTextureFromImage(image);
 
@@ -74,7 +74,7 @@ bool ConvertManager::process(const QImage & image)
     if (imageData.isEmpty())
         return false;
     
-	return m_writer->write( std::move( imageData ), sourcePath, std::move( info ) );
+	return m_writer->write( std::move( imageData ), std::move( info ) );
 }
 
 void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
