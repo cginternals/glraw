@@ -11,8 +11,6 @@
 
 #include <glraw/RawFile.h>
 
-#include <glraw/AbstractWriter.h>
-
 class QFile;
 class QDataStream;
 
@@ -20,13 +18,15 @@ class QDataStream;
 namespace glraw
 {
 
-class GLRAW_API FileWriter : public AbstractWriter
+class AssetInformation;
+
+class GLRAW_API FileWriter
 {
 public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
     virtual ~FileWriter();
 
-    virtual bool write(QByteArray && imageData, AssetInformation && info);
+    virtual bool write(QByteArray && imageData, AssetInformation && info, const QString& source_path);
 
     bool headerEnabled() const;
     void setHeaderEnabled(bool b);
@@ -36,8 +36,6 @@ public:
     
     bool outputPathSet() const;
     void setOutputPath(const QString & path);
-
-	void setInputPath(const QString & path);
 
 protected:
     void writeHeader(
@@ -59,7 +57,6 @@ protected:
     bool m_headerEnabled;
     bool m_suffixesEnabled;
     QString m_outputPath;
-	QString m_inputPath;
 };
 
 } // namespace glraw
