@@ -17,17 +17,15 @@ Converter::~Converter()
 {
 }
 
-QByteArray Converter::convert(QImage & image, AssetInformation & info)
+QByteArray Converter::convert(Canvas & image, AssetInformation & info)
 {
-    m_canvas.loadTextureFromImage(image);
-    
-    if (hasFragmentShader() && !m_canvas.process(m_fragmentShader, m_uniforms))
+    if (hasFragmentShader() && !image.process(m_fragmentShader, m_uniforms))
         return QByteArray();
     
     info.setProperty("format", QVariant(static_cast<int>(m_format)));
     info.setProperty("type", QVariant(static_cast<int>(m_type)));
     
-    return m_canvas.imageFromTexture(m_format, m_type);
+    return image.imageFromTexture(m_format, m_type);
 }
 
 void Converter::setFormat(GLenum format)

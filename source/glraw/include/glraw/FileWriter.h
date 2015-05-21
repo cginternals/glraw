@@ -7,10 +7,9 @@
 #include <QString>
 #include <QVariant>
 
-#include <glraw/glraw_api.h>
+//#include <glraw/glraw_api.h>
 
 #include <glraw/RawFile.h>
-
 
 class QFile;
 class QDataStream;
@@ -27,10 +26,7 @@ public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
     virtual ~FileWriter();
 
-    virtual bool write(
-		const QByteArray & imageData,
-		const QString & sourcePath,
-		AssetInformation & info);
+    virtual bool write(QByteArray && imageData, AssetInformation && info, const QString& source_path);
 
     bool headerEnabled() const;
     void setHeaderEnabled(bool b);

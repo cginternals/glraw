@@ -47,13 +47,6 @@ function(install_qt COMP DEST)
     get_target_property(qtrelease Qt5::Core LOCATION_RELEASE)
     get_filename_component(qtdir ${qtrelease} DIRECTORY)
 
-    install(FILES 
-        ${qtdir}/icudt52.dll
-        ${qtdir}/icuin52.dll
-        ${qtdir}/icuuc52.dll
-        DESTINATION ${DEST}
-        COMPONENT ${COMP})
-
     endif()
 
 endfunction()

@@ -1,18 +1,21 @@
 #pragma once
 
-#include <glraw/glraw_api.h>
-
 #include <QString>
 #include <QScopedPointer>
 #include <QLinkedList>
 
+#include <glraw/glraw_api.h>
+
+#include <glraw/Canvas.h>
 
 namespace glraw
 {
 
 class ImageEditorInterface;
-class FileWriter;
 class AbstractConverter;
+class AbstractFilter;
+class AssetInformation;
+class FileWriter;
 
 class GLRAW_API ConvertManager
 {
@@ -23,19 +26,24 @@ public:
 
     ~ConvertManager();
 
-    bool process(const QString & sourcePath);
+	bool process(const QString & sourcePath);
 
-    void appendImageEditor(ImageEditorInterface * editor);
+	QByteArray convert(const QImage & image, AssetInformation & info);
+
+	void appendImageEditor(ImageEditorInterface * editor);
+	void appendFilter(AbstractFilter * filter);
     
-    void setWriter(FileWriter * writer);
+	void setWriter(FileWriter * writer);
     void setConverter(AbstractConverter * converter);
 
 protected:
     QLinkedList<ImageEditorInterface *> m_editors;
+	QLinkedList<AbstractFilter*> m_filters;
     
     QScopedPointer<FileWriter> m_writer;
     QScopedPointer<AbstractConverter> m_converter;
 
+	Canvas m_canvas;
 };
 
 } // namespace glraw

@@ -25,10 +25,9 @@ FileWriter::~FileWriter()
 {
 }
 
-bool FileWriter::write(const QByteArray & imageData,
-    const QString & sourcePath, AssetInformation & info)
+bool FileWriter::write(QByteArray && imageData, AssetInformation && info, const QString & source_path)
 {
-    QString target = targetFilePath(sourcePath, info);
+    QString target = targetFilePath(source_path, info);
     QFile file(target);
 
     if(!file.open(QIODevice::WriteOnly))
