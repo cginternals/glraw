@@ -5,9 +5,6 @@ configure_file(glraw-version.h.in ${CMAKE_CURRENT_BINARY_DIR}/glraw-version.h)
 # We do NOT want to deploy this header (at least not for binary packages)
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glraw/glraw-version.h DESTINATION ${INSTALL_INCLUDE}/glraw)
 
-find_package(glbinding REQUIRED)
-find_package(globjects REQUIRED)
-
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
