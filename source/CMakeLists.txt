@@ -11,14 +11,6 @@ find_package(globjects REQUIRED)
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
-
-    ${GLBINDING_INCLUDES}
-    ${GLOBJECTS_INCLUDES}
-)
-
-set(GLRAW_DEPENDENCY_LIBRARIES
-    ${GLBINDING_LIBRARIES}
-    ${GLOBJECTS_LIBRARIES}
 )
 
 # Qt5

@@ -24,7 +24,6 @@ include_directories(
 
 set(libs
     ${OPENGL_LIBRARIES}
-    ${GLRAW_DEPENDENCY_LIBRARIES}
 )
 
 
