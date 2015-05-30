@@ -576,7 +576,7 @@ bool Builder::editorExists(const QString & key)
 
 void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * editor)
 {
-    m_manager.appendImageEditor(editor);
+    //m_manager.appendImageEditor(editor);
     m_editors.insert(key, editor);
 }
 

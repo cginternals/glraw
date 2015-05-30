@@ -30,14 +30,14 @@ public:
 
 	QByteArray convert(const QImage & image, AssetInformation & info);
 
-	void appendImageEditor(ImageEditorInterface * editor);
+	//void appendImageEditor(ImageEditorInterface * editor);
 	void appendFilter(AbstractFilter * filter);
     
 	void setWriter(FileWriter * writer);
     void setConverter(AbstractConverter * converter);
 
 protected:
-    QLinkedList<ImageEditorInterface *> m_editors;
+    //QLinkedList<ImageEditorInterface *> m_editors;
 	QLinkedList<AbstractFilter*> m_filters;
     
     QScopedPointer<FileWriter> m_writer;

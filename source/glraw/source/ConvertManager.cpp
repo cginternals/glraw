@@ -27,7 +27,7 @@ ConvertManager::ConvertManager(FileWriter * writer, AbstractConverter * converte
     
 ConvertManager::~ConvertManager()
 {
-	qDeleteAll(m_editors);
+	//qDeleteAll(m_editors);
 	qDeleteAll(m_filters);
 }
 
@@ -78,10 +78,10 @@ QByteArray ConvertManager::convert(const QImage & image, AssetInformation & info
 	return m_converter->convert(m_canvas, info);
 }
 
-void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
-{
-    m_editors.append(editor);
-}
+//void ConvertManager::appendImageEditor(ImageEditorInterface * editor)
+//{
+//    m_editors.append(editor);
+//}
     
 void ConvertManager::setWriter(FileWriter * writer)
 {

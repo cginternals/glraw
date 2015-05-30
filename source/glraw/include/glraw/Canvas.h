@@ -14,6 +14,8 @@ class QOpenGLFunctions_3_2_Core;
 namespace glraw
 {
 
+class AssetInformation;
+
 class GLRAW_API Canvas : public QWindow
 {
 public:
@@ -21,6 +23,8 @@ public:
     virtual ~Canvas();
 
     void initializeGL();
+
+	void loadTexture(const QByteArray & image, AssetInformation & info);
 
     void loadTextureFromImage(const QImage & image);
     QByteArray imageFromTexture(GLenum format, GLenum type);

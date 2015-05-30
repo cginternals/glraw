@@ -12,7 +12,7 @@
 #include <QOpenGLFunctions_3_2_Core>
 
 #include "UniformParser.h"
-
+#include <glraw/AssetInformation.h>
 
 namespace
 {    
@@ -75,6 +75,25 @@ void Canvas::initializeGL()
     m_context.doneCurrent();
 }
     
+void Canvas::loadTexture(const QByteArray & image, AssetInformation & info)
+{
+	m_context.makeCurrent(this);
+
+	if (!textureLoaded())
+		m_gl->glGenTextures(1, &m_texture);
+
+	const GLsizei w = info.property("width").toInt();
+	const GLsizei h = info.property("height").toInt();
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
+		w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
+
+	m_context.doneCurrent();
+}
+
 void Canvas::loadTextureFromImage(const QImage & image)
 {
     m_context.makeCurrent(this);
