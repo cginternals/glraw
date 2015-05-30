@@ -1,6 +1,6 @@
 
-# GLRAW_DIR
 # GLRAW_FOUND
+
 # GLRAW_LIBRARIES
 # GLRAW_INCLUDES
 
@@ -9,9 +9,9 @@
 # GLRAW_LIBRARY_DEBUG
 # GLRAW_INCLUDE_DIR
 
-# GLRAW_BINARIES (win32 only)
-# GLRAW_BINARY_RELEASE (win32 only)
-# GLRAW_BINARY_DEBUG (win32 only)
+# GLRAW_BINARIES        (win32 only)
+# GLRAW_BINARY_RELEASE  (win32 only)
+# GLRAW_BINARY_DEBUG    (win32 only)
 
 macro (find LIB_NAME HEADER)
 
@@ -22,39 +22,30 @@ macro (find LIB_NAME HEADER)
         set(LIBNAME glraw)
     else()
         string(TOUPPER GLRAW_${LIB_NAME} LIB_NAME_UPPER)
-        set(LIBNAME ${LIB_NAME})
+        set(LIBNAME glraw${LIB_NAME})
     endif()
 
-    find_path(
-	${LIB_NAME_UPPER}_INCLUDE_DIR
-	${HEADER}
-        ${ENV_GLRAW_DIR}/include
-        ${ENV_GLRAW_DIR}/source/${LIB_NAME}/include
+    find_path(${LIB_NAME_UPPER}_INCLUDE_DIR ${HEADER}
+        ${ENVGLRAW_DIR}/include
+        ${ENVGLRAW_DIR}/source/${LIBNAME}/include
         ${GLRAW_DIR}/include
-        ${GLRAW_DIR}/source/${LIB_NAME}/include
-        ${ENV_PROGRAMFILES}/glraw/include
+        ${GLRAW_DIR}/source/${LIBNAME}/include
+        ${ENVPROGRAMFILES}/glraw/include
         /usr/include
         /usr/local/include
         /sw/include
         /opt/local/include
-        DOC "The directory where ${HEADER} resides"
-    )
+        DOC "The directory where ${header} resides")
 
-
-    find_library(
-	${LIB_NAME_UPPER}_LIBRARY_RELEASE
+    find_library(${LIB_NAME_UPPER}_LIBRARY_RELEASE
         NAMES ${LIBNAME}
         PATHS ${HINT_PATHS}
-        DOC "The ${LIB_NAME} library"
-    )
-    find_library(
-	${LIB_NAME_UPPER}_LIBRARY_DEBUG
+        DOC "The ${LIB_NAME} library")
+    find_library(${LIB_NAME_UPPER}_LIBRARY_DEBUG
         NAMES ${LIBNAME}d
         PATHS ${HINT_PATHS}
-        DOC "The ${LIB_NAME} debug library"
-    )
+        DOC "The ${LIB_NAME} debug library")
     
-
     if(${LIB_NAME_UPPER}_LIBRARY_RELEASE AND ${LIB_NAME_UPPER}_LIBRARY_DEBUG)
         set(${LIB_NAME_UPPER}_LIBRARY "optimized" ${${LIB_NAME_UPPER}_LIBRARY_RELEASE} "debug" ${${LIB_NAME_UPPER}_LIBRARY_DEBUG})
     elseif(${LIB_NAME_UPPER}_LIBRARY_RELEASE)
@@ -63,15 +54,14 @@ macro (find LIB_NAME HEADER)
         set(${LIB_NAME_UPPER}_LIBRARY ${${LIB_NAME_UPPER}_LIBRARY_DEBUG})
     endif()
 
+    list(APPEND GLRAW_INCLUDES ${${LIB_NAME_UPPER}_INCLUDE_DIR})
+    list(APPEND GLRAW_LIBRARIES ${${LIB_NAME_UPPER}_LIBRARY})
 
-    set(GLRAW_INCLUDES  ${GLRAW_INCLUDES}  ${${LIB_NAME_UPPER}_INCLUDE_DIR} PARENT_SCOPE)
-    set(GLRAW_LIBRARIES ${GLRAW_LIBRARIES} ${${LIB_NAME_UPPER}_LIBRARY} PARENT_SCOPE)
-
-    # DEBUG MESSAGES
-#    message("${LIB_NAME_UPPER}_INCLUDE_DIR     = ${${LIB_NAME_UPPER}_INCLUDE_DIR}")
-#    message("${LIB_NAME_UPPER}_LIBRARY_RELEASE = ${${LIB_NAME_UPPER}_LIBRARY_RELEASE}")
-#    message("${LIB_NAME_UPPER}_LIBRARY_DEBUG   = ${${LIB_NAME_UPPER}_LIBRARY_DEBUG}")
-#    message("${LIB_NAME_UPPER}_LIBRARY         = ${${LIB_NAME_UPPER}_LIBRARY}")
+    # DEBUG
+    # message("${LIB_NAME_UPPER}_INCLUDE_DIR     = ${${LIB_NAME_UPPER}_INCLUDE_DIR}")
+    # message("${LIB_NAME_UPPER}_LIBRARY_RELEASE = ${${LIB_NAME_UPPER}_LIBRARY_RELEASE}")
+    # message("${LIB_NAME_UPPER}_LIBRARY_DEBUG   = ${${LIB_NAME_UPPER}_LIBRARY_DEBUG}")
+    # message("${LIB_NAME_UPPER}_LIBRARY         = ${${LIB_NAME_UPPER}_LIBRARY}")
 
 endmacro()
 
@@ -80,8 +70,11 @@ if(CMAKE_CURRENT_LIST_FILE)
     get_filename_component(GLRAW_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 endif()
 
-file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" ENV_PROGRAMFILES)
-file(TO_CMAKE_PATH "$ENV{GLRAW_DIR}" ENV_GLRAW_DIR)
+file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" ENVPROGRAMFILES)
+file(TO_CMAKE_PATH "$ENV{GLRAW_DIR}" ENVGLRAW_DIR)
+
+set(GLRAW_INCLUDES "")
+set(GLRAW_LIBRARIES "")
 
 set(LIB_PATHS   
     ${GLRAW_DIR}/build
@@ -89,9 +82,9 @@ set(LIB_PATHS
     ${GLRAW_DIR}/build/Debug
     ${GLRAW_DIR}/build-release
     ${GLRAW_DIR}/build-debug
+    ${ENVGLRAW_DIR}/lib
     ${GLRAW_DIR}/lib
-    ${ENV_GLRAW_DIR}/lib
-    ${ENV_PROGRAMFILES}/glraw/lib
+    ${ENVPROGRAMFILES}/glraw/lib
     /usr/lib
     /usr/local/lib
     /sw/lib
@@ -138,8 +131,8 @@ if (GLRAW_LIBRARY AND WIN32)
 endif()
 
 # DEBUG
-#message("GLRAW_INCLUDES  = ${GLRAW_INCLUDES}")
-#message("GLRAW_LIBRARIES = ${GLRAW_LIBRARIES}")
+# message("GLRAW_INCLUDES  = ${GLRAW_INCLUDES}")
+# message("GLRAW_LIBRARIES = ${GLRAW_LIBRARIES}")
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GLRAW DEFAULT_MSG GLRAW_LIBRARIES GLRAW_INCLUDES)
