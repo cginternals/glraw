@@ -49,11 +49,13 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 file( GLOB api_includes
     ${include_path}/*.h*
+    ${include_path}/filter/*.h*
 )
 
 file( GLOB sources
     ${source_path}/*.cpp
     ${source_path}/*.h*
+    ${source_path}/filter/*.cpp
 )
 
 # Group source files

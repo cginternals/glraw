@@ -10,7 +10,7 @@
 
 #include <glraw/AssetInformation.h>
 #include <glraw/AbstractConverter.h>
-#include <glraw/AbstractFilter.h>
+#include <glraw/filter/AbstractFilter.h>
 
 namespace glraw
 {
@@ -28,13 +28,12 @@ MemoryProcessor::~MemoryProcessor()
 bool MemoryProcessor::process(QByteArray & data, AssetInformation & info)
 {
 	assert(!m_converter.isNull());
-
 	assert(info.propertyExists("width"));
 	assert(info.propertyExists("height"));
 
 	if (data.isNull())
 	{
-		qDebug() << "Input image data is invalid.";
+		qDebug() << "Input image data is null.";
 		return false;
 	}
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+//#include <cstdint>
 
 #include <QtGui/qopengl.h>
 #include <QMap>

@@ -16,7 +16,7 @@ public:
     AbstractFilter() = default;
     virtual ~AbstractFilter() = default;
 
-    virtual void process(Canvas & imageData, AssetInformation & info) = 0;
+    virtual bool process(Canvas & imageData, AssetInformation & info) = 0;
 };
 
 } // namespace glraw

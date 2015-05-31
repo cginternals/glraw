@@ -6,7 +6,7 @@
 #include <glraw/glraw_api.h>
 
 class QImage;
-class QByteArray;
+//class QByteArray;
 
 class QOpenGLFunctions_3_2_Core;
 
@@ -36,6 +36,9 @@ public:
 
     bool textureLoaded() const;
 
+	void makeContext();
+	void doneContext();
+
 protected:
     static int byteSizeOf(GLenum type);
     static int numberOfElementsFor(GLenum format);
@@ -46,6 +49,9 @@ protected:
     // using gl as a memeber instead of inheritance 
     // probably resolves an deinitialization issue.
     QOpenGLFunctions_3_2_Core * m_gl;
+
+	//new stuff
+	//QByteArray * m_imageData;
 };
 
 } // namespace glraw

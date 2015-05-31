@@ -13,7 +13,7 @@
 #include <glraw/ImageEditorInterface.h>
 #include <glraw/FileWriter.h>
 #include <glraw/AbstractConverter.h>
-#include <glraw/AbstractFilter.h>
+#include <glraw/filter/AbstractFilter.h>
 
 
 namespace glraw

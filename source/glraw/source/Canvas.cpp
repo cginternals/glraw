@@ -37,6 +37,7 @@ Canvas::Canvas()
 :   QWindow((QScreen *)nullptr)
 ,   m_texture(0)
 ,   m_gl(new QOpenGLFunctions_3_2_Core)
+//,   m_imageData(nullptr)
 {
     setSurfaceType(OpenGLSurface);
     create();
@@ -75,6 +76,16 @@ void Canvas::initializeGL()
     m_context.doneCurrent();
 }
     
+void Canvas::makeContext()
+{
+	m_context.makeCurrent(this);
+}
+
+void Canvas::doneContext()
+{
+	m_context.doneCurrent();
+}
+
 void Canvas::loadTexture(const QByteArray & image, AssetInformation & info)
 {
 	m_context.makeCurrent(this);
