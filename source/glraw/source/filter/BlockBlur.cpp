@@ -10,12 +10,16 @@ BlockBlur::BlockBlur(unsigned int size)
 	setKernelSize(size);
 }
 
+BlockBlur::BlockBlur(const QVariantMap& in)
+{
+}
+
 bool BlockBlur::process(Canvas & imageData, AssetInformation & info)
 {
 	return true;
 }
 
-int BlockBlur::getKernelSize() const
+int BlockBlur::kernelSize() const
 {
 	return m_kernelSize;
 }

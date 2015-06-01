@@ -36,14 +36,14 @@ bool MemoryProcessor::process(QByteArray & data, AssetInformation & info)
 		qDebug() << "Input image data is null.";
 		return false;
 	}
-
+        /*
 	m_canvas.loadTexture(data, info);
 
 	for (auto filter : m_filters)
 		filter->process(m_canvas, info);
 
 	data = m_converter->convert(m_canvas, info);
-
+        */
 	return !data.isEmpty();
 }
 
@@ -54,6 +54,7 @@ void MemoryProcessor::setConverter(AbstractConverter * converter)
 
 void MemoryProcessor::appendFilter(AbstractFilter * filter)
 {
+	assert(filter);
 	m_filters.append(filter);
 }
 

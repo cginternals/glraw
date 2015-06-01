@@ -6,10 +6,12 @@ namespace glraw
 
 class GLRAW_API BlockBlur : public AbstractFilter
 {
+public:
 	BlockBlur(unsigned int size);
+	BlockBlur(const QVariantMap&);
 	virtual ~BlockBlur() = default;
 
-	int getKernelSize() const;
+	int kernelSize() const;
 	void setKernelSize(int size);
 
 	virtual bool process(Canvas & imageData, AssetInformation & info);

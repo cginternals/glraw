@@ -2,7 +2,7 @@
 
 #include <glraw/glraw_api.h>
 
-class QByteArray;
+#include <QVariantMap>
 
 namespace glraw
 {
