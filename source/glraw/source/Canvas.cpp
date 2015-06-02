@@ -244,7 +244,7 @@ bool Canvas::process(
     m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-    program.setUniformValue("src", 0);
+	program.setUniformValue("src", m_texture);
 
     m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     
@@ -254,7 +254,7 @@ bool Canvas::process(
     m_gl->glDeleteTextures(1, &m_texture);
     
     program.release();
-    
+
     m_context.doneCurrent();
 
     m_texture = processedTexture;

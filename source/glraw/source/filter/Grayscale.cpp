@@ -4,13 +4,13 @@
 
 namespace
 {
-	const char * const source =  R"(
-		#version 150
+const char * const source =
+		R"(#version 150
 
 		uniform sampler2D src;
 
 		in vec2 v_uv;
-		layout(location = 0) out vec4 dst;
+		out vec4 dst;
 
 		void main()
 		{   
@@ -39,9 +39,7 @@ Grayscale::Grayscale(const QVariantMap& cfg)
 
 bool Grayscale::process(Canvas & imageData, AssetInformation & info)
 {
-	//imageData.process(source, QMap<QString, QString>());
-
-	return imageData.process(source, QMap<QString, QString>());
+	return imageData.process(source, QMap<QString, QString>());;
 }
 
 QVector3D Grayscale::FactorFromMode(GrayscaleFactor in)
