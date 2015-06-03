@@ -244,7 +244,7 @@ bool Canvas::process(
     m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-	program.setUniformValue("src", m_texture);
+	program.setUniformValue("src", 0);
 
     m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     

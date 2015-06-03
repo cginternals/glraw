@@ -36,10 +36,6 @@ bool MemoryProcessor::process(QByteArray & data, AssetInformation & info)
 		qDebug() << "Input image data is null.";
 		return false;
 	}
-    
-	//m_canvas.makeContext();
-	//
-	//m_canvas.doneContext();
 
 	m_canvas.loadTexture(data, info);
 
