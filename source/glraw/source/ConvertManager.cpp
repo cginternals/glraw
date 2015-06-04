@@ -72,10 +72,10 @@ QByteArray ConvertManager::convert(const QImage & image, AssetInformation & info
 
 	m_canvas.loadTextureFromImage(image);
 
-	for (auto filter : m_filters)
-		filter->process(m_canvas, info);
+	//for (auto filter : m_filters)
+	//	filter->process(m_canvas, info);
 
-	return m_converter->convert(m_canvas, info);
+	return QByteArray();//m_converter->convert(m_canvas, info);
 }
 
 //void ConvertManager::appendImageEditor(ImageEditorInterface * editor)

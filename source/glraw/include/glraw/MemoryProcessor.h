@@ -1,11 +1,12 @@
 #pragma once
 
+#include <memory>
+
 #include <QScopedPointer>
 #include <QLinkedList>
 
 #include <glraw/glraw_api.h>
 
-#include <glraw/Canvas.h>
 
 namespace glraw
 {
@@ -13,6 +14,7 @@ namespace glraw
 class AbstractConverter;
 class AbstractFilter;
 class AssetInformation;
+class Canvas;
 
 class GLRAW_API MemoryProcessor
 {
@@ -30,7 +32,7 @@ protected:
 	QLinkedList<AbstractFilter*> m_filters;
 	QScopedPointer<AbstractConverter> m_converter;
 
-	Canvas m_canvas;
+	std::unique_ptr<Canvas> m_canvas;
 };
 
 } // namespace glraw

@@ -16,12 +16,12 @@ CompressionConverter::~CompressionConverter()
 {
 }
 
-QByteArray CompressionConverter::convert(Canvas & image, AssetInformation & info)
+QByteArray CompressionConverter::convert(std::unique_ptr<Canvas> & image, AssetInformation & info)
 {   
-    if (hasFragmentShader() && !image.process(m_fragmentShader, m_uniforms))
-        return QByteArray();
+    //if (hasFragmentShader() && !image->process(m_fragmentShader, m_uniforms))
+    //    return QByteArray();
     
-    QByteArray imageData = image.compressedImageFromTexture(m_compressedFormat);
+    QByteArray imageData = image->compressedImageFromTexture(m_compressedFormat);
     
     info.setProperty("compressedFormat", QVariant(static_cast<int>(m_compressedFormat)));
     info.setProperty("size", QVariant(imageData.size()));

@@ -1,15 +1,14 @@
 #pragma once
 
+#include <functional>
+
 #include <QWindow>
 #include <QOpenGLFunctions_3_2_Core>
 
 #include <glraw/glraw_api.h>
 
 class QImage;
-//class QByteArray;
-
 class QOpenGLFunctions_3_2_Core;
-
 
 namespace glraw
 {
@@ -22,6 +21,10 @@ public:
     Canvas();
     virtual ~Canvas();
 
+	void updateTexture(GLuint tex);
+	GLuint texture();
+	QOpenGLFunctions_3_2_Core * gl();
+
     void initializeGL();
 
 	void loadTexture(const QByteArray & image, AssetInformation & info);
@@ -30,9 +33,6 @@ public:
     QByteArray imageFromTexture(GLenum format, GLenum type);
     QByteArray compressedImageFromTexture(GLenum compressedInternalFormat);
 
-    bool process(
-        const QString & fragmentShader
-    ,   const QMap<QString, QString> & uniforms);
 
     bool textureLoaded() const;
 
@@ -49,9 +49,6 @@ protected:
     // using gl as a memeber instead of inheritance 
     // probably resolves an deinitialization issue.
     QOpenGLFunctions_3_2_Core * m_gl;
-
-	//new stuff
-	//QByteArray * m_imageData;
 };
 
 } // namespace glraw

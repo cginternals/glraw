@@ -22,7 +22,7 @@ public:
     Converter();
     virtual ~Converter();
 
-    virtual QByteArray convert(Canvas & image, AssetInformation & info);
+	virtual QByteArray convert(std::unique_ptr<Canvas> & image, AssetInformation & info);
 
     void setFormat(GLenum format);
     void setType(GLenum type);

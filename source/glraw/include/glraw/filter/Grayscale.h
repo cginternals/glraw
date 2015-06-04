@@ -22,7 +22,11 @@ public:
 	Grayscale(const QVariantMap& cfg);
 	virtual ~Grayscale() = default;
 
-	virtual bool process(Canvas & imageData, AssetInformation & info);
+	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
+
+protected:
+
+	void setUniforms(QOpenGLShaderProgram& program) override;
 
 private:
 

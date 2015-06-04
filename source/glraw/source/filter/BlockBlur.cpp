@@ -14,7 +14,7 @@ BlockBlur::BlockBlur(const QVariantMap& in)
 {
 }
 
-bool BlockBlur::process(Canvas & imageData, AssetInformation & info)
+bool BlockBlur::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
 {
 	return true;
 }

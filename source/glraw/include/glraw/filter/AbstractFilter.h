@@ -2,7 +2,11 @@
 
 #include <glraw/glraw_api.h>
 
+#include <memory>
+
 #include <QVariantMap>
+
+class QOpenGLShaderProgram;
 
 namespace glraw
 {
@@ -16,7 +20,16 @@ public:
     AbstractFilter() = default;
     virtual ~AbstractFilter() = default;
 
-    virtual bool process(Canvas & imageData, AssetInformation & info) = 0;
+	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) = 0;
+
+protected:
+
+	virtual bool renderShader(std::unique_ptr<Canvas> & imageData, const QString & shader);
+	virtual void setUniforms(QOpenGLShaderProgram& program);
+
+private:
+
+	bool createProgram(QOpenGLShaderProgram& prog, const QString & shader);
 };
 
 } // namespace glraw

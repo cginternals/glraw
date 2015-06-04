@@ -14,7 +14,7 @@ public:
 	int kernelSize() const;
 	void setKernelSize(int size);
 
-	virtual bool process(Canvas & imageData, AssetInformation & info);
+	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info);
 
 private:
 

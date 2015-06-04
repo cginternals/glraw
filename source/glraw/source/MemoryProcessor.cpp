@@ -11,6 +11,7 @@
 #include <glraw/AssetInformation.h>
 #include <glraw/AbstractConverter.h>
 #include <glraw/filter/AbstractFilter.h>
+#include <glraw/Canvas.h>
 
 namespace glraw
 {
@@ -33,14 +34,25 @@ bool MemoryProcessor::process(QByteArray & data, AssetInformation & info)
 
 	if (data.isNull())
 	{
-		qDebug() << "Input image data is null.";
+		qCritical("Input image data is null.");
 		return false;
 	}
 
-	m_canvas.loadTexture(data, info);
+	if (!m_canvas)
+	{
+		m_canvas = std::unique_ptr<Canvas>(new Canvas());
+	}
+
+	m_canvas->loadTexture(data, info);
 
 	for (auto filter : m_filters)
-		filter->process(m_canvas, info);
+	{
+		if (!filter->process(m_canvas, info))
+		{
+			qCritical() << "ERROR!!";
+			return false;
+		}
+	}
 
 	data = m_converter->convert(m_canvas, info);
 	return !data.isEmpty();

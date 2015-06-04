@@ -22,7 +22,7 @@ public:
     CompressionConverter();
     virtual ~CompressionConverter();
 
-    virtual QByteArray convert(Canvas & image, AssetInformation & info);
+	virtual QByteArray convert(std::unique_ptr<Canvas> & image, AssetInformation & info);
 
     void setCompressedFormat(GLint compressedFormat);
 
