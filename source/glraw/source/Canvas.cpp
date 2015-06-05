@@ -159,6 +159,12 @@ QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat)
     
 void Canvas::updateTexture(GLuint tex)
 {
+	assert( tex );
+
+	makeContext();
+	m_gl->glDeleteTextures( 1, &m_texture );
+	doneContext();
+
 	m_texture = tex;
 }
 

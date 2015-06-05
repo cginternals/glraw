@@ -24,11 +24,10 @@ public:
 
 protected:
 
-	virtual bool renderShader(std::unique_ptr<Canvas> & imageData, const QString & shader);
-	virtual void setUniforms(QOpenGLShaderProgram& program);
+	virtual void setUniforms( QOpenGLShaderProgram& program );
 
-private:
-
+	bool renderShader(std::unique_ptr<Canvas> & imageData, const QString & shader);
+	int renderShaderToTexture(std::unique_ptr<Canvas> & imageData, const QString & shader);
 	bool createProgram(QOpenGLShaderProgram& prog, const QString & shader);
 };
 
