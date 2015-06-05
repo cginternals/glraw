@@ -4,3 +4,4 @@
 
 #include <glraw/filter/BlockBlur.h>
 #include <glraw/filter/Grayscale.h>
+#include <glraw/filter/Invert.h>

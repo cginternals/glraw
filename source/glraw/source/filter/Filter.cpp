@@ -10,7 +10,8 @@ LibraryInstance Filter::InitializeLibrary()
 {
 	LibraryInstance tmp;
 	tmp.emplace("grayscale", &Factory<Grayscale>);
-	tmp.emplace("blockblur", &Factory<BlockBlur>);
+	tmp.emplace( "blockblur", &Factory<BlockBlur> );
+	tmp.emplace( "invert", &Factory<Invert> );
 
 	return tmp;
 }
