@@ -53,7 +53,7 @@ const char* horizontalShader =
 		})";
 
 
-	const int DefaultRange = 1;
+	const int DefaultRange = 25;
 	const float DefaultFactor = 1.0f;
 }
 

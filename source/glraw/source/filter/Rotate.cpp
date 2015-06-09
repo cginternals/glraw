@@ -19,15 +19,13 @@ namespace
 
 		void main()
 		{   
-			if(rotationSin = 0)
+			if(rotationSin == 0)
 			{
 				dst = texture(src, v_uv);
 				return;
 			}
-			
 			vec2 texCoords = vec2((v_uv.x-0.5f)*rotationCos - (v_uv.y-0.5f)*rotationSin + 0.5f, (v_uv.x-0.5f)*rotationSin + (v_uv.y-0.5f)*rotationCos + 0.5f);
 			dst = texture(src, texCoords);
-			
 		} )";
 
 	const int DefaultRotation = 0;

@@ -23,7 +23,7 @@ private:
 	bool m_horizontal;
 	bool m_vertical;
 
-	static bool HorizontalFromVariant( const QVariantMap& cfg );
+	static bool HorizontalFromVariant(const QVariantMap& cfg);
 	static bool VerticalFromVariant(const QVariantMap& cfg);
 };
 

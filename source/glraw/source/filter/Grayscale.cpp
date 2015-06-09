@@ -79,7 +79,7 @@ QVector3D Grayscale::FactorFromVariant(const QVariantMap& cfg)
 		float g = cfg.value("g", {def.y()}).toFloat();
 		float b = cfg.value("b", {def.z()}).toFloat();
 
-		return QVector3D(r, g, b);
+		return { r, g, b };
 	}
 }
 

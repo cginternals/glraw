@@ -12,6 +12,9 @@ LibraryInstance Filter::InitializeLibrary()
 	tmp.emplace("grayscale", &Factory<Grayscale>);
 	tmp.emplace( "blockblur", &Factory<BlockBlur> );
 	tmp.emplace( "invert", &Factory<Invert> );
+	tmp.emplace( "mirror", &Factory<Mirror> );
+	tmp.emplace( "rotate", &Factory<Rotate> );
+	tmp.emplace( "scale", &Factory<Scale> );
 
 	return tmp;
 }
