@@ -11,20 +11,16 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform float rotationSin;
-		uniform float rotationCos;
+		uniform int rotation;
 
 		in vec2 v_uv;
 		out vec4 dst;
 
 		void main()
 		{   
-			if(rotationSin == 0)
-			{
-				dst = texture(src, v_uv);
-				return;
-			}
-			vec2 texCoords = vec2((v_uv.x-0.5f)*rotationCos - (v_uv.y-0.5f)*rotationSin + 0.5f, (v_uv.x-0.5f)*rotationSin + (v_uv.y-0.5f)*rotationCos + 0.5f);
+			float sin = (rotation==1)?1.f:(rotation==3)?-1.f:0.f;
+			float cos = (rotation==0)?1.f:(rotation==2)?-1.f:0.f;
+			vec2 texCoords = vec2((v_uv.x-0.5f)*cos - (v_uv.y-0.5f)*sin + 0.5f, (v_uv.x-0.5f)*sin + (v_uv.y-0.5f)*cos + 0.5f);
 			dst = texture(src, texCoords);
 		} )";
 
@@ -52,8 +48,7 @@ bool Rotate::process(std::unique_ptr<Canvas> & imageData, AssetInformation & inf
 
 void Rotate::setUniforms(QOpenGLShaderProgram& program)
 {
-	program.setUniformValue( "rotationSin", sinf(M_PI * (float)m_rotation / 90.0f ));
-	program.setUniformValue("rotationCos", sinf(M_PI * (float)m_rotation / 90.0f));
+	program.setUniformValue( "rotation", m_rotation);
 }
 
 float Rotate::RotationFromVariant(const QVariantMap& cfg)

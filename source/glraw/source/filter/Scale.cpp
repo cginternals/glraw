@@ -50,7 +50,7 @@ namespace glraw
 {
 
 Scale::Scale( int width = DefaultWidth, int height = DefaultHeight, bool fastMode = DefaultFastMode )
-	: m_width(height)
+	: m_width(width)
 	, m_height(height)
 	, m_fastMode(fastMode)
 {
@@ -128,8 +128,8 @@ bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info
 
 void Scale::setUniforms(QOpenGLShaderProgram& program)
 {
-	program.setUniformValue( "height", m_height );
-	program.setUniformValue("width", m_height);
+	program.setUniformValue("height", m_height);
+	program.setUniformValue("width", m_width);
 	program.setUniformValue("mode", m_fastMode);
 }
 
