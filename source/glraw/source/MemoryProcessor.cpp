@@ -38,23 +38,32 @@ bool MemoryProcessor::process(QByteArray & data, AssetInformation & info)
 		return false;
 	}
 
-	if (!m_canvas)
+	canvas()->loadTexture(data, info);
+
+	if(!applyFilter(info))
 	{
-		m_canvas = std::unique_ptr<Canvas>(new Canvas());
+		return false;
 	}
 
-	m_canvas->loadTexture(data, info);
+	return copyImageFromGL(data, info);
+}
 
-	for (auto filter : m_filters)
+bool MemoryProcessor::applyFilter(AssetInformation & info)
+{
+	for(auto filter : m_filters)
 	{
-		if (!filter->process(m_canvas, info))
+		if(!filter->process(canvas(), info))
 		{
 			qCritical() << "ERROR!!";
 			return false;
 		}
 	}
+	return true;
+}
 
-	data = m_converter->convert(m_canvas, info);
+bool MemoryProcessor::copyImageFromGL(QByteArray & data, AssetInformation & info)
+{
+	data = m_converter->convert(canvas(), info);
 	return !data.isEmpty();
 }
 
@@ -67,6 +76,16 @@ void MemoryProcessor::appendFilter(AbstractFilter * filter)
 {
 	assert(filter);
 	m_filters.append(filter);
+}
+
+std::unique_ptr<Canvas> & MemoryProcessor::canvas()
+{
+	if(!m_canvas)
+	{
+		m_canvas = std::unique_ptr<Canvas>(new Canvas());
+	}
+
+	return m_canvas;
 }
 
 } // namespace glraw

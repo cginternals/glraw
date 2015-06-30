@@ -26,7 +26,7 @@ public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
     virtual ~FileWriter();
 
-    virtual bool write(QByteArray && imageData, AssetInformation && info, const QString& source_path);
+    virtual bool write(QByteArray & imageData, AssetInformation & info, const QString& source_path);
 
     bool headerEnabled() const;
     void setHeaderEnabled(bool b);

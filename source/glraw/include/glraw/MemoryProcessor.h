@@ -20,7 +20,7 @@ class GLRAW_API MemoryProcessor
 {
 public:
 	MemoryProcessor(AbstractConverter * converter = nullptr);
-	~MemoryProcessor();
+	virtual ~MemoryProcessor();
 
 	bool process(QByteArray & data, AssetInformation & info);
 
@@ -29,8 +29,15 @@ public:
 
 protected:
 
+	bool applyFilter(AssetInformation & info);
+	bool copyImageFromGL(QByteArray & data, AssetInformation & info);
+
 	QLinkedList<AbstractFilter*> m_filters;
 	QScopedPointer<AbstractConverter> m_converter;
+
+	std::unique_ptr<Canvas> & canvas();
+
+private:
 
 	std::unique_ptr<Canvas> m_canvas;
 };
