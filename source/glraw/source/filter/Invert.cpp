@@ -25,13 +25,13 @@ namespace
 			}
 		} )";
 
-	const bool DefaultAlpha = false;
+	const bool DefaultInvertAlpha = false;
 }
 
 namespace glraw
 {
 
-Invert::Invert( bool invert_alpha = DefaultAlpha )
+Invert::Invert( bool invert_alpha = DefaultInvertAlpha )
 	: m_invertAlpha(invert_alpha)
 {
 }
@@ -54,7 +54,7 @@ void Invert::setUniforms( QOpenGLShaderProgram& program )
 
 bool Invert::AlphaFromVariant( const QVariantMap& cfg )
 {
-	return cfg.value( "invert_alpha", { DefaultAlpha } ).toBool();
+	return cfg.value( "invert_alpha", { DefaultInvertAlpha } ).toBool();
 }
 
 }
