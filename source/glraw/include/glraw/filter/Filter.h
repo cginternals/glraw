@@ -8,3 +8,5 @@
 #include <glraw/filter/Mirror.h>
 #include <glraw/filter/Rotate.h>
 #include <glraw/filter/Scale.h>
+#include <glraw/filter/Dilation.h>
+#include <glraw/filter/Erosion.h>

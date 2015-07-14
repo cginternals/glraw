@@ -4,29 +4,40 @@
 namespace glraw
 {
 
-class GLRAW_API Scale : public AbstractFilter
-{
-public:
-	Scale( int width, int height, bool fastMode );
-	Scale(const QVariantMap& cfg);
-	virtual ~Scale() = default;
+	class GLRAW_API Scale : public AbstractFilter
+	{
+	public:
+		enum ScaleMode
+		{
+			Absolute = 0,
+			Relative = 1,
+			RatioX = 2,
+			RatioY = 3
+		};
+		Scale(ScaleMode mode, int width, int height, float scale, bool bilinear);
+		Scale(const QVariantMap& cfg);
+		virtual ~Scale() = default;
 
-	virtual bool process( std::unique_ptr<Canvas> & imageData, AssetInformation & info ) override;
+		virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
 
-protected:
+	protected:
 
-	void setUniforms( QOpenGLShaderProgram& program ) override;
+		void setUniforms(QOpenGLShaderProgram& program) override;
 
-private:
+	private:
 
-	int m_width;
-	int m_height;
-	bool m_fastMode;
-	
+		ScaleMode m_mode;
+		int m_width;
+		int m_height;
+		float m_scale;
+		bool m_bilinear;
 
-	static int WidthFromVariant(const QVariantMap& cfg);
-	static int HeightFromVariant(const QVariantMap& cfg);
-	static bool FastModeFromVariant(const QVariantMap& cfg);
-};
+
+		static ScaleMode ModeFromVariant(const QVariantMap& cfg);
+		static int WidthFromVariant(const QVariantMap& cfg);
+		static int HeightFromVariant(const QVariantMap& cfg);
+		static float ScaleFromVariant(const QVariantMap& cfg);
+		static bool BilinearFromVariant(const QVariantMap& cfg);
+	};
 
 }

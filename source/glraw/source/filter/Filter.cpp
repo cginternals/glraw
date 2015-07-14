@@ -14,7 +14,9 @@ LibraryInstance Filter::InitializeLibrary()
 	tmp.emplace( "invert", &Factory<Invert> );
 	tmp.emplace( "mirror", &Factory<Mirror> );
 	tmp.emplace( "rotate", &Factory<Rotate> );
-	tmp.emplace( "scale", &Factory<Scale> );
+	tmp.emplace("scale", &Factory<Scale>);
+	tmp.emplace("dilation", &Factory<Dilation>);
+	tmp.emplace("erosion", &Factory<Erosion>);
 
 	return tmp;
 }
