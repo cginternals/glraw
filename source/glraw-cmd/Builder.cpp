@@ -8,8 +8,8 @@
 #include <QCoreApplication>
 #include <QCommandLineOption>
 
-#include <glraw/MirrorEditor.h>
-#include <glraw/ScaleEditor.h>
+//#include <glraw/MirrorEditor.h>
+//#include <glraw/ScaleEditor.h>
 #include <glraw/FileWriter.h>
 #include <glraw/Converter.h>
 #include <glraw/CompressionConverter.h>
@@ -100,21 +100,21 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "format",
         &Builder::compressedFormat
     });
-    
+	/*
     options.append({
         QStringList() << "mv" << "mirror-vertical",
         "Mirrors the image vertically.",
         QString(),
         &Builder::mirrorVertical
-    });
-
+    });*/
+	/*
     options.append({
         QStringList() << "mh" << "mirror-horizontal", 
         "Mirrors the image horizontally.",
         QString(),
         &Builder::mirrorHorizontal
-    });
-
+    });*/
+	/*
     options.append({
         QStringList() << "s" << "scale",
         "Scales the image.",
@@ -164,8 +164,8 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "(default: IgnoreAspectRatio).",                // since qt auto-line-breaks after 45 characters.
         "mode",
         &Builder::aspectRatioMode
-    });
-
+    });*/
+	
     options.append({
         QStringList() << "shader",
         "Applies a fragment shader before conversion  " // spaces are required for well formated output
@@ -251,6 +251,11 @@ void Builder::process(const QCoreApplication & app)
             m_manager.process(source);
         }
     }
+}
+
+bool Builder::filter(const QString & name)
+{
+	return true;
 }
 
 bool Builder::help(const QString & name)
@@ -368,7 +373,7 @@ bool Builder::raw(const QString & name)
     m_writer->setHeaderEnabled(false);
     return true;
 }
-
+/*
 bool Builder::mirrorVertical(const QString & name)
 {
     const QString editorName = "MirrorEditor";
@@ -552,7 +557,7 @@ bool Builder::aspectRatioMode(const QString & name)
         Conversions::stringToAspectRatioMode(modeString));
 
     return true;
-}
+}*/
 
 bool Builder::shader(const QString & name)
 {
@@ -568,17 +573,17 @@ bool Builder::uniform(const QString & name)
 
     return true;
 }
-
+/*
 bool Builder::editorExists(const QString & key)
 {
     return m_editors.contains(key);
-}
-
+}*/
+/*
 void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * editor)
 {
     //m_manager.appendImageEditor(editor);
     m_editors.insert(key, editor);
-}
+}*/
 
 bool Builder::configureShader()
 {
