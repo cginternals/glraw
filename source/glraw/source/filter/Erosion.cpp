@@ -10,7 +10,7 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform int M;
+		uniform unsigned int size;
 
 		in vec2 v_uv;
 		out vec4 dst;
@@ -18,44 +18,37 @@ namespace
 		void main()
 		{   
 			vec2 img_size = vec2(1.0f)/textureSize(src, 0);
-
 			dst = vec4(1.0f);
 
-			for(int i=-M; i<= M;++i)
+			for(int i=-size; i<= size;++i)
 			{
 				dst = min(dst, texture(src, v_uv+img_size*i));
 			}
 		} )";
-	const int DefaultKernelSize = 1;
+
+	const unsigned int DefaultSize = 1;
 }
 
 namespace glraw
 {
 
-	Erosion::Erosion(int kernelsize = DefaultKernelSize)
-		: m_kernelsize(kernelsize)
-	{
-	}
+Erosion::Erosion(unsigned int size = DefaultSize)
+	: m_size(VerifySize(size))
+{
+}
 
-	Erosion::Erosion(const QVariantMap& cfg)
-		: Erosion(KernelSizeFromVariant(cfg))
-	{
-	}
+Erosion::Erosion(const QVariantMap& cfg)
+	: Erosion(SizeFromVariant(cfg, DefaultSize))
+{
+}
 
-	bool Erosion::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
-	{
-		return renderShader(imageData, source);
-	}
+bool Erosion::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+{
+	return renderShader(imageData, source);
+}
 
-	void Erosion::setUniforms(QOpenGLShaderProgram& program)
-	{
-		program.setUniformValue("M", m_kernelsize);
-	}
-
-
-	int Erosion::KernelSizeFromVariant(const QVariantMap& cfg)
-	{
-		return cfg.value("kernelsize", { DefaultKernelSize }).toInt();
-	}
-
+void Erosion::setUniforms(QOpenGLShaderProgram& program)
+{
+	program.setUniformValue("size", m_size);
+}
 }

@@ -39,7 +39,6 @@ Invert::Invert( bool invert_alpha = DefaultInvertAlpha )
 Invert::Invert( const QVariantMap& cfg )
 	: Invert( AlphaFromVariant(cfg) )
 {
-
 }
 
 bool Invert::process( std::unique_ptr<Canvas> & imageData, AssetInformation & info )

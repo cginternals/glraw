@@ -24,13 +24,13 @@ namespace
 			dst = texture(src, texCoords);
 		} )";
 
-	const int DefaultRotation = 0;
+	const unsigned int DefaultRotation = static_cast<unsigned int>(glraw::Rotate::RotationMode::Default);
 }
 
 namespace glraw
 {
 
-Rotate::Rotate(int rotation = DefaultRotation)
+Rotate::Rotate(unsigned int rotation = DefaultRotation)
 	: m_rotation(rotation%4)
 {
 }
@@ -38,7 +38,6 @@ Rotate::Rotate(int rotation = DefaultRotation)
 Rotate::Rotate(const QVariantMap& cfg)
 	: Rotate(RotationFromVariant(cfg))
 {
-
 }
 
 bool Rotate::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
@@ -51,7 +50,7 @@ void Rotate::setUniforms(QOpenGLShaderProgram& program)
 	program.setUniformValue( "rotation", m_rotation);
 }
 
-float Rotate::RotationFromVariant(const QVariantMap& cfg)
+unsigned int Rotate::RotationFromVariant(const QVariantMap& cfg)
 {
 	return cfg.value("rotation", { DefaultRotation }).toInt();
 }

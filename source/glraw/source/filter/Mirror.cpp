@@ -22,7 +22,7 @@ namespace
 		} )";
 
 	const bool DefaultHorizontal = false;
-	const bool DefaultVertical = false;
+	const bool DefaultVertical = true;
 }
 
 namespace glraw

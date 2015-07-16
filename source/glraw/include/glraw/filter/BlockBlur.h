@@ -7,7 +7,7 @@ namespace glraw
 class GLRAW_API BlockBlur : public AbstractFilter
 {
 public:
-	BlockBlur(unsigned int range, float factor);
+	BlockBlur(unsigned int size, float factor);
 	BlockBlur(const QVariantMap&);
 	virtual ~BlockBlur() = default;
 
@@ -19,12 +19,8 @@ protected:
 
 private:
 
-	unsigned int m_range;
+	unsigned int m_size;
 	float m_factor;
-
-	static unsigned int VerifyRange(unsigned int range);
-	static unsigned int RangeFromVariant(const QVariantMap& cfg);
-	static float FactorFromVariant(const QVariantMap& cfg);
 };
 
 }

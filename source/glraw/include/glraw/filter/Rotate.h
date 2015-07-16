@@ -8,11 +8,21 @@ namespace glraw
 class GLRAW_API Rotate : public AbstractFilter
 {
 public:
-	Rotate(int rotation);
+	Rotate(unsigned int rotation);
 	Rotate(const QVariantMap& cfg);
 	virtual ~Rotate() = default;
 
 	virtual bool process( std::unique_ptr<Canvas> & imageData, AssetInformation & info ) override;
+
+	enum class RotationMode : int
+	{
+		RotateBy_0,
+		RotateBy_90,
+		RotateBy_180,
+		RotateBy_270,
+
+		Default = RotateBy_90
+	};
 
 protected:
 
@@ -20,10 +30,9 @@ protected:
 
 private:
 
-	int m_rotation;
+	unsigned int m_rotation;
 
-	static float RotationFromVariant(const QVariantMap& cfg);
-
+	static unsigned int RotationFromVariant(const QVariantMap& cfg);
 };
 
 }

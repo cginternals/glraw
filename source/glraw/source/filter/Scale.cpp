@@ -71,159 +71,160 @@ namespace
 	const float DefaultScale = 1.0f;
 	const int DefaultWidth = 500;
 	const int DefaultHeight = 500;
-	const int DefaultMode = 1;
 	bool DefaultBilinear = true;
 }
 
 namespace glraw
 {
-	Scale::Scale(ScaleMode mode = (ScaleMode)DefaultMode, int width = DefaultWidth, int height = DefaultHeight, float scale = DefaultScale, bool bilinear = DefaultBilinear)
-		: m_mode(mode)
-		, m_width(width)
-		, m_height(height)
-		, m_scale(scale)
-		, m_bilinear(bilinear)
-	{
-	}
 
-	Scale::Scale(const QVariantMap& cfg)
-		: m_mode(ModeFromVariant(cfg))
-		, m_width(WidthFromVariant(cfg))
-		, m_height(HeightFromVariant(cfg))
-		, m_scale(ScaleFromVariant(cfg))
-		, m_bilinear(BilinearFromVariant(cfg))
-	{
-	}
+Scale::Scale(ScaleMode mode = ScaleMode::Default, unsigned int width = DefaultWidth, unsigned int height = DefaultHeight, float scale = DefaultScale, bool bilinear = DefaultBilinear)
+	: m_mode(mode)
+	, m_width(width)
+	, m_height(height)
+	, m_scale(scale)
+	, m_bilinear(bilinear)
+{
+}
 
-	bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+Scale::Scale(const QVariantMap& cfg)
+	: m_mode(ModeFromVariant(cfg))
+	, m_width(WidthFromVariant(cfg))
+	, m_height(HeightFromVariant(cfg))
+	, m_scale(ScaleFromVariant(cfg))
+	, m_bilinear(BilinearFromVariant(cfg))
+{
+}
+
+bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+{
+	imageData->makeContext();
+	QOpenGLShaderProgram program;
+	if (m_bilinear)
 	{
-		imageData->makeContext();
-		QOpenGLShaderProgram program;
-		if (m_bilinear)
+		if (!createProgram(program, sourceBilinear))
 		{
-			if (!createProgram(program, sourceBilinear))
-			{
-				qCritical("Shader Error!");
-				return 0;
-			}
+			qCritical("Shader Error!");
+			return 0;
 		}
-		else
+	}
+	else
+	{
+		if (!createProgram(program, sourceFast))
 		{
-			if (!createProgram(program, sourceFast))
-			{
-				qCritical("Shader Error!");
-				return 0;
-			}
+			qCritical("Shader Error!");
+			return 0;
 		}
-		GLuint texture = imageData->texture();
-		auto m_gl = imageData->gl();
-
-
-		m_gl->glBindTexture(GL_TEXTURE_2D, texture);
-
-		GLuint processedTexture;
-		GLint w, h;
-		int width, height;
-
-		m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-		m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
-		switch (m_mode)
-		{
-		case 0:
-			width = m_width;
-			height = m_height;
-		case 2:
-			width = m_width;
-			height = m_width / width;
-			break;
-		case 3:
-			width = m_height / height;
-			height = height;
-			break;
-		default:
-			width = (int)(m_width*m_scale);
-			height = (int)(m_height*m_scale);
-			break;
-		}
-
-		//info.setProperty("width", width);
-		//info.setProperty("height", height);
-
-
-		m_gl->glGenTextures(1, &processedTexture);
-		m_gl->glBindTexture(GL_TEXTURE_2D, processedTexture);
-		m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-
-		GLuint fbo;
-		m_gl->glGenFramebuffers(1, &fbo);
-		m_gl->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		m_gl->glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
-
-		GLuint vao;
-		m_gl->glGenVertexArrays(1, &vao);
-		m_gl->glBindVertexArray(vao);
-
-		static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
-
-		GLuint buffer;
-		m_gl->glGenBuffers(1, &buffer);
-		m_gl->glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, rawv, GL_STATIC_DRAW);
-		m_gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
-		m_gl->glEnableVertexAttribArray(0);
-
-
-		m_gl->glViewport(0, 0, width, height);
-		m_gl->glDisable(GL_DEPTH_TEST);
-
-		m_gl->glActiveTexture(GL_TEXTURE0);
-		m_gl->glBindTexture(GL_TEXTURE_2D, imageData->texture());
-
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		program.setUniformValue("src", 0);
-		setUniforms(program);
-
-		m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		m_gl->glDeleteBuffers(1, &buffer);
-		m_gl->glDeleteVertexArrays(1, &vao);
-		m_gl->glDeleteFramebuffers(1, &fbo);
-
-		program.release();
-		imageData->doneContext();
-
-		return processedTexture;
 	}
+	GLuint texture = imageData->texture();
+	auto m_gl = imageData->gl();
 
-	void Scale::setUniforms(QOpenGLShaderProgram& program)
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, texture);
+
+	GLuint processedTexture;
+	GLint w, h;
+	int width, height;
+
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+	switch (m_mode)
 	{
-		program.setUniformValue("mode", m_bilinear);
+	case 0:
+		width = m_width;
+		height = m_height;
+		break;
+	case 2:
+		width = m_width;
+		height = m_width / width;
+		break;
+	case 3:
+		width = m_height / height;
+		height = height;
+		break;
+	default:
+		width = (int)(m_width*m_scale);
+		height = (int)(m_height*m_scale);
+		break;
 	}
 
-	Scale::ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
-	{
-		return (ScaleMode)cfg.value("mode", { DefaultMode }).toInt();
-	}
+	//info.setProperty("width", width);
+	//info.setProperty("height", height);
 
-	float Scale::ScaleFromVariant(const QVariantMap& cfg)
-	{
-		return cfg.value("scale", { DefaultScale }).toFloat();
-	}
-	int Scale::WidthFromVariant(const QVariantMap& cfg)
-	{
-		return cfg.value("width", { DefaultWidth }).toInt();
-	}
-	int Scale::HeightFromVariant(const QVariantMap& cfg)
-	{
-		return cfg.value("height", { DefaultHeight }).toInt();
-	}
-	bool Scale::BilinearFromVariant(const QVariantMap& cfg)
-	{
-		return cfg.value("bilinear", { DefaultBilinear }).toBool();
-	}
+
+	m_gl->glGenTextures(1, &processedTexture);
+	m_gl->glBindTexture(GL_TEXTURE_2D, processedTexture);
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+
+	GLuint fbo;
+	m_gl->glGenFramebuffers(1, &fbo);
+	m_gl->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	m_gl->glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
+
+	GLuint vao;
+	m_gl->glGenVertexArrays(1, &vao);
+	m_gl->glBindVertexArray(vao);
+
+	static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
+
+	GLuint buffer;
+	m_gl->glGenBuffers(1, &buffer);
+	m_gl->glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, rawv, GL_STATIC_DRAW);
+	m_gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
+	m_gl->glEnableVertexAttribArray(0);
+
+
+	m_gl->glViewport(0, 0, width, height);
+	m_gl->glDisable(GL_DEPTH_TEST);
+
+	m_gl->glActiveTexture(GL_TEXTURE0);
+	m_gl->glBindTexture(GL_TEXTURE_2D, imageData->texture());
+
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	program.setUniformValue("src", 0);
+	setUniforms(program);
+
+	m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	m_gl->glDeleteBuffers(1, &buffer);
+	m_gl->glDeleteVertexArrays(1, &vao);
+	m_gl->glDeleteFramebuffers(1, &fbo);
+
+	program.release();
+	imageData->doneContext();
+
+	return processedTexture;
+}
+
+void Scale::setUniforms(QOpenGLShaderProgram& program)
+{
+	program.setUniformValue("mode", m_bilinear);
+}
+
+Scale::ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
+{
+	return static_cast<ScaleMode>(cfg.value("mode", { static_cast<int>(ScaleMode::Default) }).toInt());
+}
+
+float Scale::ScaleFromVariant(const QVariantMap& cfg)
+{
+	return cfg.value("scale", { DefaultScale }).toFloat();
+}
+unsigned int Scale::WidthFromVariant(const QVariantMap& cfg)
+{
+	return cfg.value("width", { DefaultWidth }).toInt();
+}
+unsigned int Scale::HeightFromVariant(const QVariantMap& cfg)
+{
+	return cfg.value("height", { DefaultHeight }).toInt();
+}
+bool Scale::BilinearFromVariant(const QVariantMap& cfg)
+{
+	return cfg.value("bilinear", { DefaultBilinear }).toBool();
+}
 
 }

@@ -3,24 +3,22 @@
 
 namespace glraw
 {
-	class GLRAW_API Erosion : public AbstractFilter
-	{
-	public:
-		Erosion(int kernelsize);
-		Erosion(const QVariantMap& cfg);
-		virtual ~Erosion() = default;
+class GLRAW_API Erosion : public AbstractFilter
+{
+public:
+	Erosion(unsigned int size);
+	Erosion(const QVariantMap& cfg);
+	virtual ~Erosion() = default;
 
-		virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
+	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
 
-	protected:
+protected:
 
-		void setUniforms(QOpenGLShaderProgram& program) override;
+	void setUniforms(QOpenGLShaderProgram& program) override;
 
-	private:
+private:
 
-		int m_kernelsize;
-
-		static int KernelSizeFromVariant(const QVariantMap& cfg);
-	};
+	unsigned int m_size;
+};
 
 }

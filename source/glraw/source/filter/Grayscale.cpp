@@ -2,30 +2,28 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
-const char * const source =
-		R"(#version 150
+	const char * const source =
+			R"(#version 150
 
-		uniform sampler2D src;
-		uniform vec3 factor;
+			uniform sampler2D src;
+			uniform vec3 factor;
 
-		in vec2 v_uv;
-		out vec4 dst;
+			in vec2 v_uv;
+			out vec4 dst;
 
-		void main()
-		{   
-			vec4 color = texture(src, v_uv);
-			dst = vec4(vec3(factor.r * color.r + factor.g * color.g + factor.b * color.b), color.a);
-		} )";
+			void main()
+			{   
+				vec4 color = texture(src, v_uv);
+				dst = vec4(vec3(factor.r * color.r + factor.g * color.g + factor.b * color.b), color.a);
+			} )";
 }
 
 namespace glraw
 {
 
-Grayscale::Grayscale(GrayscaleFactor in)
+Grayscale::Grayscale(GrayscaleFactor in = GrayscaleFactor::Default)
 	: Grayscale(FactorFromMode(in))
 {
 }

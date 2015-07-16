@@ -34,14 +34,14 @@ protected:
 
 	void setUniforms( QOpenGLShaderProgram& program ) override;
 
+private:
 
-	int m_blendMode;
+	BlendMode m_blendMode;
 	QVector4D m_color;
 	float m_factor;
 
 	static BlendMode ModeFromVariant(const QVariantMap& cfg);
 	static QVector4D ColorFromVariant( const QVariantMap& cfg );
-	static float FactorFromVariant( const QVariantMap& cfg );
 };
 
 }

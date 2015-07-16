@@ -7,18 +7,18 @@
 
 namespace
 {
-const char * vertexShaderSource =
-	R"(#version 150
+	const char * vertexShaderSource =
+		R"(#version 150
 
-    in vec2 a_vertex;
-    out vec2 v_uv;
+		in vec2 a_vertex;
+		out vec2 v_uv;
 
-    void main()
-    {
-        v_uv = a_vertex.xy * 0.5 + 0.5;    
-        gl_Position = vec4(a_vertex * 1.0, 0.0, 1.0);
-    }
-    )";
+		void main()
+		{
+			v_uv = a_vertex.xy * 0.5 + 0.5;    
+			gl_Position = vec4(a_vertex * 1.0, 0.0, 1.0);
+		}
+		)";
 }
 
 namespace glraw
@@ -130,4 +130,31 @@ void AbstractFilter::setUniforms(QOpenGLShaderProgram& program)
 {
 }
 
+unsigned int AbstractFilter::numberOfPasses()
+{
+	return 1;
+}
+
+unsigned int AbstractFilter::VerifySize( unsigned int size )
+{
+	if( size == 0 )
+	{
+		qDebug( "The minimum size is 1." );
+		return 1;
+	}
+	else
+	{
+		return size;
+	}
+}
+
+unsigned int AbstractFilter::SizeFromVariant( const QVariantMap& cfg, unsigned int default_value )
+{
+	return cfg.value( "size", { default_value } ).toInt();
+}
+
+float AbstractFilter::FactorFromVariant( const QVariantMap& cfg, float default_value )
+{
+	return cfg.value( "factor", { default_value } ).toFloat();
+}
 }

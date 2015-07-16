@@ -10,7 +10,7 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform int M;
+		uniform int size;
 
 		in vec2 v_uv;
 		out vec4 dst;
@@ -21,41 +21,35 @@ namespace
 
 			dst = vec4(vec3(0.0f),1.0f);
 
-			for(int i=-M; i<= M;++i)
+			for(int i=-size; i <= size; ++i)
 			{
 				dst = max(dst, texture(src, v_uv+img_size*i));
 			}
 		} )";
-	const int DefaultKernelSize = 1;
+
+	const unsigned int DefaultSize = 1;
 }
 
 namespace glraw
 {
 
-	Dilation::Dilation(int kernelsize = DefaultKernelSize)
-		: m_kernelsize(kernelsize)
-	{
-	}
+Dilation::Dilation(unsigned int size = DefaultSize)
+	: m_size(VerifySize(size))
+{
+}
 
-	Dilation::Dilation(const QVariantMap& cfg)
-		: Dilation(KernelSizeFromVariant(cfg))
-	{
-	}
+Dilation::Dilation(const QVariantMap& cfg)
+	: Dilation(SizeFromVariant(cfg, DefaultSize))
+{
+}
 
-	bool Dilation::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
-	{
-		return renderShader(imageData, source);
-	}
+bool Dilation::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+{
+	return renderShader(imageData, source);
+}
 
-	void Dilation::setUniforms(QOpenGLShaderProgram& program)
-	{
-		program.setUniformValue("M", m_kernelsize);
-	}
-
-
-	int Dilation::KernelSizeFromVariant(const QVariantMap& cfg)
-	{
-		return cfg.value("kernelsize", { DefaultKernelSize }).toInt();
-	}
-
+void Dilation::setUniforms(QOpenGLShaderProgram& program)
+{
+	program.setUniformValue("size", m_size);
+}
 }

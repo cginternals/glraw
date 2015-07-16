@@ -17,7 +17,7 @@ enum class GrayscaleFactor
 class GLRAW_API Grayscale : public AbstractFilter
 {
 public:
-	Grayscale(GrayscaleFactor in = GrayscaleFactor::Default);
+	Grayscale(GrayscaleFactor in);
 	Grayscale(const QVector3D& factor);
 	Grayscale(const QVariantMap& cfg);
 	virtual ~Grayscale() = default;

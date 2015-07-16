@@ -9,71 +9,71 @@
 
 namespace
 {
-const char* verticalShader = 
-		R"(#version 150
+	const char* verticalShader = 
+			R"(#version 150
 
-		uniform sampler2D src;
-		uniform int range;
+			uniform sampler2D src;
+			uniform int size;
 
-		in vec2 v_uv;
-		out vec4 fragColor;
+			in vec2 v_uv;
+			out vec4 fragColor;
 
-		void main()
-		{
-			vec3 color = vec3(0.0);
-			float offset = 1.0 / textureSize(src, 0).y;
-			for (int i = -range; i <= range; ++i)
+			void main()
 			{
-				color += texture(src, v_uv + vec2(0.0, i * offset)).xyz;
-			}
-			fragColor = vec4(color / (2*range+1), 1.0);
-		})";
+				vec3 color = vec3(0.0);
+				float offset = 1.0 / textureSize(src, 0).y;
+				for (int i = -size; i <= size; ++i)
+				{
+					color += texture(src, v_uv + vec2(0.0, i * offset)).xyz;
+				}
+				fragColor = vec4(color / (2*size+1), 1.0);
+			})";
 
-const char* horizontalShader =
-		R"(#version 150
+	const char* horizontalShader =
+			R"(#version 150
 
-		uniform sampler2D src;
-		uniform sampler2D buf;
-		uniform float factor;
-		uniform int range;
+			uniform sampler2D src;
+			uniform sampler2D buf;
+			uniform float factor;
+			uniform int size;
 
-		in vec2 v_uv;
-		out vec4 fragColor;
+			in vec2 v_uv;
+			out vec4 fragColor;
 
-		void main()
-		{
-			vec3 color = vec3(0.0);
-			float offset = 1.0 / textureSize(src, 0).x;
-			for (int i = -range; i <= range; ++i)
+			void main()
 			{
-				color += texture(buf, v_uv + vec2(i * offset, 0.0)).xyz;
-			}
-			color = (color / (2*range+1)) * factor + texture(src, v_uv).xyz * (1.0-factor);
-			fragColor = vec4(color, 1.0);
-		})";
+				vec3 color = vec3(0.0);
+				float offset = 1.0 / textureSize(src, 0).x;
+				for (int i = -size; i <= size; ++i)
+				{
+					color += texture(buf, v_uv + vec2(i * offset, 0.0)).xyz;
+				}
+				color = (color / (2*size+1)) * factor + texture(src, v_uv).xyz * (1.0-factor);
+				fragColor = vec4(color, 1.0);
+			})";
 
 
-	const int DefaultRange = 25;
+	const int DefaultSize = 5;
 	const float DefaultFactor = 1.0f;
 }
 
 namespace glraw
 {
 
-BlockBlur::BlockBlur( unsigned int range = DefaultRange, float factor = DefaultFactor )
-	: m_range(VerifyRange(range))
+BlockBlur::BlockBlur( unsigned int size = DefaultSize, float factor = DefaultFactor )
+	: m_size(VerifySize(size))
 	, m_factor(factor)
 {
 }
 
 BlockBlur::BlockBlur(const QVariantMap& in)
-	: BlockBlur( RangeFromVariant(in), FactorFromVariant(in) )
+	: BlockBlur( SizeFromVariant(in, DefaultSize), FactorFromVariant(in, DefaultFactor) )
 {
 }
 
 void BlockBlur::setUniforms( QOpenGLShaderProgram& program )
 {
-	program.setUniformValue( "range", m_range );
+	program.setUniformValue( "size", m_size );
 }
 
 bool BlockBlur::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
@@ -165,29 +165,6 @@ bool BlockBlur::process(std::unique_ptr<Canvas> & imageData, AssetInformation & 
 	imageData->doneContext();
 
 	return true;
-}
-
-unsigned int BlockBlur::VerifyRange( unsigned int range )
-{
-	if( range == 0 )
-	{
-		qWarning( "The minimum range is 1." );
-		return 1;
-	}
-	else
-	{
-		return range;
-	}
-}
-
-unsigned int BlockBlur::RangeFromVariant( const QVariantMap& cfg )
-{
-	return cfg.value( "range", { DefaultRange } ).toInt();
-}
-
-float BlockBlur::FactorFromVariant( const QVariantMap& cfg )
-{
-	return cfg.value( "factor", { DefaultFactor } ).toFloat();
 }
 
 }

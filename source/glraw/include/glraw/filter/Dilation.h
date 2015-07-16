@@ -3,24 +3,23 @@
 
 namespace glraw
 {
-	class GLRAW_API Dilation : public AbstractFilter
-	{
-	public:
-		Dilation(int kernelsize);
-		Dilation(const QVariantMap& cfg);
-		virtual ~Dilation() = default;
 
-		virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
+class GLRAW_API Dilation : public AbstractFilter
+{
+public:
+	Dilation(unsigned int size);
+	Dilation(const QVariantMap& cfg);
+	virtual ~Dilation() = default;
 
-	protected:
+	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
 
-		void setUniforms(QOpenGLShaderProgram& program) override;
+protected:
 
-	private:
+	void setUniforms(QOpenGLShaderProgram& program) override;
 
-		int m_kernelsize;
+private:
 
-		static int KernelSizeFromVariant(const QVariantMap& cfg);
-	};
+	unsigned int m_size;
+};
 
 }
