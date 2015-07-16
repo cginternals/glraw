@@ -56,6 +56,7 @@ protected:
 	bool uniform(const QString & name);
 
 	bool filter(const QString & name);
+	bool input(const QString & name);
 
 protected:
     //bool editorExists(const QString & key);
@@ -68,12 +69,19 @@ protected:
     
     void showHelp() const;
 
+	void addFilter();
+
 protected:
     QCommandLineParser m_parser;
     QMap<QString, ConfigureMethod> m_configureMethods;
 
     QString m_shaderSource;
     QStringList m_uniformList;
+
+	QStringList m_inputFiles;
+
+	QString m_currentFilterName;
+	QVariantMap m_currentFilterOptions;
 
     //QMap<QString, glraw::ImageEditorInterface *> m_editors;
     glraw::AbstractConverter * m_converter;

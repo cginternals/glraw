@@ -15,6 +15,8 @@
 #include <glraw/CompressionConverter.h>
 #include <glraw/S3TCExtensions.h>
 
+#include <glraw/filter/Filter.hpp>
+
 #include "CommandLineOption.h"
 #include "Conversions.h"
 
@@ -45,12 +47,19 @@ QList<CommandLineOption> Builder::commandLineOptions()
 {
     QList<CommandLineOption> options;
     
-    options.append({
-        QStringList() << "h" << "help",
-        "Displays this help.",
-        QString(),
-        &Builder::help
-    });
+	options.append({
+		QStringList() << "h" << "help",
+		"Displays this help.",
+		QString(),
+		&Builder::help
+	});
+
+	options.append({
+		QStringList() << "i" << "input",
+		"Adds a file to process.",
+		"file",
+		&Builder::input
+	});
     
     options.append({
         QStringList() << "o" << "output",
@@ -235,26 +244,73 @@ void Builder::process(const QCoreApplication & app)
         return;
     
     m_manager.setConverter(m_converter);
-
-    QStringList sources = m_parser.positionalArguments();
     
-    if (sources.size() < 1)
+	if (m_inputFiles.size() < 1)
     {
         qDebug() << "No source files passed in.";
         return;
     }
+
+	QStringList filter_parameter = m_parser.positionalArguments();
+	for(auto param : filter_parameter)
+	{
+		filter(param);
+	}
+
+	if(m_currentFilterName != QString())
+	{
+		addFilter();
+	}
     
-    for (auto source : sources)
+	for(auto source : m_inputFiles)
     {
-        if( source != "sources" )
-        {
-            m_manager.process(source);
-        }
+        m_manager.process(source);
     }
 }
 
 bool Builder::filter(const QString & name)
 {
+	QStringList association = name.split('=');
+
+	if(association.size() != 2)
+	{
+		qDebug() << "Failed to parse '" << name << "'.";
+		return false;
+	}
+
+	QString option = association.at(0).toLower();
+	QString value = association.at(1).toLower();
+
+	if(option == "filter")
+	{
+		if(m_currentFilterName != QString())
+		{
+			addFilter();
+		}
+		m_currentFilterName = value;
+	}
+	else
+	{
+		m_currentFilterOptions.insert(option, value);
+	}
+	return true;
+}
+
+void Builder::addFilter()
+{
+	auto filter = glraw::Filter::CreateByName(m_currentFilterName.toStdString(), m_currentFilterOptions);
+	m_manager.appendFilter(filter);
+}
+
+bool Builder::input(const QString & name)
+{
+	QString in = m_parser.value(name);
+	if(in == QString())
+	{
+		qDebug() << "No input file specified.";
+		return false;
+	}
+	m_inputFiles << in;
 	return true;
 }
 
