@@ -13,15 +13,8 @@ Converter::Converter()
 {
 }
 
-Converter::~Converter()
-{
-}
-
 QByteArray Converter::convert(std::unique_ptr<Canvas> & image, AssetInformation & info)
-{
-    //if (hasFragmentShader() && !image->process(m_fragmentShader, m_uniforms))
-    //    return QByteArray();
-    
+{  
     info.setProperty("format", QVariant(static_cast<int>(m_format)));
     info.setProperty("type", QVariant(static_cast<int>(m_type)));
     

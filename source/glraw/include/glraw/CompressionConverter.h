@@ -20,9 +20,9 @@ class GLRAW_API CompressionConverter : public AbstractConverter
 {
 public:
     CompressionConverter();
-    virtual ~CompressionConverter();
+    virtual ~CompressionConverter() = default;
 
-	virtual QByteArray convert(std::unique_ptr<Canvas> & image, AssetInformation & info);
+	virtual QByteArray convert(std::unique_ptr<Canvas> & image, AssetInformation & info) override;
 
     void setCompressedFormat(GLint compressedFormat);
 

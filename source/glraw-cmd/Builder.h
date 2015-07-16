@@ -12,7 +12,6 @@ class QCoreApplication;
 
 namespace glraw
 {
-    //class ImageEditorInterface;
     class FileWriter;
     class AbstractConverter;
 }
@@ -43,15 +42,6 @@ protected:
     bool type(const QString & name);
     bool compressedFormat(const QString & name);
     bool raw(const QString & name);
-    //bool mirrorVertical(const QString & name);
-    //bool mirrorHorizontal(const QString & name);
-    //bool scale(const QString & name);
-    //bool widthScale(const QString & name);
-    //bool heightScale(const QString & name);
-    //bool width(const QString & name);
-    //bool height(const QString & name);
-    //bool transformMode(const QString & name);
-    //bool aspectRatioMode(const QString & name);
     bool shader(const QString & name);
 	bool uniform(const QString & name);
 
@@ -59,11 +49,6 @@ protected:
 	bool input(const QString & name);
 
 protected:
-    //bool editorExists(const QString & key);
-    //void appendEditor(const QString & key, glraw::ImageEditorInterface * editor);
-    
-    //template <class Editor>
-    //Editor * editor(const QString & key);
 
     bool configureShader();
     
@@ -83,11 +68,8 @@ protected:
 	QString m_currentFilterName;
 	QVariantMap m_currentFilterOptions;
 
-    //QMap<QString, glraw::ImageEditorInterface *> m_editors;
     glraw::AbstractConverter * m_converter;
     glraw::FileWriter * m_writer;
     glraw::ConvertManager m_manager;
 
 };
-
-#include "Builder.hpp"

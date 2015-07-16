@@ -8,8 +8,6 @@
 #include <QCoreApplication>
 #include <QCommandLineOption>
 
-//#include <glraw/MirrorEditor.h>
-//#include <glraw/ScaleEditor.h>
 #include <glraw/FileWriter.h>
 #include <glraw/Converter.h>
 #include <glraw/CompressionConverter.h>
@@ -109,71 +107,6 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "format",
         &Builder::compressedFormat
     });
-	/*
-    options.append({
-        QStringList() << "mv" << "mirror-vertical",
-        "Mirrors the image vertically.",
-        QString(),
-        &Builder::mirrorVertical
-    });*/
-	/*
-    options.append({
-        QStringList() << "mh" << "mirror-horizontal", 
-        "Mirrors the image horizontally.",
-        QString(),
-        &Builder::mirrorHorizontal
-    });*/
-	/*
-    options.append({
-        QStringList() << "s" << "scale",
-        "Scales the image.",
-        "decimal",
-        &Builder::scale
-    });
-
-    options.append({
-        QStringList() << "ws" << "width-scale",
-        "Scales the width.",
-        "decimal",
-        &Builder::widthScale
-    });
-
-    options.append({
-        QStringList() << "hs" << "height-scale",
-        "Scales the height.",
-        "decimal",
-        &Builder::heightScale
-    });
-
-    options.append({
-        QStringList() << "width",
-        "Sets the width in px.",
-        "integer",
-        &Builder::width
-    });
-
-    options.append({
-        QStringList() << "height",
-        "Sets the height in px.",
-        "integer",
-        &Builder::height
-    });
-
-    options.append({
-        QStringList() << "transform-mode",
-        "Transformation mode used for resizing        " // spaces are required for well formated output
-        "(default: nearest).",                          // since qt auto-line-breaks after 45 characters.
-        "mode",
-        &Builder::transformMode
-    });
-    
-    options.append({
-        QStringList() << "aspect-ratio-mode",
-        "Aspect ratio mode used for resizing          " // spaces are required for well formated output
-        "(default: IgnoreAspectRatio).",                // since qt auto-line-breaks after 45 characters.
-        "mode",
-        &Builder::aspectRatioMode
-    });*/
 	
     options.append({
         QStringList() << "shader",
@@ -429,191 +362,6 @@ bool Builder::raw(const QString & name)
     m_writer->setHeaderEnabled(false);
     return true;
 }
-/*
-bool Builder::mirrorVertical(const QString & name)
-{
-    const QString editorName = "MirrorEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::MirrorEditor());
-    
-    auto e = editor<glraw::MirrorEditor>(editorName);
-    
-    e->setVertical(true);
-    
-    return true;
-}
-
-bool Builder::mirrorHorizontal(const QString & name)
-{
-    const QString editorName = "MirrorEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::MirrorEditor());
-    
-    auto e = editor<glraw::MirrorEditor>(editorName);
-    
-    e->setHorizontal(true);
-    
-    return true;
-}
-
-bool Builder::scale(const QString & name)
-{
-    QString scaleString = m_parser.value(name);
-    
-    bool ok;
-    float scale = scaleString.toFloat(&ok);
-    if (!ok)
-    {
-        qDebug() << scaleString << "isn't a float.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-
-    e->setScale(scale);
-    
-    return true;
-}
-
-bool Builder::widthScale(const QString & name)
-{
-    QString widthScaleString = m_parser.value(name);
-    
-    bool ok;
-    float widthScale = widthScaleString.toFloat(&ok);
-    if (!ok)
-    {
-        qDebug() << widthScaleString << "isn't a float.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-
-    e->setWidthScale(widthScale);
-    
-    return true;
-}
-
-bool Builder::heightScale(const QString & name)
-{
-    QString heighScaleString = m_parser.value(name);
-    
-    bool ok;
-    float heightScale = heighScaleString.toFloat(&ok);
-    if (!ok)
-    {
-        qDebug() << heighScaleString << "isn't a float.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-
-    e->setHeightScale(heightScale);
-    
-    return true;
-}
-
-bool Builder::width(const QString & name)
-{
-    QString widthString = m_parser.value(name);
-    
-    bool ok;
-    int width = widthString.toInt(&ok);
-    if (!ok)
-    {
-        qDebug() << widthString << "isn't a int.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-
-    e->setWidth(width);
-    
-    return true;
-}
-
-bool Builder::height(const QString & name)
-{
-    QString heightString = m_parser.value(name);
-    
-    bool ok;
-    int height = heightString.toInt(&ok);
-    if (!ok)
-    {
-        qDebug() << heightString << "isn't a int.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-
-    e->setHeight(height);
-    
-    return true;
-}
-
-bool Builder::transformMode(const QString & name)
-{
-    QString modeString = m_parser.value(name);
-    
-    if (!Conversions::isTransformationMode(modeString))
-    {
-        qDebug() << qPrintable(modeString) << "is not a transformation mode.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-    
-    e->setTransformationMode(
-        Conversions::stringToTransformationMode(modeString)
-    );
-
-    return true;
-}
-
-bool Builder::aspectRatioMode(const QString & name)
-{
-    QString modeString = m_parser.value(name);
-    
-    if (!Conversions::isAspectRatioMode(modeString))
-    {
-        qDebug() << qPrintable(modeString) << "is not a transformation mode.";
-        return false;
-    }
-
-    const QString editorName = "ScaleEditor";
-    if (!editorExists(editorName))
-        appendEditor(editorName, new glraw::ScaleEditor());
-    
-    auto e = editor<glraw::ScaleEditor>(editorName);
-    e->setAspectRatioMode(
-        Conversions::stringToAspectRatioMode(modeString));
-
-    return true;
-}*/
 
 bool Builder::shader(const QString & name)
 {
@@ -629,31 +377,17 @@ bool Builder::uniform(const QString & name)
 
     return true;
 }
-/*
-bool Builder::editorExists(const QString & key)
-{
-    return m_editors.contains(key);
-}*/
-/*
-void Builder::appendEditor(const QString & key, glraw::ImageEditorInterface * editor)
-{
-    //m_manager.appendImageEditor(editor);
-    m_editors.insert(key, editor);
-}*/
 
 bool Builder::configureShader()
 {
+	//TODO implement
     if (m_shaderSource.isEmpty())
         return true;
     
-    if (!m_converter->setFragmentShader(m_shaderSource))
-        return false;
 
     for (auto & uniform : m_uniformList)
     {
         qDebug() << uniform;
-        if (!m_converter->setUniform(uniform))
-            return false;
     }
 
     return true;
@@ -662,14 +396,14 @@ bool Builder::configureShader()
 void Builder::showHelp() const
 {
    qDebug() << qPrintable(m_parser.helpText()) << R"(
-Formats:        Types:                  Transformation Modes:
-  GL_RED          GL_UNSIGNED_BYTE        nearest
-  GL_BLUE         GL_BYTE                 linear
-  GL_GREEN        GL_UNSIGNED_SHORT        
-  GL_RG           GL_SHORT              Aspect Ratio Modes:
-  GL_RGB          GL_UNSIGNED_INT         IgnoreAspectRatio
-  GL_BGR          GL_INT                  KeepAspectRatio
-  GL_RGBA         GL_FLOAT                KeepAspectRatioByExpanding
+Formats:        Types:                
+  GL_RED          GL_UNSIGNED_BYTE    
+  GL_BLUE         GL_BYTE             
+  GL_GREEN        GL_UNSIGNED_SHORT   
+  GL_RG           GL_SHORT            
+  GL_RGB          GL_UNSIGNED_INT     
+  GL_BGR          GL_INT              
+  GL_RGBA         GL_FLOAT            
   GL_BGRA
 
 Compressed Formats:)";

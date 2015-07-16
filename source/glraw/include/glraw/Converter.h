@@ -20,9 +20,9 @@ class GLRAW_API Converter : public AbstractConverter
 {
 public:
     Converter();
-    virtual ~Converter();
+    virtual ~Converter() = default;
 
-	virtual QByteArray convert(std::unique_ptr<Canvas> & image, AssetInformation & info);
+	virtual QByteArray convert(std::unique_ptr<Canvas> & image, AssetInformation & info) override;
 
     void setFormat(GLenum format);
     void setType(GLenum type);
