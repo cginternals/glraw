@@ -16,7 +16,7 @@ namespace
 		void main()
 		{
 			v_uv = a_vertex.xy * 0.5 + 0.5;    
-			gl_Position = vec4(a_vertex * 1.0, 0.0, 1.0);
+			gl_Position = vec4(a_vertex, 0.0, 1.0);
 		}
 		)";
 }
@@ -24,83 +24,76 @@ namespace
 namespace glraw
 {
 
-bool AbstractFilter::renderShader(std::unique_ptr<Canvas> & imageData, const QString & shader)
+AbstractFilter::AbstractFilter()
+	: m_gl(nullptr)
 {
-	GLuint processedTexture = renderShaderToTexture(imageData, shader);
+}
 
-	if( processedTexture == 0 )
+bool AbstractFilter::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+{
+	m_gl = imageData->gl();
+	GLuint processedTexture = renderToTexture(imageData);
+
+	if(processedTexture == 0)
 	{
 		qCritical("Error rendering to texture!");
 		return false;
 	}
 
-	imageData->updateTexture(processedTexture);
+	if(numberOfPasses() % 2 != 0)
+	{
+		imageData->updateTexture(processedTexture);
+	}
+
+	updateAssetInformation(info);
 
 	return true;
 }
 
-int AbstractFilter::renderShaderToTexture( std::unique_ptr<Canvas> & imageData, const QString & shader )
+void AbstractFilter::updateAssetInformation(AssetInformation & info)
+{
+}
+
+int AbstractFilter::renderToTexture(std::unique_ptr<Canvas> & imageData)
 {
 	imageData->makeContext();
-	QOpenGLShaderProgram program;
-	if( !createProgram( program, shader ) )
+
+	GLuint processedTexture = createWorkingTexture(imageData->texture());
+
+	for(unsigned int i = 0; i < numberOfPasses(); i++)
 	{
-		qCritical( "Shader Error!" );
-		return 0;
+		QOpenGLShaderProgram program;
+		if(!createProgram(program, fragmentShaderSource(i)))
+		{
+			qCritical("Shader Error!");
+			return 0;
+		}
+
+		if(i % 2 == 0)
+		{
+			attachToFramebuffer(processedTexture);
+		}
+		else
+		{
+			attachToFramebuffer(imageData->texture());
+		}
+		bindVertexBuffer();
+
+		bindTexture(0, imageData->texture());
+		program.setUniformValue("src", 0);
+		if(i > 0)
+		{
+			bindTexture(1, processedTexture);
+			program.setUniformValue("buf", 1);
+		}
+
+		setUniforms(program, i);
+
+		m_gl->glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		program.release();
 	}
-	GLuint texture = imageData->texture();
-	auto m_gl = imageData->gl();
 
-	GLint width, height;
-	m_gl->glBindTexture( GL_TEXTURE_2D, texture );
-	m_gl->glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width );
-	m_gl->glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height );
-
-	GLuint processedTexture;
-	m_gl->glGenTextures( 1, &processedTexture );
-	m_gl->glBindTexture( GL_TEXTURE_2D, processedTexture );
-	m_gl->glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr );
-
-	GLuint fbo;
-	m_gl->glGenFramebuffers( 1, &fbo );
-	m_gl->glBindFramebuffer( GL_FRAMEBUFFER, fbo );
-	m_gl->glFramebufferTexture( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0 );
-
-	GLuint vao;
-	m_gl->glGenVertexArrays( 1, &vao );
-	m_gl->glBindVertexArray( vao );
-
-	static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
-
-	GLuint buffer;
-	m_gl->glGenBuffers( 1, &buffer );
-	m_gl->glBindBuffer( GL_ARRAY_BUFFER, buffer );
-	m_gl->glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * 8, rawv, GL_STATIC_DRAW );
-	m_gl->glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, sizeof( QVector2D ), nullptr );
-	m_gl->glEnableVertexAttribArray( 0 );
-
-
-	m_gl->glViewport( 0, 0, width, height );
-	m_gl->glDisable( GL_DEPTH_TEST );
-
-	m_gl->glActiveTexture( GL_TEXTURE0 );
-	m_gl->glBindTexture( GL_TEXTURE_2D, imageData->texture() );
-
-	m_gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	m_gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	m_gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	m_gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-
-	program.setUniformValue( "src", 0 );
-	setUniforms(program);
-
-	m_gl->glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-
-	m_gl->glDeleteBuffers( 1, &buffer );
-	m_gl->glDeleteVertexArrays( 1, &vao );
-	m_gl->glDeleteFramebuffers( 1, &fbo );
-
-	program.release();
 	imageData->doneContext();
 
 	return processedTexture;
@@ -126,7 +119,7 @@ bool AbstractFilter::createProgram(QOpenGLShaderProgram& program, const QString 
 	return program.bind();
 }
 
-void AbstractFilter::setUniforms(QOpenGLShaderProgram& program)
+void AbstractFilter::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 }
 
@@ -145,6 +138,75 @@ unsigned int AbstractFilter::VerifySize( unsigned int size )
 	else
 	{
 		return size;
+	}
+}
+
+void AbstractFilter::bindTexture(unsigned int unit, unsigned int tex)
+{
+	m_gl->glActiveTexture(GL_TEXTURE0 + unit);
+	m_gl->glBindTexture(GL_TEXTURE_2D, tex);
+
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+int AbstractFilter::createWorkingTexture(unsigned int prototype)
+{
+	GLint width, height;
+	m_gl->glBindTexture(GL_TEXTURE_2D, prototype);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+	GLuint buffer_texture;
+	m_gl->glGenTextures(1, &buffer_texture);
+	m_gl->glBindTexture(GL_TEXTURE_2D, buffer_texture);
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+	m_gl->glViewport(0, 0, width, height);
+
+	return buffer_texture;
+}
+
+void AbstractFilter::attachToFramebuffer(unsigned int texture)
+{
+	static bool initialized = false;
+	static GLuint fbo;
+
+	if(!initialized)
+	{
+		m_gl->glGenFramebuffers(1, &fbo);
+		m_gl->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		initialized = true;
+	}
+
+	m_gl->glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+}
+
+void AbstractFilter::bindVertexBuffer()
+{
+	static const float rawv[] = { +1.f, -1.f, +1.f, +3.f, -3.f, -1.f };
+	static bool initialized = false;
+	static GLuint vao, buffer;
+
+	if(!initialized)
+	{
+		m_gl->glGenVertexArrays(1, &vao);
+		m_gl->glBindVertexArray(vao);
+
+		m_gl->glGenBuffers(1, &buffer);
+		m_gl->glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+		m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, rawv, GL_STATIC_DRAW);
+		m_gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
+		m_gl->glEnableVertexAttribArray(0);
+		initialized = true;
+	}
+	else
+	{
+		m_gl->glBindVertexArray(vao);
+		m_gl->glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	}
 }
 

@@ -11,11 +11,11 @@ public:
 	BlockBlur(const QVariantMap&);
 	virtual ~BlockBlur() = default;
 
-	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
-
 protected:
 
-	virtual void setUniforms( QOpenGLShaderProgram& program ) override;
+	virtual unsigned int numberOfPasses() override;
+	virtual void setUniforms( QOpenGLShaderProgram& program, unsigned int pass ) override;
+	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
 

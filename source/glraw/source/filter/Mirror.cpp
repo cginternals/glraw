@@ -39,15 +39,15 @@ Mirror::Mirror( const QVariantMap& cfg )
 {
 }
 
-bool Mirror::process( std::unique_ptr<Canvas> & imageData, AssetInformation & info )
-{
-	return renderShader( imageData, source );
-}
-
-void Mirror::setUniforms( QOpenGLShaderProgram& program )
+void Mirror::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue( "horizontal", m_horizontal );
 	program.setUniformValue( "vertical", m_vertical );
+}
+
+QString Mirror::fragmentShaderSource(unsigned int pass)
+{
+	return source;
 }
 
 bool Mirror::HorizontalFromVariant( const QVariantMap& cfg )

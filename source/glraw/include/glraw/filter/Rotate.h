@@ -12,8 +12,6 @@ public:
 	Rotate(const QVariantMap& cfg);
 	virtual ~Rotate() = default;
 
-	virtual bool process( std::unique_ptr<Canvas> & imageData, AssetInformation & info ) override;
-
 	enum class RotationMode : int
 	{
 		RotateBy_0,
@@ -26,7 +24,8 @@ public:
 
 protected:
 
-	void setUniforms( QOpenGLShaderProgram& program ) override;
+	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
+	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
 

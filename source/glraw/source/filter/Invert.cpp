@@ -41,14 +41,14 @@ Invert::Invert( const QVariantMap& cfg )
 {
 }
 
-bool Invert::process( std::unique_ptr<Canvas> & imageData, AssetInformation & info )
-{
-	return renderShader( imageData, source );
-}
-
-void Invert::setUniforms( QOpenGLShaderProgram& program )
+void Invert::setUniforms( QOpenGLShaderProgram& program, unsigned int pass )
 {
 	program.setUniformValue( "invert_alpha", m_invertAlpha );
+}
+
+QString Invert::fragmentShaderSource(unsigned int pass)
+{
+	return source;
 }
 
 bool Invert::AlphaFromVariant( const QVariantMap& cfg )

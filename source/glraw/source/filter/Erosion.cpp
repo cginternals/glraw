@@ -42,13 +42,14 @@ Erosion::Erosion(const QVariantMap& cfg)
 {
 }
 
-bool Erosion::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
-{
-	return renderShader(imageData, source);
-}
-
-void Erosion::setUniforms(QOpenGLShaderProgram& program)
+void Erosion::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue("size", m_size);
 }
+
+QString Erosion::fragmentShaderSource(unsigned int pass)
+{
+	return source;
+}
+
 }

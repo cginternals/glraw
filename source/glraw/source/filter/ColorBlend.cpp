@@ -18,39 +18,39 @@ namespace
 		void main()
 		{   
 			vec4 texel = texture(src, v_uv);
-			if( blend_mode == 0 ) // Mix
+			if( mode == 0 ) // Mix
 			{
 				dst = (texel+color) * 0.5;
 			}
-			else if( blend_mode == 1 ) // Additive
+			else if( mode == 1 ) // Additive
 			{
 				dst = (texel+color);
 			}
-			else if( blend_mode == 2 ) // Subtractive
+			else if( mode == 2 ) // Subtractive
 			{
 				dst = (texel-color);
 			}	
-			else if( blend_mode == 3 ) // Difference
+			else if( mode == 3 ) // Difference
 			{
 				dst = (color-texel);
 			}	
-			else if( blend_mode == 4 ) // Multiply
+			else if( mode == 4 ) // Multiply
 			{
 				dst = (texel*color);
 			}
-			else if( blend_mode == 5 ) // Divide
+			else if( mode == 5 ) // Divide
 			{
 				dst = (texel/color);
 			}
-			else if( blend_mode == 6 ) // Divisor
+			else if( mode == 6 ) // Divisor
 			{
 				dst = (color/texel);
 			}
-			else if( blend_mode == 7 ) // Minimum
+			else if( mode == 7 ) // Minimum
 			{
 				dst = min(texel,color);
 			}	
-			else if( blend_mode == 8 ) // Maximum
+			else if( mode == 8 ) // Maximum
 			{
 				dst = max(texel,color);
 			}
@@ -77,14 +77,16 @@ ColorBlend::ColorBlend( const QVariantMap& cfg )
 {
 }
 
-bool ColorBlend::process( std::unique_ptr<Canvas> & imageData, AssetInformation & info )
-{
-	return renderShader( imageData, source );
-}
-
-void ColorBlend::setUniforms( QOpenGLShaderProgram& program )
+void ColorBlend::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue("mode", static_cast<int>(m_blendMode));
+	program.setUniformValue("factor", m_factor);
+	program.setUniformValue("color", m_color);
+}
+
+QString ColorBlend::fragmentShaderSource(unsigned int pass)
+{
+	return source;
 }
 
 BlendMode ColorBlend::ModeFromVariant(const QVariantMap& cfg)

@@ -40,14 +40,14 @@ Rotate::Rotate(const QVariantMap& cfg)
 {
 }
 
-bool Rotate::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
-{
-	return renderShader( imageData, source );
-}
-
-void Rotate::setUniforms(QOpenGLShaderProgram& program)
+void Rotate::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue( "rotation", m_rotation);
+}
+
+QString Rotate::fragmentShaderSource(unsigned int pass)
+{
+	return source;
 }
 
 unsigned int Rotate::RotationFromVariant(const QVariantMap& cfg)

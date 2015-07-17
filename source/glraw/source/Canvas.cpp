@@ -85,6 +85,8 @@ void Canvas::loadTexture(const QByteArray & image, AssetInformation & info)
 
 	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
 
+	m_gl->glDisable(GL_DEPTH_TEST);
+
 	m_context.doneCurrent();
 }
 

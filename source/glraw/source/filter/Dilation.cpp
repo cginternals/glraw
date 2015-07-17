@@ -43,13 +43,14 @@ Dilation::Dilation(const QVariantMap& cfg)
 {
 }
 
-bool Dilation::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
-{
-	return renderShader(imageData, source);
-}
-
-void Dilation::setUniforms(QOpenGLShaderProgram& program)
+void Dilation::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue("size", m_size);
 }
+
+QString Dilation::fragmentShaderSource(unsigned int pass)
+{
+	return source;
+}
+
 }

@@ -25,9 +25,9 @@ RemoveAlpha::RemoveAlpha(const QVariantMap& in)
 {
 }
 
-bool RemoveAlpha::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+QString RemoveAlpha::fragmentShaderSource(unsigned int pass)
 {
-	return renderShader( imageData, source );
+	return source;
 }
 
 }

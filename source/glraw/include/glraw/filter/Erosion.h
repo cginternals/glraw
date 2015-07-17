@@ -10,11 +10,10 @@ public:
 	Erosion(const QVariantMap& cfg);
 	virtual ~Erosion() = default;
 
-	virtual bool process(std::unique_ptr<Canvas> & imageData, AssetInformation & info) override;
-
 protected:
 
-	void setUniforms(QOpenGLShaderProgram& program) override;
+	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
+	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
 

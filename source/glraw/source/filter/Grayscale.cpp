@@ -38,14 +38,14 @@ Grayscale::Grayscale(const QVariantMap& cfg)
 {
 }
 
-bool Grayscale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
-{
-	return renderShader(imageData, source);
-}
-
-void Grayscale::setUniforms(QOpenGLShaderProgram& program)
+void Grayscale::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue("factor", m_conversionFactor);
+}
+
+QString Grayscale::fragmentShaderSource(unsigned int pass)
+{
+	return source;
 }
 
 QVector3D Grayscale::FactorFromMode(GrayscaleFactor in)

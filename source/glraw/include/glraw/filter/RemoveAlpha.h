@@ -13,7 +13,10 @@ public:
 	RemoveAlpha(const QVariantMap& in);
 	virtual ~RemoveAlpha() = default;
 
-	virtual bool process( std::unique_ptr<Canvas> & imageData, AssetInformation & info ) override;
+protected:
+
+	virtual QString fragmentShaderSource(unsigned int pass) override;
+
 };
 
 }

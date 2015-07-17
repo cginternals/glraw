@@ -7,7 +7,7 @@
 
 namespace
 {
-	const char * const sourceBilinear =
+	const char * const source =
 		R"(#version 150
 
 		uniform sampler2D src;
@@ -69,29 +69,30 @@ Scale::Scale(const QVariantMap& cfg)
 {
 }
 
-bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info)
+void Scale::updateAssetInformation(AssetInformation & info)
 {
-	imageData->makeContext();
-	QOpenGLShaderProgram program;
+	info.setProperty("width", out_width);
+	info.setProperty("height", out_height);
+}
 
-	if (!createProgram(program, sourceBilinear))
-	{
-		qCritical("Shader Error!");
-		return false;
-	}
+void Scale::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
+{
+	program.setUniformValue("nearest", m_bilinear);
+}
 
-	GLuint texture = imageData->texture();
-	auto m_gl = imageData->gl();
+QString Scale::fragmentShaderSource(unsigned int pass)
+{
+	return source;
+}
 
-	m_gl->glBindTexture(GL_TEXTURE_2D, texture);
+int Scale::createWorkingTexture(unsigned int prototype)
+{
+	GLint width, height;
+	m_gl->glBindTexture(GL_TEXTURE_2D, prototype);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
 
-	GLuint processedTexture;
-	GLint w, h;
-	int width, height;
-
-	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
-	switch (m_mode)
+	switch(m_mode)
 	{
 	case ScaleMode::Absolute:
 		width = m_width;
@@ -99,81 +100,29 @@ bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info
 		break;
 	case ScaleMode::RatioX:
 		width = m_width;
-		height = m_width / w;
+		height = m_width / height;
 		break;
 	case ScaleMode::RatioY:
-		width = m_height / h;
+		width = m_height / width;
 		height = m_height;
 		break;
 	default:
-		width = (int)(w*m_scale);
-		height = (int)(h*m_scale);
+		width = (int)(width*m_scale);
+		height = (int)(height*m_scale);
 		break;
 	}
 
-	info.setProperty("width", width);
-	info.setProperty("height", height);
-
-	m_gl->glGenTextures(1, &processedTexture);
-	m_gl->glBindTexture(GL_TEXTURE_2D, processedTexture);
+	GLuint buffer_texture;
+	m_gl->glGenTextures(1, &buffer_texture);
+	m_gl->glBindTexture(GL_TEXTURE_2D, buffer_texture);
 	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-	GLuint fbo;
-	m_gl->glGenFramebuffers(1, &fbo);
-	m_gl->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	m_gl->glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, processedTexture, 0);
-
-	GLuint vao;
-	m_gl->glGenVertexArrays(1, &vao);
-	m_gl->glBindVertexArray(vao);
-
-	static const float rawv[] = { +1.f, -1.f, +1.f, +1.f, -1.f, -1.f, -1.f, +1.f };
-
-	GLuint buffer;
-	m_gl->glGenBuffers(1, &buffer);
-	m_gl->glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, rawv, GL_STATIC_DRAW);
-	m_gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(QVector2D), nullptr);
-	m_gl->glEnableVertexAttribArray(0);
-
-
 	m_gl->glViewport(0, 0, width, height);
-	m_gl->glDisable(GL_DEPTH_TEST);
 
-	m_gl->glActiveTexture(GL_TEXTURE0);
-	m_gl->glBindTexture(GL_TEXTURE_2D, imageData->texture());
+	out_width = width;
+	out_height = height;
 
-	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	program.setUniformValue("src", 0);
-
-	program.setUniformValue("width", width);
-	program.setUniformValue("height", height);
-	setUniforms(program);
-
-	m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
-
-	m_gl->glDeleteBuffers(1, &buffer);
-	m_gl->glDeleteVertexArrays(1, &vao);
-	m_gl->glDeleteFramebuffers(1, &fbo);
-
-	program.release();
-
-	imageData->doneContext();
-
-	imageData->updateTexture(processedTexture);
-
-	return true;
-}
-
-void Scale::setUniforms(QOpenGLShaderProgram& program)
-{
-	program.setUniformValue("nearest", m_bilinear);
+	return buffer_texture;
 }
 
 Scale::ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
