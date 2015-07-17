@@ -13,65 +13,39 @@ namespace
 		uniform sampler2D src;
 		uniform int width;
 		uniform int height;
-		uniform bool mode;
+		uniform bool bilinear;
 
 		in vec2 v_uv;
 		out vec4 dst;
 
 		void main()
 		{   
-			ivec2 size = textureSize(src, 0);
-			float dX = v_uv.x/size.x;
-			float dY = v_uv.y/size.y;
-
-			vec2 texCoords = vec2(dX*width, dY*height);
-			vec2 ratio = fract(texCoords);
-
-			if(mode)
+			if(bilinear)
 			{
-				dst = texture(src, texCoords);
-				return;
+				ivec2 size = textureSize(src, 0);
+				float dX = v_uv.x/size.x;
+				float dY = v_uv.y/size.y;
+
+				vec2 texCoords = vec2(dX*width, dY*height);
+				vec2 ratio = fract(texCoords);
+
+				vec4 c1 = texture(src, v_uv);
+				vec4 c2 = texture(src, v_uv + vec2(dX,0.f));
+				vec4 c3 = texture(src, v_uv + vec2(0.f,dY));
+				vec4 c4 = texture(src, v_uv + vec2(dX,dY));
+
+				dst = mix(mix(c1,c2,ratio.x), mix(c3,c4,ratio.x), ratio.y);
 			}
-
-			vec4 c1 = texture(src, texCoords);
-			vec4 c2 = texture(src, texCoords + vec2(dX,0.f));
-			vec4 c3 = texture(src, texCoords + vec2(0.f,dY));
-			vec4 c4 = texture(src, texCoords + vec2(dX,dY));
-
-			dst = mix(mix(c1,c2,ratio.x), mix(c3,c4,ratio.x), ratio.y);
-
-			dst = vec4(1.0f);
-
-		} )";
-
-	const char * const sourceFast =
-		R"(#version 150
-
-		uniform sampler2D src;
-		uniform int width;
-		uniform int height;
-		uniform bool mode;
-
-		in vec2 v_uv;
-		out vec4 dst;
-
-		void main()
-		{   
-			ivec2 size = textureSize(src, 0);
-			float dX = v_uv.x/size.x;
-			float dY = v_uv.y/size.y;
-
-			vec2 texCoords = vec2(dX*width, dY*height);
-			vec2 ratio = fract(texCoords);
-
-			dst = texture(src, texCoords);
-
+			else
+			{
+				dst = texture(src, v_uv);
+			}
 		} )";
 
 	const float DefaultScale = 1.0f;
 	const int DefaultWidth = 500;
 	const int DefaultHeight = 500;
-	bool DefaultBilinear = true;
+	bool DefaultBilinear = false;
 }
 
 namespace glraw
@@ -99,25 +73,15 @@ bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info
 {
 	imageData->makeContext();
 	QOpenGLShaderProgram program;
-	if (m_bilinear)
+
+	if (!createProgram(program, sourceBilinear))
 	{
-		if (!createProgram(program, sourceBilinear))
-		{
-			qCritical("Shader Error!");
-			return 0;
-		}
+		qCritical("Shader Error!");
+		return false;
 	}
-	else
-	{
-		if (!createProgram(program, sourceFast))
-		{
-			qCritical("Shader Error!");
-			return 0;
-		}
-	}
+
 	GLuint texture = imageData->texture();
 	auto m_gl = imageData->gl();
-
 
 	m_gl->glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -129,31 +93,30 @@ bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info
 	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
 	switch (m_mode)
 	{
-	case 0:
+	case ScaleMode::Absolute:
 		width = m_width;
 		height = m_height;
 		break;
-	case 2:
+	case ScaleMode::RatioX:
 		width = m_width;
-		height = m_width / width;
+		height = m_width / w;
 		break;
-	case 3:
-		width = m_height / height;
-		height = height;
+	case ScaleMode::RatioY:
+		width = m_height / h;
+		height = m_height;
 		break;
 	default:
-		width = (int)(m_width*m_scale);
-		height = (int)(m_height*m_scale);
+		width = (int)(w*m_scale);
+		height = (int)(h*m_scale);
 		break;
 	}
 
-	//info.setProperty("width", width);
-	//info.setProperty("height", height);
-
+	info.setProperty("width", width);
+	info.setProperty("height", height);
 
 	m_gl->glGenTextures(1, &processedTexture);
 	m_gl->glBindTexture(GL_TEXTURE_2D, processedTexture);
-	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 	GLuint fbo;
 	m_gl->glGenFramebuffers(1, &fbo);
@@ -186,23 +149,31 @@ bool Scale::process(std::unique_ptr<Canvas> & imageData, AssetInformation & info
 	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	program.setUniformValue("src", 0);
+
+	program.setUniformValue("width", width);
+	program.setUniformValue("height", height);
 	setUniforms(program);
 
 	m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	m_gl->glBindTexture(GL_TEXTURE_2D, 0);
 
 	m_gl->glDeleteBuffers(1, &buffer);
 	m_gl->glDeleteVertexArrays(1, &vao);
 	m_gl->glDeleteFramebuffers(1, &fbo);
 
 	program.release();
+
 	imageData->doneContext();
 
-	return processedTexture;
+	imageData->updateTexture(processedTexture);
+
+	return true;
 }
 
 void Scale::setUniforms(QOpenGLShaderProgram& program)
 {
-	program.setUniformValue("mode", m_bilinear);
+	program.setUniformValue("nearest", m_bilinear);
 }
 
 Scale::ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
