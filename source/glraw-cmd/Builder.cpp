@@ -12,7 +12,6 @@
 #include <glraw/Converter.h>
 #include <glraw/CompressionConverter.h>
 #include <glraw/S3TCExtensions.h>
-
 #include <glraw/filter/Filter.hpp>
 
 #include "CommandLineOption.h"
@@ -107,21 +106,6 @@ QList<CommandLineOption> Builder::commandLineOptions()
         "format",
         &Builder::compressedFormat
     });
-	
-    options.append({
-        QStringList() << "shader",
-        "Applies a fragment shader before conversion  " // spaces are required for well formated output
-        "(see for example data/grayscale.frag).",       // since qt auto-line-breaks after 45 characters.
-        "source",
-        &Builder::shader
-    });
-
-    options.append({
-        QStringList() << "uniform",
-        "Specifies uniform <identifier>=<value> pair.",
-        "assignment",
-        &Builder::uniform
-    });
 
     return options;
 }
@@ -131,7 +115,7 @@ void Builder::initialize()
     m_parser.setApplicationDescription("Converts Qt supported images to an OpenGL compatible raw format.");
     m_parser.addVersionOption();
 
-    m_parser.addPositionalArgument("sources", "Qt-supported image file(s).");
+    m_parser.addPositionalArgument("filter", "Algorithms provided by glraw.");
 
     for (auto option : commandLineOptions())
     {
@@ -172,9 +156,6 @@ void Builder::process(const QCoreApplication & app)
 
     if (m_converter == nullptr)
         m_converter = new glraw::Converter();
-    
-    if (!configureShader())
-        return;
     
     m_manager.setConverter(m_converter);
     
@@ -360,36 +341,6 @@ bool Builder::compressedFormat(const QString & name)
 bool Builder::raw(const QString & name)
 {
     m_writer->setHeaderEnabled(false);
-    return true;
-}
-
-bool Builder::shader(const QString & name)
-{
-    m_shaderSource = m_parser.value(name);
-    
-    return true;
-}
-
-bool Builder::uniform(const QString & name)
-{
-    if (m_uniformList.isEmpty())
-        m_uniformList = m_parser.values(name);
-
-    return true;
-}
-
-bool Builder::configureShader()
-{
-	//TODO implement
-    if (m_shaderSource.isEmpty())
-        return true;
-    
-
-    for (auto & uniform : m_uniformList)
-    {
-        qDebug() << uniform;
-    }
-
     return true;
 }
 

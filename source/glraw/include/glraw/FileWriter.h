@@ -1,19 +1,15 @@
 #pragma once
 
-//#include <cstdint>
-
 #include <QtGui/qopengl.h>
 #include <QMap>
 #include <QString>
 #include <QVariant>
 
-//#include <glraw/glraw_api.h>
 
 #include <glraw/RawFile.h>
 
 class QFile;
 class QDataStream;
-
 
 namespace glraw
 {
@@ -24,7 +20,7 @@ class GLRAW_API FileWriter
 {
 public:
     FileWriter(bool headerEnabled = true, bool suffixesEnabled = true);
-    virtual ~FileWriter();
+    virtual ~FileWriter() = default;
 
     virtual bool write(QByteArray & imageData, AssetInformation & info, const QString& source_path);
 

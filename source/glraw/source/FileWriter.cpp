@@ -21,10 +21,6 @@ FileWriter::FileWriter(bool headerEnabled, bool suffixesEnabled)
 {
 }
 
-FileWriter::~FileWriter()
-{
-}
-
 bool FileWriter::write(QByteArray & imageData, AssetInformation & info, const QString & source_path)
 {
     QString target = targetFilePath(source_path, info);

@@ -42,15 +42,10 @@ protected:
     bool type(const QString & name);
     bool compressedFormat(const QString & name);
     bool raw(const QString & name);
-    bool shader(const QString & name);
-	bool uniform(const QString & name);
-
 	bool filter(const QString & name);
 	bool input(const QString & name);
 
 protected:
-
-    bool configureShader();
     
     void showHelp() const;
 
@@ -59,9 +54,6 @@ protected:
 protected:
     QCommandLineParser m_parser;
     QMap<QString, ConfigureMethod> m_configureMethods;
-
-    QString m_shaderSource;
-    QStringList m_uniformList;
 
 	QStringList m_inputFiles;
 

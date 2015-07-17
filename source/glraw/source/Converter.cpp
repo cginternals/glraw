@@ -15,8 +15,8 @@ Converter::Converter()
 
 QByteArray Converter::convert(std::unique_ptr<Canvas> & image, AssetInformation & info)
 {  
-    info.setProperty("format", QVariant(static_cast<int>(m_format)));
-    info.setProperty("type", QVariant(static_cast<int>(m_type)));
+	info.setProperty("format", m_format);
+	info.setProperty("type", m_type);
     
     return image->imageFromTexture(m_format, m_type);
 }

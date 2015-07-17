@@ -48,7 +48,6 @@ protected:
 	{
 		First,
 		Second,
-		Third,
 	};
 };
 
