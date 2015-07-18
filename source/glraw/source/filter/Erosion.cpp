@@ -10,7 +10,7 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform unsigned int size;
+		uniform int size;
 
 		in vec2 v_uv;
 		out vec4 dst;
@@ -20,9 +20,12 @@ namespace
 			vec2 img_size = vec2(1.0f)/textureSize(src, 0);
 			dst = vec4(1.0f);
 
-			for(int i=-size; i<= size;++i)
+			for(int i=-size; i<=size;++i)
 			{
-				dst = min(dst, texture(src, v_uv+img_size*i));
+				for(int j=-size; j <=size; ++j)
+				{
+					dst = min(dst, texture(src, v_uv+img_size*vec2(i,j)));
+				}
 			}
 		} )";
 
