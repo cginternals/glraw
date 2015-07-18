@@ -99,11 +99,11 @@ int Scale::createWorkingTexture(unsigned int prototype)
 		height = m_height;
 		break;
 	case ScaleMode::RatioX:
+		height = height * static_cast<float>(m_width) / width;
 		width = m_width;
-		height = m_width / height;
 		break;
 	case ScaleMode::RatioY:
-		width = m_height / width;
+		width = width * static_cast<float>(m_height) / height;
 		height = m_height;
 		break;
 	default:
