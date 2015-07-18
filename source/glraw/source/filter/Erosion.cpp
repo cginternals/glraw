@@ -10,7 +10,7 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform unsigned int size;
+		uniform int size;
 
 		in vec2 v_uv;
 		out vec4 dst;
