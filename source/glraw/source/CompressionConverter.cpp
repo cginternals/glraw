@@ -16,7 +16,7 @@ QByteArray CompressionConverter::convert(std::unique_ptr<Canvas> & image, AssetI
 {   
     QByteArray imageData = image->compressedImageFromTexture(m_compressedFormat);
     
-	info.setProperty("compressedFormat", m_compressedFormat);
+	info.setProperty("compressedFormat", static_cast<int>(m_compressedFormat));
 	info.setProperty("size", imageData.size());
     
     return imageData;
