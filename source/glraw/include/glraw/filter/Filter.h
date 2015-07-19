@@ -7,6 +7,7 @@
 #include <glraw/filter/ColorBlend.h>
 #include <glraw/filter/Contrast.h>
 #include <glraw/filter/Dilation.h>
+#include <glraw/filter/EdgeDetection.h>
 #include <glraw/filter/Erosion.h>
 #include <glraw/filter/GaussianBlur.h>
 #include <glraw/filter/Grayscale.h>

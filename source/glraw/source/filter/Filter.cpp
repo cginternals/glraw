@@ -15,6 +15,7 @@ bool Filter::InitializeLibrary()
 	AddFilter<ColorBlend>("colorblend");
 	AddFilter<Contrast>("contrast");
 	AddFilter<Dilation>("dilation");
+	AddFilter<EdgeDetection>("edgedetection");
 	AddFilter<Erosion>("erosion");
 	AddFilter<GaussianBlur>("gaussianblur");
 	AddFilter<Grayscale>("grayscale");
