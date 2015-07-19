@@ -45,13 +45,12 @@ namespace
 			void main()
 			{
 				float offset = 1.0 / textureSize(buf, 0).x;
-				vec3 color = vec3(0.f);
+				dst = vec4(0.f);
 				
 				for (int i = -size; i <= size; ++i)
 				{
-					color += kernel[i+size]*texture(buf, v_uv + vec2(i * offset, 0.0)).rgb;
+					dst += kernel[i+size]*texture(buf, v_uv + vec2(i * offset, 0.0));
 				}
-				dst = vec4(color, texture(buf, v_uv).a);
 			})";
 
 

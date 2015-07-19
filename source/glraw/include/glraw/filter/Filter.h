@@ -12,6 +12,8 @@
 #include <glraw/filter/Grayscale.h>
 #include <glraw/filter/Invert.h>
 #include <glraw/filter/Mirror.h>
+#include <glraw/filter/MotionBlur.h>
+#include <glraw/filter/RadialBlur.h>
 #include <glraw/filter/Rotate.h>
 #include <glraw/filter/Saturation.h>
 #include <glraw/filter/Scale.h>

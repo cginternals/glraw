@@ -20,6 +20,8 @@ bool Filter::InitializeLibrary()
 	AddFilter<Grayscale>("grayscale");
 	AddFilter<Invert>("invert");
 	AddFilter<Mirror>("mirror");
+	AddFilter<MotionBlur>("motionblur");
+	AddFilter<RadialBlur>("radialblur");
 	AddFilter<Rotate>("rotate");
 	AddFilter<Saturation>("saturation");
 	AddFilter<Scale>("scale");
