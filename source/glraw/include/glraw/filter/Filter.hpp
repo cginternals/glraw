@@ -18,11 +18,11 @@ class GLRAW_API Filter
 public:
 	Filter() = delete;
 
-	static AbstractFilter * CreateByName(const std::string& name, const QVariantMap& options)
+	static AbstractFilter * CreateByName(const std::string & name, const QVariantMap& options)
 	{
-		auto it = s_library.find(name);
+		auto it = Library().find(name);
 
-		if (it == s_library.end())
+		if(it == Library().end())
 		{
 			return nullptr;
 		}
@@ -39,11 +39,28 @@ public:
 		return new FilterType(options);
 	}
 
+	template<typename FilterType>
+	static void AddFilter(const std::string & name)
+	{
+		instance.emplace(name, &Factory<FilterType>);
+	}
+
+	static bool Exists(const std::string & name)
+	{
+		return Library().find(name) != Library().end();
+	}
+
+	static LibraryInstance & Library()
+	{
+		static bool dummy = InitializeLibrary();
+		return instance;
+	}
+
 private:
 
-	static LibraryInstance InitializeLibrary();
+	static bool InitializeLibrary();
 
-	static LibraryInstance s_library;
+	static LibraryInstance instance;
 };
 
 }

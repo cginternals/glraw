@@ -1,28 +1,29 @@
 #include <glraw/filter/Filter.hpp>
 #include <glraw/filter/Filter.h>
 
+#define AddLibrary(instance,name)	inst.emplace(name, &Factory<instance>)
+
 namespace glraw
 {
 
-LibraryInstance Filter::s_library = Filter::InitializeLibrary();
+	LibraryInstance Filter::instance;
 
-LibraryInstance Filter::InitializeLibrary()
+bool Filter::InitializeLibrary()
 {
-	LibraryInstance tmp;
-	tmp.emplace("grayscale", &Factory<Grayscale>);
-	tmp.emplace("blockblur", &Factory<BlockBlur>);
-	tmp.emplace("colorblend", &Factory<ColorBlend>);
-	tmp.emplace("invert", &Factory<Invert> );
-	tmp.emplace("mirror", &Factory<Mirror> );
-	tmp.emplace("rotate", &Factory<Rotate> );
-	tmp.emplace("scale", &Factory<Scale>);
-	tmp.emplace("dilation", &Factory<Dilation>);
-	tmp.emplace("erosion", &Factory<Erosion>);
-	tmp.emplace("saturation", &Factory<Saturation>);
-	tmp.emplace("contrast", &Factory<Contrast>);
-	tmp.emplace("brightness", &Factory<Brightness>);
+	AddFilter<BlockBlur>("blockblur");
+	AddFilter<Brightness>("brightness");
+	AddFilter<ColorBlend>("colorblend");
+	AddFilter<Contrast>("contrast");
+	AddFilter<Dilation>("dilation");
+	AddFilter<Erosion>("erosion");
+	AddFilter<Grayscale>("grayscale");
+	AddFilter<Invert>("invert");
+	AddFilter<Mirror>("mirror");
+	AddFilter<Rotate>("rotate");
+	AddFilter<Saturation>("saturation");
+	AddFilter<Scale>("scale");
 
-	return tmp;
+	return true;
 }
 
 }
