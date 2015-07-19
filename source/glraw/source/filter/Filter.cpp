@@ -18,6 +18,9 @@ LibraryInstance Filter::InitializeLibrary()
 	tmp.emplace("scale", &Factory<Scale>);
 	tmp.emplace("dilation", &Factory<Dilation>);
 	tmp.emplace("erosion", &Factory<Erosion>);
+	tmp.emplace("saturation", &Factory<Saturation>);
+	tmp.emplace("contrast", &Factory<Contrast>);
+	tmp.emplace("brightness", &Factory<Brightness>);
 
 	return tmp;
 }
