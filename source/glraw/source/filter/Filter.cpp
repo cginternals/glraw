@@ -16,13 +16,15 @@ bool Filter::InitializeLibrary()
 	AddFilter<Contrast>("contrast");
 	AddFilter<Dilation>("dilation");
 	AddFilter<Erosion>("erosion");
+	AddFilter<GaussianBlur>("gaussianblur");
 	AddFilter<Grayscale>("grayscale");
 	AddFilter<Invert>("invert");
 	AddFilter<Mirror>("mirror");
 	AddFilter<Rotate>("rotate");
 	AddFilter<Saturation>("saturation");
-	AddFilter<Sharpening>("sharpening");
 	AddFilter<Scale>("scale");
+	AddFilter<Sharpening>("sharpening");
+	AddFilter<UnsharpMask>("unsharpmask");
 
 	return true;
 }

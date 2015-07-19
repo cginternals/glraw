@@ -8,6 +8,7 @@
 #include <glraw/filter/Contrast.h>
 #include <glraw/filter/Dilation.h>
 #include <glraw/filter/Erosion.h>
+#include <glraw/filter/GaussianBlur.h>
 #include <glraw/filter/Grayscale.h>
 #include <glraw/filter/Invert.h>
 #include <glraw/filter/Mirror.h>
@@ -15,3 +16,4 @@
 #include <glraw/filter/Saturation.h>
 #include <glraw/filter/Scale.h>
 #include <glraw/filter/Sharpening.h>
+#include <glraw/filter/UnsharpMask.h>
