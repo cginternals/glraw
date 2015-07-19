@@ -20,7 +20,7 @@ namespace
 			vec4 color = texture(src,v_uv);
 			vec3 colorGray = vec3(float(color.rgb*vec3(0.2126f, 0.7152f, 0.0722f)));
 			
-			dst = vec4(mix(colorGray, color.rgb, clamp(amount,0.f,1.f)),color.a);
+			dst = vec4(mix(colorGray, color.rgb, amount),color.a);
 		} )";
 
 	const unsigned int DefaultAmount = 0.5;

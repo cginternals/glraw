@@ -17,7 +17,7 @@ namespace glraw
 
 	private:
 		float m_amount;
-		float Saturation::AmountFromVariant(const QVariantMap& cfg, float default_value);
+		float AmountFromVariant(const QVariantMap& cfg, float default_value);
 	};
 
 }

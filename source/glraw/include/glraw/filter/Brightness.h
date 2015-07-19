@@ -17,7 +17,8 @@ protected:
 
 private:
 	float m_amount;
-	float Brightness::AmountFromVariant(const QVariantMap& cfg, float default_value);
+
+	float AmountFromVariant(const QVariantMap& cfg, float default_value);
 };
 
 }
