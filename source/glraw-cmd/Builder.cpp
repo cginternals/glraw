@@ -201,7 +201,16 @@ bool Builder::filter(const QString & name)
 		{
 			addFilter();
 		}
-		m_currentFilterName = value;
+
+		if(glraw::Filter::Exists(value.toStdString()))
+		{
+			m_currentFilterName = value;
+		}
+		else
+		{
+			qDebug() << "Filter" << value << "does not exist.";
+			return false;
+		}
 	}
 	else
 	{
