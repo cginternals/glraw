@@ -14,3 +14,4 @@
 #include <glraw/filter/Rotate.h>
 #include <glraw/filter/Saturation.h>
 #include <glraw/filter/Scale.h>
+#include <glraw/filter/Sharpening.h>

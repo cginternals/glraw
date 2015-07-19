@@ -21,6 +21,7 @@ bool Filter::InitializeLibrary()
 	AddFilter<Mirror>("mirror");
 	AddFilter<Rotate>("rotate");
 	AddFilter<Saturation>("saturation");
+	AddFilter<Sharpening>("sharpening");
 	AddFilter<Scale>("scale");
 
 	return true;
