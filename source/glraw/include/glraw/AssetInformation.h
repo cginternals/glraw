@@ -14,8 +14,8 @@ namespace glraw
 class GLRAW_API AssetInformation
 {
 public:
-    AssetInformation();
-    ~AssetInformation();
+    AssetInformation() = default;
+	~AssetInformation() = default;
 
     bool propertyExists(const QString & key) const;
     QVariant property(const QString & key) const;

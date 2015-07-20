@@ -7,14 +7,6 @@
 namespace glraw
 {
     
-AssetInformation::AssetInformation()
-{
-}
-
-AssetInformation::~AssetInformation()
-{
-}
-
 bool AssetInformation::propertyExists(const QString & key) const
 {
     return m_properties.contains(key);
