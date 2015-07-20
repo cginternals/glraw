@@ -40,7 +40,7 @@ public:
 	}
 
 	template<typename FilterType>
-	static void AddFilter(const std::string & name)
+	static void Add(const std::string & name)
 	{
 		instance.emplace(name, &Factory<FilterType>);
 	}
@@ -48,6 +48,17 @@ public:
 	static bool Exists(const std::string & name)
 	{
 		return Library().find(name) != Library().end();
+	}
+
+	static std::vector<std::string> All()
+	{
+		std::vector<std::string> output;
+
+		for(auto entry : Library())
+		{
+			output.push_back(entry.first);
+		}
+		return output;
 	}
 
 	static LibraryInstance & Library()

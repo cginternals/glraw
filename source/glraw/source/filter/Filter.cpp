@@ -10,18 +10,18 @@ namespace glraw
 
 bool Filter::InitializeLibrary()
 {
-	AddFilter<BlockBlur>("blockblur");
-	AddFilter<Brightness>("brightness");
-	AddFilter<ColorBlend>("colorblend");
-	AddFilter<Contrast>("contrast");
-	AddFilter<Dilation>("dilation");
-	AddFilter<Erosion>("erosion");
-	AddFilter<Grayscale>("grayscale");
-	AddFilter<Invert>("invert");
-	AddFilter<Mirror>("mirror");
-	AddFilter<Rotate>("rotate");
-	AddFilter<Saturation>("saturation");
-	AddFilter<Scale>("scale");
+	Add<BlockBlur>("blockblur");
+	Add<Brightness>("brightness");
+	Add<ColorBlend>("colorblend");
+	Add<Contrast>("contrast");
+	Add<Dilation>("dilation");
+	Add<Erosion>("erosion");
+	Add<Grayscale>("grayscale");
+	Add<Invert>("invert");
+	Add<Mirror>("mirror");
+	Add<Rotate>("rotate");
+	Add<Saturation>("saturation");
+	Add<Scale>("scale");
 
 	return true;
 }

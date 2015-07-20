@@ -240,6 +240,14 @@ bool Builder::input(const QString & name)
 bool Builder::help(const QString & name)
 {
     showHelp();
+
+	auto filters = glraw::Filter::All();
+	qDebug("Available filter:");
+	for(auto & filter : filters)
+	{
+		qDebug() << " " << filter.c_str();
+	}
+
     return false;
 }
 

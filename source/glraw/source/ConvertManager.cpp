@@ -29,14 +29,14 @@ bool ConvertManager::process(const QString & sourcePath)
 
 	if (!QFile::exists(sourcePath))
 	{
-		qDebug() << "Input file does not exist.";
+		qDebug("Input file does not exist.");
 		return false;
 	}
 
 	QImage image(sourcePath);
 	if(image.isNull())
 	{
-		qDebug() << "Loading image from input file failed.";
+		qDebug("Loading image from input file failed.");
 		return false;
 	}
 
@@ -45,12 +45,14 @@ bool ConvertManager::process(const QString & sourcePath)
 
 	if(!applyFilter(info))
 	{
+		qDebug("Error while applying the image filter.");
 		return false;
 	}
 
 	QByteArray imageData;
 	if(!copyImageFromGL(imageData, info))
 	{
+		qDebug("Error while extracting the image data from GPU.");
 		return false;
 	}
 
