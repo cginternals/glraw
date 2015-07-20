@@ -20,7 +20,7 @@ namespace
 			dst = vec4(clamp(texture(src, v_uv).rgb * factor, vec3(0.f), vec3(1.f)),texture(src, v_uv).a);
 		} )";
 
-	const unsigned int DefaultFactor = 0.5;
+	const float DefaultFactor = 0.5;
 }
 
 namespace glraw
