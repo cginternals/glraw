@@ -3,7 +3,11 @@
 #define _USE_MATH_DEFINES
 
 #include <math.h>
+
 #include <QOpenGLShaderProgram>
+
+#include <glraw/Canvas.h>
+#include <glraw/AssetInformation.h>
 
 namespace
 {
@@ -38,6 +42,41 @@ Rotate::Rotate(unsigned int rotation = DefaultRotation)
 Rotate::Rotate(const QVariantMap& cfg)
 	: Rotate(RotationFromVariant(cfg))
 {
+}
+
+void Rotate::updateAssetInformation(AssetInformation & info)
+{
+	info.setProperty("width", out_width);
+	info.setProperty("height", out_height);
+}
+
+int Rotate::createWorkingTexture(unsigned int prototype)
+{
+	GLint width, height;
+	m_gl->glBindTexture(GL_TEXTURE_2D, prototype);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+	GLuint buffer_texture;
+	m_gl->glGenTextures(1, &buffer_texture);
+	m_gl->glBindTexture(GL_TEXTURE_2D, buffer_texture);
+
+
+	if (m_rotation == 1 || m_rotation == 3)
+	{
+		out_width = height;
+		out_height = width;
+	}
+	else
+	{
+		out_width = width;
+		out_height = height;
+	}
+
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, out_width, out_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	m_gl->glViewport(0, 0, out_width, out_height);
+
+	return buffer_texture;
 }
 
 void Rotate::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)

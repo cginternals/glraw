@@ -32,7 +32,7 @@ namespace
 			}	
 			else if( mode == 3 ) // Difference
 			{
-				dst = (color-texel);
+				dst = abs(color-texel);
 			}	
 			else if( mode == 4 ) // Multiply
 			{
