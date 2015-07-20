@@ -15,13 +15,19 @@ bool Filter::InitializeLibrary()
 	Add<ColorBlend>("colorblend");
 	Add<Contrast>("contrast");
 	Add<Dilation>("dilation");
+	Add<EdgeDetection>("edgedetection");
 	Add<Erosion>("erosion");
+	Add<GaussianBlur>("gaussianblur");
 	Add<Grayscale>("grayscale");
 	Add<Invert>("invert");
 	Add<Mirror>("mirror");
+	Add<MotionBlur>("motionblur");
+	Add<RadialBlur>("radialblur");
 	Add<Rotate>("rotate");
 	Add<Saturation>("saturation");
 	Add<Scale>("scale");
+	Add<Sharpening>("sharpening");
+	Add<UnsharpMask>("unsharpmask");
 
 	return true;
 }
