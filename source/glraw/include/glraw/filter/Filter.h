@@ -19,4 +19,5 @@
 #include <glraw/filter/Saturation.h>
 #include <glraw/filter/Scale.h>
 #include <glraw/filter/Sharpening.h>
+#include <glraw/filter/Sobel.h>
 #include <glraw/filter/UnsharpMask.h>

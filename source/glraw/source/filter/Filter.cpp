@@ -26,6 +26,7 @@ bool Filter::InitializeLibrary()
 	Add<Rotate>("rotate");
 	Add<Saturation>("saturation");
 	Add<Scale>("scale");
+	Add<Sobel>("sobel");
 	Add<Sharpening>("sharpening");
 	Add<UnsharpMask>("unsharpmask");
 
