@@ -8,7 +8,6 @@ namespace
 		R"(#version 150
 
 			uniform sampler2D src;
-			uniform vec3 factor;
 			uniform float[18] kernel;
 
 			in vec2 v_uv;
@@ -20,7 +19,6 @@ namespace
 
 				vec4 Gx = vec4(0.f);
 				vec4 Gy = vec4(0.f);
-				vec3 color = vec3(0.f);
 				for(int i=-1;i<=1;++i)
 				{
 					for(int j=-1;j<=1;++j)
@@ -31,7 +29,24 @@ namespace
 					}
 				}
 				dst = abs(Gx)+abs(Gy);
+				dst = vec4(dst.rgb,texture(src,v_uv).a);
 			} )";
+
+	const float sobel[18] = { -1.f,	 -2.f,  -1.f, 
+							   0.f,   0.f,   0.f, 
+							   1.f,   2.f,   1.f,
+
+							  -1.f,   0.f,   1.f, 
+							  -2.f,   0.f,   2.f, 
+							  -1.f,   0.f,   1.f };
+
+	const float scharr[18] = { 3.f,  10.f,   3.f, 
+							   0.f,   0.f,   0.f, 
+							  -3.f, -10.f,  -3.f, 
+							  
+							   3.f,   0.f,  -3.f, 
+							  10.f,   0.f, -10.f, 
+							   3.f,   0.f,  -3.f };
 }
 
 namespace glraw
@@ -49,8 +64,6 @@ Sobel::Sobel(const QVariantMap& cfg)
 
 void Sobel::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
-	float sobel[18] = { -1.f, -2.f, -1.f, 0.f, 0.f, 0.f, 1.f, 2.f, 1.f, -1.f, 0.f, 1.f, -2.f, 0.f, 2.f, -1.f, 0.f, 1.f };
-	float scharr[18] = { 3.f, 10.f, 3.f, 0.f, 0.f, 0.f, -3.f, -10.f, -3.f, 3.f, 0.f, -3.f, 10.f, 0.f, -10.f, 3.f, 0.f, -3.f };
 	switch (m_mode)
 	{
 	case SobelMode::Sobel:
