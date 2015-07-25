@@ -27,6 +27,8 @@ public:
 	void appendFilter(AbstractFilter * filter);
 	void setConverter(AbstractConverter * converter);
 
+	void reset();
+
 protected:
 
 	bool applyFilter(AssetInformation & info);

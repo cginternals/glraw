@@ -88,4 +88,9 @@ std::unique_ptr<Canvas> & MemoryProcessor::canvas()
 	return m_canvas;
 }
 
+void MemoryProcessor::reset()
+{
+	qDeleteAll(m_filters);
+}
+
 } // namespace glraw
