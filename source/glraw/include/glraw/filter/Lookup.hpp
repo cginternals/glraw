@@ -47,13 +47,13 @@ protected:
 
 	static QVector4D GetColor(const QVector4D& default_value, const QVariantMap& cfg)
 	{
-		QVector3D color = GetHue(default_value.toVector3D(),cfg);
+		QVector3D color = GetColor(default_value.toVector3D(), cfg);
 		float a = cfg.value("a", { default_value.w() }).toFloat();
 
 		return{ color, a };
 	}
 
-	static QVector3D GetHue(const QVector3D& default_value, const QVariantMap& cfg)
+	static QVector3D GetColor(const QVector3D& default_value, const QVariantMap& cfg)
 	{
 		float r = cfg.value("r", { default_value.x() }).toFloat();
 		float g = cfg.value("g", { default_value.y() }).toFloat();

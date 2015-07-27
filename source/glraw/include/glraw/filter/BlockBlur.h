@@ -1,10 +1,10 @@
 #pragma once
-#include <glraw/filter/AbstractFilter.h>
+#include <glraw/filter/AbstractKernel.h>
 
 namespace glraw
 {
 
-class GLRAW_API BlockBlur : public AbstractFilter
+class GLRAW_API BlockBlur : public AbstractKernel
 {
 public:
 	BlockBlur(unsigned int size, float factor);
@@ -12,15 +12,9 @@ public:
 	virtual ~BlockBlur() = default;
 
 protected:
+	virtual QString firstShader() const override;
+	virtual QString secondShader() const override;
 
-	virtual unsigned int numberOfPasses() override;
-	virtual void setUniforms( QOpenGLShaderProgram& program, unsigned int pass ) override;
-	virtual QString fragmentShaderSource(unsigned int pass) override;
-
-private:
-
-	unsigned int m_size;
-	float m_factor;
 };
 
 }

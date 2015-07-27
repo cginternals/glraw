@@ -3,21 +3,22 @@
 
 namespace glraw
 {
-	class GLRAW_API EdgeDetection : public AbstractFilter
-	{
-	public:
-		EdgeDetection(unsigned int size);
-		EdgeDetection(const QVariantMap& cfg);
-		virtual ~EdgeDetection() = default;
 
-	protected:
+class GLRAW_API EdgeDetection : public AbstractFilter
+{
+public:
+	EdgeDetection(unsigned int size);
+	EdgeDetection(const QVariantMap& cfg);
+	virtual ~EdgeDetection() = default;
 
-		virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
-		virtual QString fragmentShaderSource(unsigned int pass) override;
+protected:
 
-	private:
+	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
+	virtual QString fragmentShaderSource(unsigned int pass) override;
 
-		unsigned int m_size;
-	};
+private:
+
+	unsigned int m_size;
+};
 
 }

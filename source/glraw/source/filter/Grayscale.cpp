@@ -73,7 +73,7 @@ QVector3D Grayscale::FactorFromVariant(const QVariantMap& cfg)
 	else
 	{
 		const auto default_hue = FactorFromMode(GrayscaleFactor::Default);
-		return GetHue(default_hue, cfg);
+		return GetColor(default_hue, cfg);
 	}
 }
 
