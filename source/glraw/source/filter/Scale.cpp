@@ -20,37 +20,47 @@ namespace
 			dst = texture(src, v_uv);
 		} )";
 
-	const float DefaultScale = 1.0f;
-	const unsigned int DefaultWidth = 500;
-	const unsigned int DefaultHeight = 500;
-	const bool DefaultBilinear = false;
+	const float DefaultScale = 2.0f;
+	const unsigned int DefaultSize = 500;
+	const bool DefaultBilinear = true;
+	const bool DefaulXAxis = true;
 }
 
 namespace glraw
 {
 
-Scale::Scale(ScaleMode mode = ScaleMode::Default, unsigned int width = DefaultWidth, unsigned int height = DefaultHeight, float scale = DefaultScale, bool bilinear = DefaultBilinear)
-	: m_mode(mode)
-	, m_width(width)
-	, m_height(height)
-	, m_scale(scale)
+Scale::Scale(float scale = DefaultScale, bool bilinear = DefaultBilinear)
+	: m_mode(ScaleMode::Relative)
+	, m_size(scale, scale)
+	, m_bilinear(bilinear)
+{
+}
+
+Scale::Scale(unsigned int width, unsigned int height, bool bilinear = DefaultBilinear)
+	: m_mode(ScaleMode::Absolute)
+	, m_size(width, height)
+	, m_bilinear(bilinear)
+{
+}
+
+Scale::Scale(unsigned int side, bool x_axis = DefaulXAxis, bool bilinear = DefaultBilinear)
+	: m_mode(x_axis ? ScaleMode::RatioX : ScaleMode::RatioY)
+	, m_size(side, side)
 	, m_bilinear(bilinear)
 {
 }
 
 Scale::Scale(const QVariantMap& cfg)
 	: m_mode(ModeFromVariant(cfg))
-	, m_width(Get("width", DefaultWidth, cfg))
-	, m_height(Get("height", DefaultHeight, cfg))
-	, m_scale(Get("scale", DefaultScale, cfg))
+	, m_size(GetSize(m_mode, cfg))
 	, m_bilinear(Get("bilinear", DefaultBilinear, cfg))
 {
 }
 
 void Scale::updateAssetInformation(AssetInformation & info)
 {
-	info.setProperty("width", out_width);
-	info.setProperty("height", out_height);
+	info.setProperty("width", m_output.first);
+	info.setProperty("height", m_output.second);
 }
 
 QString Scale::fragmentShaderSource(unsigned int pass)
@@ -65,37 +75,38 @@ int Scale::createWorkingTexture(unsigned int prototype)
 	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
 	m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
 
-	switch(m_mode)
-	{
-	case ScaleMode::Absolute:
-		width = m_width;
-		height = m_height;
-		break;
-	case ScaleMode::RatioX:
-		height = height * static_cast<float>(m_width) / width;
-		width = m_width;
-		break;
-	case ScaleMode::RatioY:
-		width = width * static_cast<float>(m_height) / height;
-		height = m_height;
-		break;
-	default:
-		width = (int)(width*m_scale);
-		height = (int)(height*m_scale);
-		break;
-	}
+	auto cache = calculateSize(width, height);
+	m_output = { static_cast<int>(cache.x()), static_cast<int>(cache.y()) };
 
 	GLuint buffer_texture;
 	m_gl->glGenTextures(1, &buffer_texture);
 	m_gl->glBindTexture(GL_TEXTURE_2D, buffer_texture);
-	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_output.first, m_output.second, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-	m_gl->glViewport(0, 0, width, height);
-
-	out_width = width;
-	out_height = height;
+	m_gl->glViewport(0, 0, m_output.first, m_output.second);
 
 	return buffer_texture;
+}
+
+QVector2D Scale::calculateSize(int width, int height) const
+{
+	switch(m_mode)
+	{
+	case ScaleMode::Absolute:
+		return { m_size.x(), m_size.y() };
+
+	default:
+		qDebug("Invalid ScaleMode enum used.");
+
+	case ScaleMode::Relative:
+		return { width * m_size.x(), height * m_size.y() };
+
+	case ScaleMode::RatioX:
+		return { m_size.x(), height * m_size.x() / width };
+
+	case ScaleMode::RatioY:
+		return { width * m_size.y() / height, m_size.y() };
+	}
 }
 
 void Scale::bindTexture(unsigned int unit, unsigned int tex)
@@ -103,23 +114,44 @@ void Scale::bindTexture(unsigned int unit, unsigned int tex)
 	m_gl->glActiveTexture(GL_TEXTURE0 + unit);
 	m_gl->glBindTexture(GL_TEXTURE_2D, tex);
 
-	if(m_bilinear)
-	{
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}else
-	{
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bilinear ? GL_LINEAR : GL_NEAREST);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bilinear ? GL_LINEAR : GL_NEAREST);
 
 	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-Scale::ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
+ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
 {
 	return static_cast<ScaleMode>(cfg.value("mode", { static_cast<int>(ScaleMode::Default) }).toInt());
+}
+
+QVector2D Scale::GetSize(ScaleMode mode, const QVariantMap& cfg)
+{
+	switch(mode)
+	{
+	case ScaleMode::Absolute:
+		return 
+		{ 
+			static_cast<float>(Get("width", DefaultSize, cfg)),
+			static_cast<float>(Get("height", DefaultSize, cfg))
+		};
+
+	default:
+		qDebug("Invalid ScaleMode enum used.");
+
+	case ScaleMode::Relative:
+		{
+			float scale = Get("scale", DefaultScale, cfg);
+			return { Get("scale_x", scale, cfg), Get("scale_y", scale, cfg) };
+		}
+
+	case ScaleMode::RatioX:
+		return { static_cast<float>(Get("width", DefaultSize, cfg)), 0.0f };
+
+	case ScaleMode::RatioY:
+		return { 0.0f, static_cast<float>(Get("height", DefaultSize, cfg)) };
+	}
 }
 
 }
