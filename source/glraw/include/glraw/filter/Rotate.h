@@ -28,7 +28,6 @@ protected:
 	virtual int createWorkingTexture(unsigned int prototype) override;
 	virtual void updateAssetInformation(AssetInformation & info) override;
 
-private:
 	unsigned int m_rotation;
 
 	int out_width;

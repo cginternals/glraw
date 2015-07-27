@@ -24,7 +24,6 @@ protected:
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
-private:
 	QVector3D m_conversionFactor;
 
 	static QVector3D FactorFromMode(GrayscaleFactor in);

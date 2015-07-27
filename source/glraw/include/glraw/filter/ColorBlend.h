@@ -28,11 +28,8 @@ public:
 	virtual ~ColorBlend() = default;
 
 protected:
-
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
-
-private:
 
 	BlendMode m_blendMode;
 	QVector4D m_color;

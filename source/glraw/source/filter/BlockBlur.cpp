@@ -1,9 +1,5 @@
 #include <glraw/filter/BlockBlur.h>
 
-#include <cassert>
-
-#include <QOpenGLShaderProgram>
-
 namespace
 {
 	const char* verticalShader = 

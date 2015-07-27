@@ -12,11 +12,8 @@ public:
 	virtual ~EdgeDetection() = default;
 
 protected:
-
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
-
-private:
 
 	unsigned int m_size;
 };

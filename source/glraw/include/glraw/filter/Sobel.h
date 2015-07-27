@@ -25,7 +25,6 @@ protected:
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
-private:
 	const float* m_kernel;
 
 	static SobelMode ModeFromVariant(const QVariantMap& cfg);

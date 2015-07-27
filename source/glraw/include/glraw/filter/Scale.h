@@ -31,7 +31,6 @@ protected:
 	virtual int createWorkingTexture(unsigned int prototype) override;
 	virtual void bindTexture(unsigned int unit, unsigned int tex) override;
 
-private:
 	ScaleMode m_mode;
 	QVector2D m_size;
 	bool m_bilinear;

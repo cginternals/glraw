@@ -16,7 +16,6 @@ protected:
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
-private:
 	bool m_horizontal;
 	bool m_vertical;
 };
