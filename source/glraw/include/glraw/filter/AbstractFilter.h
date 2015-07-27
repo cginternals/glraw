@@ -6,6 +6,8 @@
 
 #include <QVariantMap>
 
+#include <glraw/filter/Lookup.hpp>
+
 class QOpenGLShaderProgram;
 class QOpenGLFunctions_3_2_Core;
 
@@ -15,7 +17,7 @@ namespace glraw
 class AssetInformation;
 class Canvas;
 
-class GLRAW_API AbstractFilter
+class GLRAW_API AbstractFilter : public Lookup
 {
 public:
     AbstractFilter();
@@ -30,19 +32,14 @@ protected:
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass);
 	virtual void updateAssetInformation(AssetInformation & info);
 	virtual int createWorkingTexture(unsigned int prototype);
-	
+	virtual void bindTexture(unsigned int unit, unsigned int tex);
+
 	int renderToTexture(std::unique_ptr<Canvas> & imageData);
 	bool createProgram(QOpenGLShaderProgram& prog, const QString & shader);
-	void bindTexture(unsigned int unit, unsigned int tex);
-
-	QOpenGLFunctions_3_2_Core * m_gl;
-
-	static float FactorFromVariant(const QVariantMap& cfg, float default_value);
-	static unsigned int SizeFromVariant(const QVariantMap& cfg, unsigned int default_value);
-	static unsigned int VerifySize(unsigned int size);
-
 	void attachToFramebuffer(unsigned int texture);
 	void bindVertexBuffer();
+
+	QOpenGLFunctions_3_2_Core * m_gl;
 
 	enum Pass : int
 	{

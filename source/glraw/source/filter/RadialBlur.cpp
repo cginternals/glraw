@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -42,9 +40,8 @@ namespace
 namespace glraw
 {
 
-	RadialBlur::RadialBlur(float x = DefaultX, float y = DefaultY, float blur = DefaultBlur, float bright = DefaultBright, unsigned int size=DefaultSize)
-	: m_x(x)
-	, m_y(y)
+RadialBlur::RadialBlur(float x = DefaultX, float y = DefaultY, float blur = DefaultBlur, float bright = DefaultBright, unsigned int size = DefaultSize)
+	: m_position(x, y)
 	, m_blur(blur)
 	, m_bright(bright)
 	, m_size(VerifySize(size))
@@ -52,13 +49,18 @@ namespace glraw
 }
 
 RadialBlur::RadialBlur(const QVariantMap& cfg)
-	: RadialBlur(XFromVariant(cfg, DefaultX), YFromVariant(cfg, DefaultY), BlurFromVariant(cfg, DefaultBlur), BrightFromVariant(cfg, DefaultBright), SizeFromVariant(cfg, DefaultSize))
+	: RadialBlur(
+		Get("x", DefaultX, cfg), 
+		Get("y", DefaultY, cfg),
+		Get("blur", DefaultBlur, cfg), 
+		Get("bright", DefaultBright, cfg), 
+		GetSize(DefaultSize, cfg))
 {
 }
 
 void RadialBlur::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
-	program.setUniformValue("pos", QVector2D(m_x,m_y));
+	program.setUniformValue("pos", m_position);
 	program.setUniformValue("blur", m_blur);
 	program.setUniformValue("bright", m_bright);
 	program.setUniformValue("size", m_size);
@@ -67,26 +69,6 @@ void RadialBlur::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 QString RadialBlur::fragmentShaderSource(unsigned int pass)
 {
 	return source;
-}
-
-float RadialBlur::XFromVariant(const QVariantMap& cfg, float default_value)
-{
-	return cfg.value("x", { default_value }).toFloat();
-}
-
-float RadialBlur::YFromVariant(const QVariantMap& cfg, float default_value)
-{
-	return cfg.value("y", { default_value }).toFloat();
-}
-
-float RadialBlur::BlurFromVariant(const QVariantMap& cfg, float default_value)
-{
-	return cfg.value("blur", { default_value }).toFloat();
-}
-
-float RadialBlur::BrightFromVariant(const QVariantMap& cfg, float default_value)
-{
-	return cfg.value("bright", { default_value }).toFloat();
 }
 
 }

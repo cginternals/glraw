@@ -8,7 +8,6 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform bool invert_alpha;
 
 		in vec2 v_uv;
 		out vec4 dst;
@@ -16,13 +15,7 @@ namespace
 		void main()
 		{   
 			vec4 color = texture(src, v_uv);
-			if( invert_alpha )
-			{
-				dst = vec4(1) - color;
-			}else
-			{
-				dst = vec4(vec3(1)-color.rgb, color.a);
-			}
+			dst = vec4(vec3(1)-color.rgb, color.a);
 		} )";
 
 	const bool DefaultInvertAlpha = false;
@@ -31,29 +24,13 @@ namespace
 namespace glraw
 {
 
-Invert::Invert( bool invert_alpha = DefaultInvertAlpha )
-	: m_invertAlpha(invert_alpha)
-{
-}
-
 Invert::Invert( const QVariantMap& cfg )
-	: Invert( AlphaFromVariant(cfg) )
 {
-}
-
-void Invert::setUniforms( QOpenGLShaderProgram& program, unsigned int pass )
-{
-	program.setUniformValue( "invert_alpha", m_invertAlpha );
 }
 
 QString Invert::fragmentShaderSource(unsigned int pass)
 {
 	return source;
-}
-
-bool Invert::AlphaFromVariant( const QVariantMap& cfg )
-{
-	return cfg.value( "invert_alpha", { DefaultInvertAlpha } ).toBool();
 }
 
 }

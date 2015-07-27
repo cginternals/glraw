@@ -11,41 +11,19 @@ namespace
 		R"(#version 150
 
 		uniform sampler2D src;
-		uniform int width;
-		uniform int height;
-		uniform bool bilinear;
 
 		in vec2 v_uv;
 		out vec4 dst;
 
 		void main()
 		{   
-			if(bilinear)
-			{
-				ivec2 size = textureSize(src, 0);
-				float dX = v_uv.x/size.x;
-				float dY = v_uv.y/size.y;
-
-				vec2 texCoords = vec2(dX*width, dY*height);
-				vec2 ratio = fract(texCoords);
-
-				vec4 c1 = texture(src, v_uv);
-				vec4 c2 = texture(src, v_uv + vec2(dX,0.f));
-				vec4 c3 = texture(src, v_uv + vec2(0.f,dY));
-				vec4 c4 = texture(src, v_uv + vec2(dX,dY));
-
-				dst = mix(mix(c1,c2,ratio.x), mix(c3,c4,ratio.x), ratio.y);
-			}
-			else
-			{
-				dst = texture(src, v_uv);
-			}
+			dst = texture(src, v_uv);
 		} )";
 
 	const float DefaultScale = 1.0f;
-	const int DefaultWidth = 500;
-	const int DefaultHeight = 500;
-	bool DefaultBilinear = false;
+	const unsigned int DefaultWidth = 500;
+	const unsigned int DefaultHeight = 500;
+	const bool DefaultBilinear = false;
 }
 
 namespace glraw
@@ -62,10 +40,10 @@ Scale::Scale(ScaleMode mode = ScaleMode::Default, unsigned int width = DefaultWi
 
 Scale::Scale(const QVariantMap& cfg)
 	: m_mode(ModeFromVariant(cfg))
-	, m_width(WidthFromVariant(cfg))
-	, m_height(HeightFromVariant(cfg))
-	, m_scale(ScaleFromVariant(cfg))
-	, m_bilinear(BilinearFromVariant(cfg))
+	, m_width(Get("width", DefaultWidth, cfg))
+	, m_height(Get("height", DefaultHeight, cfg))
+	, m_scale(Get("scale", DefaultScale, cfg))
+	, m_bilinear(Get("bilinear", DefaultBilinear, cfg))
 {
 }
 
@@ -73,11 +51,6 @@ void Scale::updateAssetInformation(AssetInformation & info)
 {
 	info.setProperty("width", out_width);
 	info.setProperty("height", out_height);
-}
-
-void Scale::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
-{
-	program.setUniformValue("nearest", m_bilinear);
 }
 
 QString Scale::fragmentShaderSource(unsigned int pass)
@@ -125,26 +98,28 @@ int Scale::createWorkingTexture(unsigned int prototype)
 	return buffer_texture;
 }
 
+void Scale::bindTexture(unsigned int unit, unsigned int tex)
+{
+	m_gl->glActiveTexture(GL_TEXTURE0 + unit);
+	m_gl->glBindTexture(GL_TEXTURE_2D, tex);
+
+	if(m_bilinear)
+	{
+		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}else
+	{
+		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
 Scale::ScaleMode Scale::ModeFromVariant(const QVariantMap& cfg)
 {
 	return static_cast<ScaleMode>(cfg.value("mode", { static_cast<int>(ScaleMode::Default) }).toInt());
-}
-
-float Scale::ScaleFromVariant(const QVariantMap& cfg)
-{
-	return cfg.value("scale", { DefaultScale }).toFloat();
-}
-unsigned int Scale::WidthFromVariant(const QVariantMap& cfg)
-{
-	return cfg.value("width", { DefaultWidth }).toInt();
-}
-unsigned int Scale::HeightFromVariant(const QVariantMap& cfg)
-{
-	return cfg.value("height", { DefaultHeight }).toInt();
-}
-bool Scale::BilinearFromVariant(const QVariantMap& cfg)
-{
-	return cfg.value("bilinear", { DefaultBilinear }).toBool();
 }
 
 }

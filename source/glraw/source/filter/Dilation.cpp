@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -41,7 +39,7 @@ Dilation::Dilation(unsigned int size = DefaultSize)
 }
 
 Dilation::Dilation(const QVariantMap& cfg)
-	: Dilation(SizeFromVariant(cfg, DefaultSize))
+	: Dilation(GetSize(DefaultSize, cfg))
 {
 }
 

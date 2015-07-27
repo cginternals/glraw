@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -41,7 +39,7 @@ Erosion::Erosion(unsigned int size = DefaultSize)
 }
 
 Erosion::Erosion(const QVariantMap& cfg)
-	: Erosion(SizeFromVariant(cfg, DefaultSize))
+	: Erosion(GetSize(DefaultSize, cfg))
 {
 }
 

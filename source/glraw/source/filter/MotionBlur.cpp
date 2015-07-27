@@ -1,8 +1,9 @@
 #include <glraw/filter/MotionBlur.h>
 
-#include <QOpenGLShaderProgram>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-#include <glraw/Canvas.h>
+#include <QOpenGLShaderProgram>
 
 namespace
 {
@@ -43,7 +44,7 @@ MotionBlur::MotionBlur(unsigned int size = DefaultSize, float angle = DefaultAng
 }
 
 MotionBlur::MotionBlur(const QVariantMap& cfg)
-	: MotionBlur(SizeFromVariant(cfg, DefaultSize), AngleFromVariant(cfg, DefaultAngle))
+	: MotionBlur(GetSize(DefaultSize, cfg), GetAngle(DefaultAngle, cfg))
 {
 }
 
@@ -58,11 +59,11 @@ QString MotionBlur::fragmentShaderSource(unsigned int pass)
 	return source;
 }
 
-float MotionBlur::AngleFromVariant(const QVariantMap& cfg, float default_value)
+float MotionBlur::GetAngle(float default_value, const QVariantMap & cfg)
 {
 	if (cfg.contains("angled"))
 	{
-		return cfg.value("angled", { default_value }).toFloat() * 3.14159265358979323846f / 180.f;
+		return cfg.value("angled", { default_value }).toFloat() * M_PI / 180.f;
 	}
 	else
 	{

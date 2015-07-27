@@ -17,19 +17,18 @@ namespace
 			{   
 				vec2 offset = 1.0f / textureSize(src, 0);
 
-				vec4 Gx = vec4(0.f);
-				vec4 Gy = vec4(0.f);
+				vec3 Gx = vec4(0.f);
+				vec3 Gy = vec4(0.f);
 				for(int i=-1;i<=1;++i)
 				{
 					for(int j=-1;j<=1;++j)
 					{
-						vec4 color = texture(src,v_uv+offset*vec2(i,j));
+						vec3 color = texture(src,v_uv+offset*vec2(i,j)).rgb;
 						Gx += kernel[3*j+i+4]*color;
 						Gy += kernel[3*j+i+13]*color;
 					}
 				}
-				dst = abs(Gx)+abs(Gy);
-				dst = vec4(dst.rgb,texture(src,v_uv).a);
+				dst = vec4(abs(Gx)+abs(Gy),texture(src,v_uv).a);
 			} )";
 
 	const float sobel[18] = { -1.f,	 -2.f,  -1.f, 
@@ -52,8 +51,8 @@ namespace
 namespace glraw
 {
 
-	Sobel::Sobel(SobelMode in = SobelMode::Default)
-		: m_mode(in)
+Sobel::Sobel(SobelMode in = SobelMode::Default)
+	: m_kernel(GetKernel(in))
 {
 }
 
@@ -64,15 +63,7 @@ Sobel::Sobel(const QVariantMap& cfg)
 
 void Sobel::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
-	switch (m_mode)
-	{
-	case SobelMode::Sobel:
-		program.setUniformValueArray("kernel", sobel, 18, 1);
-			break;
-	case SobelMode::Scharr:
-		program.setUniformValueArray("kernel", scharr, 18, 1);
-			break;
-	}
+	program.setUniformValueArray("kernel", m_kernel, 18, 1);
 }
 
 QString Sobel::fragmentShaderSource(unsigned int pass)
@@ -83,6 +74,21 @@ QString Sobel::fragmentShaderSource(unsigned int pass)
 SobelMode Sobel::ModeFromVariant(const QVariantMap& cfg)
 {
 	return static_cast<SobelMode>(cfg.value("mode", { static_cast<int>(SobelMode::Default) }).toInt());
+}
+
+const float* Sobel::GetKernel(SobelMode mode)
+{
+	switch(mode)
+	{
+	default:
+		qCritical("Invalid Sobel mode used.");
+
+	case SobelMode::Sobel:
+		return sobel;
+
+	case SobelMode::Scharr:
+		return scharr;
+	}
 }
 
 }

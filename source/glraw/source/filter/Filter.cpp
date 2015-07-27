@@ -1,7 +1,6 @@
 #include <glraw/filter/Filter.hpp>
 #include <glraw/filter/Filter.h>
 
-#define AddLibrary(instance,name)	inst.emplace(name, &Factory<instance>)
 
 namespace glraw
 {

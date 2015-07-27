@@ -1,7 +1,6 @@
 #pragma once
 #include <glraw/filter/AbstractFilter.h>
 
-
 namespace glraw
 {
 
@@ -23,7 +22,6 @@ public:
 	};
 
 protected:
-
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
@@ -31,13 +29,11 @@ protected:
 	virtual void updateAssetInformation(AssetInformation & info) override;
 
 private:
-
 	unsigned int m_rotation;
 
 	int out_width;
 	int out_height;
 
-	static unsigned int RotationFromVariant(const QVariantMap& cfg);
 };
 
 }

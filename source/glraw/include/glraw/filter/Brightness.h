@@ -7,7 +7,7 @@ namespace glraw
 class GLRAW_API Brightness : public AbstractFilter
 {
 public:
-	Brightness(float size);
+	Brightness(float amount);
 	Brightness(const QVariantMap& cfg);
 	virtual ~Brightness() = default;
 
@@ -17,8 +17,6 @@ protected:
 
 private:
 	float m_amount;
-
-	float AmountFromVariant(const QVariantMap& cfg, float default_value);
 };
 
 }

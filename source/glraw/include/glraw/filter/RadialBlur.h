@@ -1,6 +1,8 @@
 #pragma once
 #include <glraw/filter/AbstractFilter.h>
 
+#include <QVector2D>
+
 namespace glraw
 {
 
@@ -17,16 +19,10 @@ protected:
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
-	float m_x;
-	float m_y;
+	QVector2D m_position;
 	float m_blur;
 	float m_bright;
 	unsigned int m_size; 
-
-	float XFromVariant(const QVariantMap& cfg, float default_value);
-	float YFromVariant(const QVariantMap& cfg, float default_value);
-	float BlurFromVariant(const QVariantMap& cfg, float default_value);
-	float BrightFromVariant(const QVariantMap& cfg, float default_value);
 };
 
 }

@@ -72,12 +72,8 @@ QVector3D Grayscale::FactorFromVariant(const QVariantMap& cfg)
 	}
 	else
 	{
-		const auto def = FactorFromMode(GrayscaleFactor::Default);
-		float r = cfg.value("r", {def.x()}).toFloat();
-		float g = cfg.value("g", {def.y()}).toFloat();
-		float b = cfg.value("b", {def.z()}).toFloat();
-
-		return { r, g, b };
+		const auto default_hue = FactorFromMode(GrayscaleFactor::Default);
+		return GetHue(default_hue, cfg);
 	}
 }
 

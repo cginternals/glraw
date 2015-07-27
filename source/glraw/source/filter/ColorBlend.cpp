@@ -42,15 +42,11 @@ namespace
 			{
 				dst = (texel/color);
 			}
-			else if( mode == 6 ) // Divisor
-			{
-				dst = (color/texel);
-			}
-			else if( mode == 7 ) // Minimum
+			else if( mode == 6 ) // Minimum
 			{
 				dst = min(texel,color);
 			}	
-			else if( mode == 8 ) // Maximum
+			else if( mode == 7 ) // Maximum
 			{
 				dst = max(texel,color);
 			}
@@ -73,7 +69,7 @@ ColorBlend::ColorBlend(BlendMode mode = BlendMode::Default, const QVector4D& col
 }
 
 ColorBlend::ColorBlend( const QVariantMap& cfg )
-	: ColorBlend(ModeFromVariant(cfg), ColorFromVariant(cfg), FactorFromVariant(cfg, DefaultFactor))
+	: ColorBlend(ModeFromVariant(cfg), GetColor(DefaultColor, cfg), GetFactor(DefaultFactor, cfg))
 {
 }
 
@@ -93,16 +89,6 @@ BlendMode ColorBlend::ModeFromVariant(const QVariantMap& cfg)
 {
 	int value = cfg.value("mode", { static_cast<int>(BlendMode::Default) }).toInt();
 	return static_cast<BlendMode>(value);
-}
-
-QVector4D ColorBlend::ColorFromVariant(const QVariantMap& cfg)
-{
-	float r = cfg.value("r", { DefaultColor.x() }).toFloat();
-	float g = cfg.value("g", { DefaultColor.y() }).toFloat();
-	float b = cfg.value("b", { DefaultColor.z() }).toFloat();
-	float a = cfg.value("a", { DefaultColor.w() }).toFloat();
-
-	return {r, g, b, a};
 }
 
 }

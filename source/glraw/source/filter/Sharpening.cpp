@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -36,24 +34,24 @@ namespace
 namespace glraw
 {
 
-	Sharpening::Sharpening(unsigned int size = DefaultSize)
-		: m_size(VerifySize(size))
-	{
-	}
+Sharpening::Sharpening(unsigned int size = DefaultSize)
+	: m_size(VerifySize(size))
+{
+}
 
-	Sharpening::Sharpening(const QVariantMap& cfg)
-		: Sharpening(SizeFromVariant(cfg, DefaultSize))
-	{
-	}
+Sharpening::Sharpening(const QVariantMap& cfg)
+	: Sharpening(GetSize(DefaultSize, cfg))
+{
+}
 
-	void Sharpening::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
-	{
-		program.setUniformValue("size", m_size);
-	}
+void Sharpening::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
+{
+	program.setUniformValue("size", m_size);
+}
 
-	QString Sharpening::fragmentShaderSource(unsigned int pass)
-	{
-		return source;
-	}
+QString Sharpening::fragmentShaderSource(unsigned int pass)
+{
+	return source;
+}
 
 }

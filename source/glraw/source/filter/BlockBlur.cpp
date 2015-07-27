@@ -53,7 +53,7 @@ namespace
 			})";
 
 
-	const int DefaultSize = 5;
+	const int DefaultSize = 1;
 	const float DefaultFactor = 1.0f;
 }
 
@@ -67,7 +67,7 @@ BlockBlur::BlockBlur( unsigned int size = DefaultSize, float factor = DefaultFac
 }
 
 BlockBlur::BlockBlur(const QVariantMap& in)
-	: BlockBlur( SizeFromVariant(in, DefaultSize), FactorFromVariant(in, DefaultFactor) )
+	: BlockBlur(GetSize(DefaultSize, in), GetFactor(DefaultFactor, in))
 {
 }
 

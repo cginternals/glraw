@@ -6,7 +6,7 @@
 namespace glraw
 {
 
-enum class SobelMode : int
+enum class SobelMode
 {
 	Sobel,
 	Scharr,
@@ -22,13 +22,14 @@ public:
 	virtual ~Sobel() = default;
 
 protected:
-
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
-	SobelMode m_mode;
-	SobelMode ModeFromVariant(const QVariantMap& cfg);
+	const float* m_kernel;
+
+	static SobelMode ModeFromVariant(const QVariantMap& cfg);
+	static const float* GetKernel(SobelMode mode);
 };
 
 }

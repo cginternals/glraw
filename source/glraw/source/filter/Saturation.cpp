@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -29,28 +27,24 @@ namespace
 namespace glraw
 {
 
-	Saturation::Saturation(float amount = DefaultAmount)
-		: m_amount(amount)
-	{
-	}
+Saturation::Saturation(float amount = DefaultAmount)
+	: m_amount(amount)
+{
+}
 
-	Saturation::Saturation(const QVariantMap& cfg)
-		: Saturation(AmountFromVariant(cfg, DefaultAmount))
-	{
-	}
+Saturation::Saturation(const QVariantMap& cfg)
+	: Saturation(GetAmount(DefaultAmount, cfg))
+{
+}
 
-	void Saturation::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
-	{
-		program.setUniformValue("amount", m_amount);
-	}
+void Saturation::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
+{
+	program.setUniformValue("amount", m_amount);
+}
 
-	QString Saturation::fragmentShaderSource(unsigned int pass)
-	{
-		return source;
-	}
+QString Saturation::fragmentShaderSource(unsigned int pass)
+{
+	return source;
+}
 
-	float Saturation::AmountFromVariant(const QVariantMap& cfg, float default_value)
-	{
-		return cfg.value("amount", { default_value }).toFloat();
-	}
 }

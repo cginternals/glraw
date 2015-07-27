@@ -1,12 +1,11 @@
 #include <glraw/filter/Rotate.h>
 
 #define _USE_MATH_DEFINES
-
 #include <math.h>
 
+#include <QOpenGLFunctions_3_2_Core>
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
 #include <glraw/AssetInformation.h>
 
 namespace
@@ -40,7 +39,7 @@ Rotate::Rotate(unsigned int rotation = DefaultRotation)
 }
 
 Rotate::Rotate(const QVariantMap& cfg)
-	: Rotate(RotationFromVariant(cfg))
+	: Rotate(Get("rotation", DefaultRotation, cfg))
 {
 }
 
@@ -87,11 +86,6 @@ void Rotate::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 QString Rotate::fragmentShaderSource(unsigned int pass)
 {
 	return source;
-}
-
-unsigned int Rotate::RotationFromVariant(const QVariantMap& cfg)
-{
-	return cfg.value("rotation", { DefaultRotation }).toInt();
 }
 
 }

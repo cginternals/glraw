@@ -12,14 +12,14 @@ public:
 	virtual ~MotionBlur() = default;
 
 protected:
-
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
 	unsigned int m_size;
 	float m_angle;
-	float AngleFromVariant(const QVariantMap& cfg, float default_value);
+
+	float GetAngle(float default_value, const QVariantMap & cfg);
 };
 
 }

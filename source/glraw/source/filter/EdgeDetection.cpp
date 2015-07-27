@@ -36,24 +36,24 @@ namespace
 namespace glraw
 {
 
-	EdgeDetection::EdgeDetection(unsigned int size = DefaultSize)
-		: m_size(VerifySize(size))
-	{
-	}
+EdgeDetection::EdgeDetection(unsigned int size = DefaultSize)
+	: m_size(VerifySize(size))
+{
+}
 
-	EdgeDetection::EdgeDetection(const QVariantMap& cfg)
-		: EdgeDetection(SizeFromVariant(cfg, DefaultSize))
-	{
-	}
+EdgeDetection::EdgeDetection(const QVariantMap& cfg)
+	: EdgeDetection(GetSize(DefaultSize, cfg))
+{
+}
 
-	void EdgeDetection::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
-	{
-		program.setUniformValue("size", m_size);
-	}
+void EdgeDetection::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
+{
+	program.setUniformValue("size", m_size);
+}
 
-	QString EdgeDetection::fragmentShaderSource(unsigned int pass)
-	{
-		return source;
-	}
+QString EdgeDetection::fragmentShaderSource(unsigned int pass)
+{
+	return source;
+}
 
 }

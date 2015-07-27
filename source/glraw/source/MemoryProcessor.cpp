@@ -23,7 +23,7 @@ MemoryProcessor::MemoryProcessor(AbstractConverter * converter)
 
 MemoryProcessor::~MemoryProcessor()
 {
-	qDeleteAll(m_filters);
+	reset();
 }
 
 bool MemoryProcessor::process(QByteArray & data, AssetInformation & info)

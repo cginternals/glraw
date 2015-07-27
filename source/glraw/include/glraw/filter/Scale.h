@@ -24,9 +24,9 @@ namespace glraw
 
 		virtual void updateAssetInformation(AssetInformation & info) override;
 
-		virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
 		virtual QString fragmentShaderSource(unsigned int pass) override;
 		virtual int createWorkingTexture(unsigned int prototype) override;
+		virtual void bindTexture(unsigned int unit, unsigned int tex) override;
 
 	private:
 
@@ -40,10 +40,6 @@ namespace glraw
 		int out_height;
 
 		static ScaleMode ModeFromVariant(const QVariantMap& cfg);
-		static unsigned int WidthFromVariant(const QVariantMap& cfg);
-		static unsigned int HeightFromVariant(const QVariantMap& cfg);
-		static float ScaleFromVariant(const QVariantMap& cfg);
-		static bool BilinearFromVariant(const QVariantMap& cfg);
 	};
 
 }

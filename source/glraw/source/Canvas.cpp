@@ -163,6 +163,11 @@ void Canvas::updateTexture(GLuint tex)
 {
 	assert( tex );
 
+	if(tex == m_texture)
+	{
+		return;
+	}
+
 	makeContext();
 	m_gl->glDeleteTextures( 1, &m_texture );
 	doneContext();

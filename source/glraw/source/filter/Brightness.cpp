@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -17,7 +15,7 @@ namespace
 
 		void main()
 		{   
-			dst = vec4(clamp(texture(src, v_uv).rgb + vec3(amount), vec3(0.f), vec3(1.f)),texture(src, v_uv).a);
+			dst = vec4(texture(src, v_uv).rgb + vec3(amount), texture(src, v_uv).a);
 		} )";
 
 	const float DefaultAmount = 0.5;
@@ -32,7 +30,7 @@ Brightness::Brightness(float amount = DefaultAmount)
 }
 
 Brightness::Brightness(const QVariantMap& cfg)
-	: Brightness(AmountFromVariant(cfg, DefaultAmount))
+	: Brightness(GetFactor(DefaultAmount,cfg))
 {
 }
 
@@ -44,11 +42,6 @@ void Brightness::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 QString Brightness::fragmentShaderSource(unsigned int pass)
 {
 	return source;
-}
-
-float Brightness::AmountFromVariant(const QVariantMap& cfg, float default_value)
-{
-	return cfg.value("amount", { default_value }).toFloat();
 }
 
 }

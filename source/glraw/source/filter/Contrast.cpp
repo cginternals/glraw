@@ -2,8 +2,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const source =
@@ -17,10 +15,10 @@ namespace
 
 		void main()
 		{   
-			dst = vec4(clamp(texture(src, v_uv).rgb * factor, vec3(0.f), vec3(1.f)),texture(src, v_uv).a);
+			dst = vec4(texture(src, v_uv).rgb * factor, texture(src, v_uv).a);
 		} )";
 
-	const float DefaultFactor = 0.5;
+	const float DefaultFactor = 1.0f;
 }
 
 namespace glraw
@@ -32,7 +30,7 @@ Contrast::Contrast(float factor = DefaultFactor)
 }
 
 Contrast::Contrast(const QVariantMap& cfg)
-	: Contrast(FactorFromVariant(cfg, DefaultFactor))
+	: Contrast(GetFactor(DefaultFactor, cfg))
 {
 }
 

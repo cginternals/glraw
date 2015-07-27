@@ -5,8 +5,6 @@
 
 #include <QOpenGLShaderProgram>
 
-#include <glraw/Canvas.h>
-
 namespace
 {
 	const char * const firstPass =
@@ -77,73 +75,69 @@ namespace
 namespace glraw
 {
 
-	UnsharpMask::UnsharpMask(unsigned int size = DefaultSize, float factor = DefaultFactor, float threshold = DefaultThreshold)
-		: m_size(VerifySize(size))
-		, m_factor(factor)
-		, m_threshold(threshold)
-		, m_kernel(CalculateKernel(size))
+UnsharpMask::UnsharpMask(unsigned int size = DefaultSize, float factor = DefaultFactor, float threshold = DefaultThreshold)
+	: m_size(VerifySize(size))
+	, m_factor(factor)
+	, m_threshold(threshold)
+	, m_kernel(CalculateKernel(size))
+{
+}
+
+UnsharpMask::UnsharpMask(const QVariantMap& cfg)
+	: UnsharpMask(GetSize(DefaultSize, cfg), GetFactor(DefaultFactor, cfg), Get("threshold", DefaultThreshold, cfg))
+{
+}
+
+void UnsharpMask::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
+{
+	program.setUniformValue("size", m_size);
+	program.setUniformValueArray("kernel", m_kernel, (int)m_size + 1, 1);
+	if (pass == Pass::Second)
 	{
+		program.setUniformValue("factor", m_factor);
+		program.setUniformValue("threshold", m_threshold);
+	}
+}
+
+unsigned int UnsharpMask::numberOfPasses()
+{
+	return 2;
+}
+
+QString UnsharpMask::fragmentShaderSource(unsigned int pass)
+{
+	switch (pass)
+	{
+	case Pass::First:
+		return firstPass;
+
+	case Pass::Second:
+		return secondPass;
+
+	default:
+		qCritical("Invalid pass used");
+		return nullptr;
+	}
+}
+
+float* UnsharpMask::CalculateKernel(unsigned int size)
+{
+	float *toReturn = new float[size + 1];
+
+	float sigma = 5.f;
+
+	float sum = 0.f;
+	for (int i = 0; i < size + 1; ++i)
+	{
+		toReturn[i] = 1 / (2 * M_PI*sigma*sigma)*pow(M_E, -((i - size)*(i - size) / (2 * sigma*sigma)));
+		sum += toReturn[i];
+	}
+	for (int i = 0; i < size + 1; ++i)
+	{
+		toReturn[i] /= sum;
 	}
 
-	UnsharpMask::UnsharpMask(const QVariantMap& cfg)
-		: UnsharpMask(SizeFromVariant(cfg, DefaultSize), FactorFromVariant(cfg, DefaultFactor), ThresholdFromVariant(cfg, DefaultThreshold))
-	{
-	}
+	return toReturn;
+}
 
-	void UnsharpMask::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
-	{
-		program.setUniformValue("size", m_size);
-		program.setUniformValueArray("kernel", m_kernel, (int)m_size + 1, 1);
-		if (pass == Pass::Second)
-		{
-			program.setUniformValue("factor", m_factor);
-			program.setUniformValue("threshold", m_threshold);
-		}
-	}
-
-	unsigned int UnsharpMask::numberOfPasses()
-	{
-		return 2;
-	}
-
-	QString UnsharpMask::fragmentShaderSource(unsigned int pass)
-	{
-		switch (pass)
-		{
-		case Pass::First:
-			return firstPass;
-
-		case Pass::Second:
-			return secondPass;
-
-		default:
-			qCritical("Invalid pass used");
-			return nullptr;
-		}
-	}
-
-	float UnsharpMask::ThresholdFromVariant(const QVariantMap& cfg, float default_value)
-	{
-		return cfg.value("threshold", { default_value }).toFloat();
-	}
-
-	float* UnsharpMask::CalculateKernel(unsigned int size)
-	{
-		float *toReturn = new float[size + 1];
-
-		float sigma = 5.f;
-
-		float sum = 0.f;
-		for (int i = 0; i < size + 1; ++i)
-		{
-			toReturn[i] = 1 / (2 * M_PI*sigma*sigma)*pow(M_E, -((i - size)*(i - size) / (2 * sigma*sigma)));
-			sum += toReturn[i];
-		}
-		for (int i = 0; i < size + 1; ++i)
-		{
-			toReturn[i] /= sum;
-		}
-
-		return toReturn;
-	}
 }

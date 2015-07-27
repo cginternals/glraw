@@ -35,7 +35,7 @@ Mirror::Mirror( bool horizontal = DefaultHorizontal, bool vertical = DefaultVert
 }
 
 Mirror::Mirror( const QVariantMap& cfg )
-	: Mirror( HorizontalFromVariant( cfg ), VerticalFromVariant( cfg ) )
+	: Mirror(Get("horizontal", DefaultHorizontal, cfg), Get("vertical", DefaultVertical, cfg))
 {
 }
 
@@ -50,12 +50,4 @@ QString Mirror::fragmentShaderSource(unsigned int pass)
 	return source;
 }
 
-bool Mirror::HorizontalFromVariant( const QVariantMap& cfg )
-{
-	return cfg.value( "horizontal", {DefaultHorizontal} ).toBool();
-}
-bool Mirror::VerticalFromVariant( const QVariantMap& cfg )
-{
-	return cfg.value( "vertical", {DefaultVertical} ).toBool();
-}
 }

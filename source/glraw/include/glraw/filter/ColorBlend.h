@@ -14,7 +14,6 @@ enum class BlendMode : int
 	Difference,
 	Multiply,
 	Divide,
-	Divisor,
 	Minimum,
 	Maximum,
 
@@ -40,7 +39,6 @@ private:
 	float m_factor;
 
 	static BlendMode ModeFromVariant(const QVariantMap& cfg);
-	static QVector4D ColorFromVariant( const QVariantMap& cfg );
 };
 
 }

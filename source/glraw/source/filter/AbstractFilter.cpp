@@ -69,13 +69,13 @@ int AbstractFilter::renderToTexture(std::unique_ptr<Canvas> & imageData)
 			return 0;
 		}
 
-		if(i % 2 == 0)
+		if(i % 2)
 		{
-			attachToFramebuffer(processedTexture);
+			attachToFramebuffer(imageData->texture());
 		}
 		else
 		{
-			attachToFramebuffer(imageData->texture());
+			attachToFramebuffer(processedTexture);
 		}
 		bindVertexBuffer();
 
@@ -128,19 +128,6 @@ unsigned int AbstractFilter::numberOfPasses()
 	return 1;
 }
 
-unsigned int AbstractFilter::VerifySize( unsigned int size )
-{
-	if( size == 0 )
-	{
-		qDebug( "The minimum size is 1." );
-		return 1;
-	}
-	else
-	{
-		return size;
-	}
-}
-
 void AbstractFilter::bindTexture(unsigned int unit, unsigned int tex)
 {
 	m_gl->glActiveTexture(GL_TEXTURE0 + unit);
@@ -186,6 +173,7 @@ void AbstractFilter::attachToFramebuffer(unsigned int texture)
 
 void AbstractFilter::bindVertexBuffer()
 {
+	// Screen aligned triangle.
 	static const float rawv[] = { +1.f, -1.f, +1.f, +3.f, -3.f, -1.f };
 	static bool initialized = false;
 	static GLuint vao, buffer;
@@ -210,13 +198,4 @@ void AbstractFilter::bindVertexBuffer()
 	}
 }
 
-unsigned int AbstractFilter::SizeFromVariant( const QVariantMap& cfg, unsigned int default_value )
-{
-	return cfg.value( "size", { default_value } ).toInt();
-}
-
-float AbstractFilter::FactorFromVariant( const QVariantMap& cfg, float default_value )
-{
-	return cfg.value( "factor", { default_value } ).toFloat();
-}
 }

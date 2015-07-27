@@ -20,7 +20,7 @@ namespace glraw
 		float m_factor;
 		float m_threshold;
 		float *m_kernel;
-		float ThresholdFromVariant(const QVariantMap& cfg, float default_value);
+
 		float* CalculateKernel(unsigned int size);
 	};
 

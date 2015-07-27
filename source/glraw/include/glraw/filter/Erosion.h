@@ -16,7 +16,6 @@ protected:
 	virtual QString fragmentShaderSource(unsigned int pass) override;
 
 private:
-
 	unsigned int m_size;
 };
 
