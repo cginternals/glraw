@@ -26,8 +26,8 @@ protected:
 
 	QVector3D m_conversionFactor;
 
-	static QVector3D FactorFromMode(GrayscaleFactor in);
-	static QVector3D FactorFromVariant(const QVariantMap& cfg);
+	static QVector3D GetFactor(GrayscaleFactor in);
+	static QVector3D GetFactor(const QVariantMap& cfg);
 };
 
 }

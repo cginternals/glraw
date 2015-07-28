@@ -9,7 +9,7 @@ namespace glraw
 class GLRAW_API RadialBlur : public AbstractFilter
 {
 public:
-	RadialBlur(float x, float y, float blur, float bright, unsigned int size);
+	RadialBlur(float x, float y, float blur, unsigned int size);
 	RadialBlur(const QVariantMap& cfg);
 	virtual ~RadialBlur() = default;
 
@@ -19,7 +19,6 @@ protected:
 
 	QVector2D m_position;
 	float m_blur;
-	float m_bright;
 	unsigned int m_size; 
 };
 

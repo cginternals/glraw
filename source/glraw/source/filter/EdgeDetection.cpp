@@ -1,12 +1,8 @@
 #include <glraw/filter/EdgeDetection.h>
 
-#include <QOpenGLShaderProgram>
-
-#include <glraw/Canvas.h>
-
 namespace
 {
-	const char * const source =
+	const char * const verticalShader =
 		R"(#version 150
 
 		uniform sampler2D src;
@@ -18,42 +14,62 @@ namespace
 		void main()
 		{   
 			vec2 img_size = vec2(1.0f)/textureSize(src, 0);
-			vec3 sum = texture(src, v_uv).rgb*(2*size+1)*(2*size+1);
 
 			for(int i=-size; i<=size;++i)
 			{
-				for(int j=-size; j <=size; ++j)
-				{
-					sum -= texture(src, v_uv + img_size*vec2(i,j)).rgb;
-				}
+				dst += texture(src, v_uv + img_size*vec2(i,0));
 			}
-			dst = vec4(sum, texture(src, v_uv).a);
+		} )";
+
+	const char * const horizontalShader =
+		R"(#version 150
+
+		uniform sampler2D src;
+		uniform sampler2D buf;
+		uniform int size;
+		uniform float factor;
+
+		in vec2 v_uv;
+		out vec4 dst;
+
+		void main()
+		{   
+			vec2 img_size = vec2(1.0f)/textureSize(src, 0);
+
+			for(int i=-size; i<=size;++i)
+			{
+				dst += texture(buf, v_uv + img_size*vec2(0,i));
+			}
+			vec4 texel = texture(src, v_uv);
+			vec3 weigthed = texel.rgb*(2*size+1)*(2*size+1);
+			dst = vec4( (weigthed - dst.rgb) * factor, texel.a );
 		} )";
 
 	const unsigned int DefaultSize = 1;
+	const float DefaultFactor = 1.0f;
 }
 
 namespace glraw
 {
 
-EdgeDetection::EdgeDetection(unsigned int size = DefaultSize)
-	: m_size(VerifySize(size))
+EdgeDetection::EdgeDetection(unsigned int size = DefaultSize, float factor = DefaultFactor)
+	: AbstractKernel(size, factor)
 {
 }
 
 EdgeDetection::EdgeDetection(const QVariantMap& cfg)
-	: EdgeDetection(GetSize(DefaultSize, cfg))
+	: EdgeDetection(GetSize(DefaultSize, cfg), GetFactor(DefaultFactor, cfg))
 {
 }
 
-void EdgeDetection::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
+QString EdgeDetection::firstShader() const
 {
-	program.setUniformValue("size", m_size);
+	return verticalShader;
 }
 
-QString EdgeDetection::fragmentShaderSource(unsigned int pass)
+QString EdgeDetection::secondShader() const
 {
-	return source;
+	return horizontalShader;
 }
 
 }

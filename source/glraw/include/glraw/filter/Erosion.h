@@ -1,20 +1,18 @@
 #pragma once
-#include <glraw/filter/AbstractFilter.h>
+#include <glraw/filter/AbstractKernel.h>
 
 namespace glraw
 {
-class GLRAW_API Erosion : public AbstractFilter
+class GLRAW_API Erosion : public AbstractKernel
 {
 public:
-	Erosion(unsigned int size);
+	Erosion(unsigned int size, float factor);
 	Erosion(const QVariantMap& cfg);
 	virtual ~Erosion() = default;
 
 protected:
-	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
-	virtual QString fragmentShaderSource(unsigned int pass) override;
-
-	unsigned int m_size;
+	virtual QString firstShader() const override;
+	virtual QString secondShader() const override;
 };
 
 }

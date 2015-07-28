@@ -7,7 +7,7 @@ namespace glraw
 class GLRAW_API MotionBlur : public AbstractFilter
 {
 public:
-	MotionBlur(unsigned int size, float angle);
+	MotionBlur(unsigned int size, float angle, float factor);
 	MotionBlur(const QVariantMap& cfg);
 	virtual ~MotionBlur() = default;
 
@@ -17,8 +17,9 @@ protected:
 
 	unsigned int m_size;
 	float m_angle;
+	float m_factor;
 
-	float GetAngle(float default_value, const QVariantMap & cfg);
+	float GetAngle(const QVariantMap & cfg);
 };
 
 }

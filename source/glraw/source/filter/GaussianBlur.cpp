@@ -37,6 +37,7 @@ namespace
 
 			uniform sampler2D buf;
 			uniform int size;
+			uniform float factor;
 			uniform float[101] kernel;
 
 			in vec2 v_uv;
@@ -51,68 +52,59 @@ namespace
 				{
 					dst += kernel[abs(i)]*texture(buf, v_uv + vec2(i * offset, 0.0));
 				}
+				vec4 texel = texture(buf, v_uv);
+				dst = vec4(mix(texel, dst, factor).rgb, texel.a);
 			})";
 
 
 	const int DefaultSize = 5;
-	const float DefaultSigma = 5.f;
+	const float DefaultFactor = 1.0f;
+	const float DefaultSigma = 1.0f;
 }
 
 namespace glraw
 {
 
-GaussianBlur::GaussianBlur(unsigned int size = DefaultSize, float sigma = DefaultSigma)
-	: m_size(VerifySize(size))
-	, m_sigma(sigma)
-	, m_kernel(CalculateKernel(size))
+GaussianBlur::GaussianBlur(unsigned int size = DefaultSize, float factor = DefaultFactor, float sigma = DefaultSigma)
+	: AbstractKernel(size, factor)
+	, m_kernel(CalculateKernel(m_size, sigma))
 {
 }
 
 GaussianBlur::GaussianBlur(const QVariantMap& in)
-	: GaussianBlur(GetSize(DefaultSize, in), Get("sigma", DefaultSigma, in))
+	: GaussianBlur(GetSize(DefaultSize, in),GetFactor(DefaultFactor, in), Get("sigma", DefaultSigma, in))
 {
-}
-
-unsigned int GaussianBlur::numberOfPasses()
-{
-	return 2;
 }
 
 void GaussianBlur::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
-	program.setUniformValue("size", m_size);
-	program.setUniformValueArray("kernel", m_kernel, (int)m_size + 1, 1);
+	AbstractKernel::setUniforms(program, pass);
+	program.setUniformValueArray("kernel", m_kernel, static_cast<int>(m_size + 1), 1);
 }
 
-QString GaussianBlur::fragmentShaderSource(unsigned int pass)
+QString GaussianBlur::firstShader() const
 {
-	switch (pass)
-	{
-	case Pass::First:
-		return verticalShader;
-
-	case Pass::Second:
-		return horizontalShader;
-
-	default:
-		qCritical("Invalid pass used");
-		return nullptr;
-	}
+	return verticalShader;
 }
 
-float* GaussianBlur::CalculateKernel(unsigned int size)
+QString GaussianBlur::secondShader() const
+{
+	return horizontalShader;
+}
+
+float* GaussianBlur::CalculateKernel(unsigned int size, float sigma)
 {
 	float *toReturn = new float[size + 1];
 
 	float sum = 0.f;
 	for (int i = 0; i < size+1;++i)
 	{
-		toReturn[i] = 1 / (2 * M_PI*m_sigma*m_sigma)*pow(M_E, -((i - size)*(i - size) / (2 * m_sigma*m_sigma)));
+		toReturn[i] = 1 / (2 * M_PI*sigma*sigma)*pow(M_E, -((i - size)*(i - size) / (2 * sigma*sigma)));
 		sum += toReturn[i];
 	}
 	for (int i = 0; i < size + 1; ++i)
 	{
-		toReturn[i] /= sum;
+		toReturn[i] /= (sum*sqrt(2));
 	}
 
 	return toReturn;

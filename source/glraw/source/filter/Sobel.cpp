@@ -17,8 +17,8 @@ namespace
 			{   
 				vec2 offset = 1.0f / textureSize(src, 0);
 
-				vec3 Gx = vec4(0.f);
-				vec3 Gy = vec4(0.f);
+				vec3 Gx = vec3(0.f);
+				vec3 Gy = vec3(0.f);
 				for(int i=-1;i<=1;++i)
 				{
 					for(int j=-1;j<=1;++j)

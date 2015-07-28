@@ -24,7 +24,7 @@ namespace glraw
 {
 
 Grayscale::Grayscale(GrayscaleFactor in = GrayscaleFactor::Default)
-	: Grayscale(FactorFromMode(in))
+	: Grayscale(GetFactor(in))
 {
 }
 
@@ -34,7 +34,7 @@ Grayscale::Grayscale(const QVector3D& factor)
 }
 
 Grayscale::Grayscale(const QVariantMap& cfg)
-	: Grayscale(FactorFromVariant(cfg))
+	: Grayscale(GetFactor(cfg))
 {
 }
 
@@ -48,7 +48,7 @@ QString Grayscale::fragmentShaderSource(unsigned int pass)
 	return source;
 }
 
-QVector3D Grayscale::FactorFromMode(GrayscaleFactor in)
+QVector3D Grayscale::GetFactor(GrayscaleFactor in)
 {
 	switch (in)
 	{
@@ -62,17 +62,17 @@ QVector3D Grayscale::FactorFromMode(GrayscaleFactor in)
 	}
 }
 
-QVector3D Grayscale::FactorFromVariant(const QVariantMap& cfg)
+QVector3D Grayscale::GetFactor(const QVariantMap& cfg)
 {
 	auto it = cfg.find("mode");
 	if (it != cfg.end())
 	{
 		auto mode = static_cast<GrayscaleFactor>(it->toInt());
-		return FactorFromMode(mode);
+		return GetFactor(mode);
 	}
 	else
 	{
-		const auto default_hue = FactorFromMode(GrayscaleFactor::Default);
+		const auto default_hue = GetFactor(GrayscaleFactor::Default);
 		return GetColor(default_hue, cfg);
 	}
 }

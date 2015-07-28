@@ -1,7 +1,6 @@
 #pragma once
 #include <glraw/filter/AbstractFilter.h>
 
-
 namespace glraw
 {
 

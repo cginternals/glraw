@@ -1,21 +1,19 @@
 #pragma once
-#include <glraw/filter/AbstractFilter.h>
+#include <glraw/filter/AbstractKernel.h>
 
 namespace glraw
 {
 
-class GLRAW_API EdgeDetection : public AbstractFilter
+class GLRAW_API EdgeDetection : public AbstractKernel
 {
 public:
-	EdgeDetection(unsigned int size);
+	EdgeDetection(unsigned int size, float factor);
 	EdgeDetection(const QVariantMap& cfg);
 	virtual ~EdgeDetection() = default;
 
 protected:
-	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
-	virtual QString fragmentShaderSource(unsigned int pass) override;
-
-	unsigned int m_size;
+	virtual QString firstShader() const override;
+	virtual QString secondShader() const override;
 };
 
 }

@@ -149,7 +149,7 @@ int AbstractFilter::createWorkingTexture(unsigned int prototype)
 	GLuint buffer_texture;
 	m_gl->glGenTextures(1, &buffer_texture);
 	m_gl->glBindTexture(GL_TEXTURE_2D, buffer_texture);
-	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
 
 	m_gl->glViewport(0, 0, width, height);
 

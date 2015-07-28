@@ -16,8 +16,8 @@ namespace
 
 		void main()
 		{   
-			float x = horizontal	? 1 - v_uv.x : v_uv.x;
-			float y = vertical		? 1 - v_uv.y : v_uv.y;
+			float x = mix(v_uv.x, 1 - v_uv.x, horizontal);
+			float y = mix(v_uv.y, 1 - v_uv.y, vertical);
 			dst = texture(src, vec2(x,y));
 		} )";
 

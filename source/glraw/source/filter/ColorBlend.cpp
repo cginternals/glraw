@@ -15,38 +15,47 @@ namespace
 		in vec2 v_uv;
 		out vec4 dst;
 
+		const int Mix			= 0;
+		const int Additive		= 1;
+		const int Subtractive	= 2;
+		const int Difference	= 3;
+		const int Multiply		= 4;
+		const int Divide		= 5;
+		const int Minimum		= 6;
+		const int Maximum		= 7;
+
 		void main()
 		{   
 			vec4 texel = texture(src, v_uv);
-			if( mode == 0 ) // Mix
+			if( mode == Mix )
 			{
 				dst = (texel+color) * 0.5;
 			}
-			else if( mode == 1 ) // Additive
+			else if( mode == Additive )
 			{
 				dst = (texel+color);
 			}
-			else if( mode == 2 ) // Subtractive
+			else if( mode == Subtractive )
 			{
 				dst = (texel-color);
 			}	
-			else if( mode == 3 ) // Difference
+			else if( mode == Difference )
 			{
 				dst = abs(color-texel);
 			}	
-			else if( mode == 4 ) // Multiply
+			else if( mode == Multiply )
 			{
 				dst = (texel*color);
 			}
-			else if( mode == 5 ) // Divide
+			else if( mode == Divide )
 			{
 				dst = (texel/color);
 			}
-			else if( mode == 6 ) // Minimum
+			else if( mode == Minimum )
 			{
 				dst = min(texel,color);
 			}	
-			else if( mode == 7 ) // Maximum
+			else if( mode == Maximum )
 			{
 				dst = max(texel,color);
 			}
@@ -69,7 +78,7 @@ ColorBlend::ColorBlend(BlendMode mode = BlendMode::Default, const QVector4D& col
 }
 
 ColorBlend::ColorBlend( const QVariantMap& cfg )
-	: ColorBlend(ModeFromVariant(cfg), GetColor(DefaultColor, cfg), GetFactor(DefaultFactor, cfg))
+	: ColorBlend(GetMode(cfg), GetColor(DefaultColor, cfg), GetFactor(DefaultFactor, cfg))
 {
 }
 
@@ -85,9 +94,9 @@ QString ColorBlend::fragmentShaderSource(unsigned int pass)
 	return source;
 }
 
-BlendMode ColorBlend::ModeFromVariant(const QVariantMap& cfg)
+BlendMode ColorBlend::GetMode(const QVariantMap& cfg)
 {
-	int value = cfg.value("mode", { static_cast<int>(BlendMode::Default) }).toInt();
+	auto value = cfg.value("mode", { static_cast<int>(BlendMode::Default) }).toInt();
 	return static_cast<BlendMode>(value);
 }
 

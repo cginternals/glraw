@@ -35,7 +35,7 @@ protected:
 	QVector4D m_color;
 	float m_factor;
 
-	static BlendMode ModeFromVariant(const QVariantMap& cfg);
+	static BlendMode GetMode(const QVariantMap& cfg);
 };
 
 }

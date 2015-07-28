@@ -1,7 +1,5 @@
 #include <glraw/filter/Invert.h>
 
-#include <QOpenGLShaderProgram>
-
 namespace
 {
 	const char * const source =
