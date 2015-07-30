@@ -76,6 +76,11 @@ GaussianBlur::GaussianBlur(const QVariantMap& in)
 {
 }
 
+GaussianBlur::~GaussianBlur() 
+{ 
+	delete[] m_kernel; 
+}
+
 void GaussianBlur::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	AbstractKernel::setUniforms(program, pass);
@@ -92,19 +97,22 @@ QString GaussianBlur::secondShader() const
 	return horizontalShader;
 }
 
-float* GaussianBlur::CalculateKernel(unsigned int size, float sigma)
+float* GaussianBlur::CalculateKernel(int size, float sigma)
 {
 	float *toReturn = new float[size + 1];
 
-	float sum = 0.f;
+	float sum = 0.0f;
+	const float strength = 1.0f / (2.0f*sigma*sigma);
 	for (int i = 0; i < size+1;++i)
 	{
-		toReturn[i] = 1 / (2 * M_PI*sigma*sigma)*pow(M_E, -((i - size)*(i - size) / (2 * sigma*sigma)));
+		const int pos = i - size;
+		toReturn[i] = M_PI*strength * pow(M_E, -pos*pos*strength);
 		sum += toReturn[i];
 	}
+	sum *= sqrt(2);
 	for (int i = 0; i < size + 1; ++i)
 	{
-		toReturn[i] /= (sum*sqrt(2));
+		toReturn[i] /= sum;
 	}
 
 	return toReturn;

@@ -19,6 +19,7 @@ unsigned int AbstractKernel::numberOfPasses()
 void AbstractKernel::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
 	program.setUniformValue("size", m_size);
+	//TODO only apply this value while processing the second pass?
 	program.setUniformValue("factor", m_factor);
 }
 

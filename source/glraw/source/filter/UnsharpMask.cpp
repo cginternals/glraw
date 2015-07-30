@@ -68,76 +68,42 @@ namespace
 			})";
 
 	const unsigned int DefaultSize = 1;
-	const float DefaultFactor = 1.f;
-	const float DefaultThreshold = 0.f;
+	const float DefaultFactor = 1.0f;
+	const float DefaultThreshold = 0.0f;
+	const float DefaultSigma = 1.0f;
 }
 
 namespace glraw
 {
 
-UnsharpMask::UnsharpMask(unsigned int size = DefaultSize, float factor = DefaultFactor, float threshold = DefaultThreshold)
-	: m_size(VerifySize(size))
-	, m_factor(factor)
+UnsharpMask::UnsharpMask(unsigned int size = DefaultSize, float factor = DefaultFactor, float threshold = DefaultThreshold, float sigma = DefaultSigma)
+	: GaussianBlur(size, factor, sigma)
 	, m_threshold(threshold)
-	, m_kernel(CalculateKernel(size))
 {
 }
 
 UnsharpMask::UnsharpMask(const QVariantMap& cfg)
-	: UnsharpMask(GetSize(DefaultSize, cfg), GetFactor(DefaultFactor, cfg), Get("threshold", DefaultThreshold, cfg))
+	: UnsharpMask(GetSize(DefaultSize, cfg), GetFactor(DefaultFactor, cfg), Get("threshold", DefaultThreshold, cfg), Get("sigma", DefaultSigma, cfg))
 {
+}
+
+QString UnsharpMask::firstShader() const
+{
+	return firstPass;
+}
+
+QString UnsharpMask::secondShader() const
+{
+	return secondPass;
 }
 
 void UnsharpMask::setUniforms(QOpenGLShaderProgram& program, unsigned int pass)
 {
-	program.setUniformValue("size", m_size);
-	program.setUniformValueArray("kernel", m_kernel, (int)m_size + 1, 1);
+	GaussianBlur::setUniforms(program, pass);
 	if (pass == Pass::Second)
 	{
-		program.setUniformValue("factor", m_factor);
 		program.setUniformValue("threshold", m_threshold);
 	}
-}
-
-unsigned int UnsharpMask::numberOfPasses()
-{
-	return 2;
-}
-
-QString UnsharpMask::fragmentShaderSource(unsigned int pass)
-{
-	switch (pass)
-	{
-	case Pass::First:
-		return firstPass;
-
-	case Pass::Second:
-		return secondPass;
-
-	default:
-		qCritical("Invalid pass used");
-		return nullptr;
-	}
-}
-
-float* UnsharpMask::CalculateKernel(unsigned int size)
-{
-	float *toReturn = new float[size + 1];
-
-	float sigma = 5.f;
-
-	float sum = 0.f;
-	for (int i = 0; i < size + 1; ++i)
-	{
-		toReturn[i] = 1 / (2 * M_PI*sigma*sigma)*pow(M_E, -((i - size)*(i - size) / (2 * sigma*sigma)));
-		sum += toReturn[i];
-	}
-	for (int i = 0; i < size + 1; ++i)
-	{
-		toReturn[i] /= sum;
-	}
-
-	return toReturn;
 }
 
 }

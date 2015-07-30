@@ -1,27 +1,22 @@
 #pragma once
-#include <glraw/filter/AbstractFilter.h>
+#include <glraw/filter/GaussianBlur.h>
 
 namespace glraw
 {
 
-class GLRAW_API UnsharpMask : public AbstractFilter
+class GLRAW_API UnsharpMask : public GaussianBlur
 {
 public:
-	UnsharpMask(unsigned int size, float factor, float threshold);
+	UnsharpMask(unsigned int size, float factor, float threshold, float sigma);
 	UnsharpMask(const QVariantMap& cfg);
-	virtual ~UnsharpMask() { delete[] m_kernel; };
+	virtual ~UnsharpMask() = default;
 
 protected:
-	virtual unsigned int numberOfPasses() override;
 	virtual void setUniforms(QOpenGLShaderProgram& program, unsigned int pass) override;
-	virtual QString fragmentShaderSource(unsigned int pass) override;
+	virtual QString firstShader() const override;
+	virtual QString secondShader() const override;
 
-	unsigned int m_size;
-	float m_factor;
 	float m_threshold;
-	float *m_kernel;
-
-	float* CalculateKernel(unsigned int size);
 };
 
 }
