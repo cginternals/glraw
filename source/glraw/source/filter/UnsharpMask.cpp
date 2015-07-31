@@ -70,7 +70,7 @@ namespace
 	const unsigned int DefaultSize = 1;
 	const float DefaultFactor = 1.0f;
 	const float DefaultThreshold = 0.0f;
-	const float DefaultSigma = 1.0f;
+	const float DefaultSigma = 10.0f;
 }
 
 namespace glraw

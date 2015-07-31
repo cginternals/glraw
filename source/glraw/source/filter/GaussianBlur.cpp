@@ -23,18 +23,17 @@ namespace
 			{
 				
 				float offset = 1.0 / textureSize(src, 0).y;
-				vec3 color = vec3(0.f);
 				
 				for (int i = -size; i <= size; ++i)
 				{
-					color += kernel[abs(i)]*texture(src, v_uv + vec2(0.0, i * offset)).rgb;
+					dst += kernel[abs(i)] * texture(src, v_uv + vec2(0.0, i * offset));
 				}
-				dst = vec4(color, texture(src, v_uv).a);
 			})";
 
 	const char* horizontalShader =
 		R"(#version 150
 
+			uniform sampler2D src;
 			uniform sampler2D buf;
 			uniform int size;
 			uniform float factor;
@@ -52,14 +51,14 @@ namespace
 				{
 					dst += kernel[abs(i)]*texture(buf, v_uv + vec2(i * offset, 0.0));
 				}
-				vec4 texel = texture(buf, v_uv);
+				vec4 texel = texture(src, v_uv);
 				dst = vec4(mix(texel, dst, factor).rgb, texel.a);
 			})";
 
 
 	const int DefaultSize = 5;
 	const float DefaultFactor = 1.0f;
-	const float DefaultSigma = 1.0f;
+	const float DefaultSigma = 10.0f;
 }
 
 namespace glraw
@@ -109,7 +108,7 @@ float* GaussianBlur::CalculateKernel(int size, float sigma)
 		toReturn[i] = M_PI*strength * pow(M_E, -pos*pos*strength);
 		sum += toReturn[i];
 	}
-	sum *= sqrt(2);
+	sum *= sqrt(3);
 	for (int i = 0; i < size + 1; ++i)
 	{
 		toReturn[i] /= sum;
