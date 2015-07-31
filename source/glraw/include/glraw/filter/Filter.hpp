@@ -40,7 +40,7 @@ public:
 	}
 
 	template<typename FilterType>
-	static void Add(const std::string & name)
+	static void Add(const std::string & name, const std::string& description)
 	{
 		instance.emplace(name, &Factory<FilterType>);
 	}
