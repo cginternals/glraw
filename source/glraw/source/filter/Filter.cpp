@@ -9,25 +9,25 @@ namespace glraw
 
 bool Filter::InitializeLibrary()
 {
-	Add<BlockBlur>("blockblur", "");
-	Add<Brightness>("brightness", "");
-	Add<ColorBlend>("colorblend", "");
-	Add<Contrast>("contrast", "");
-	Add<Dilation>("dilation", "");
-	Add<EdgeDetection>("edgedetection", "");
-	Add<Erosion>("erosion", "");
-	Add<GaussianBlur>("gaussianblur", "");
-	Add<Grayscale>("grayscale", "");
-	Add<Invert>("invert", "");
-	Add<Mirror>("mirror", "");
-	Add<MotionBlur>("motionblur", "");
-	Add<RadialBlur>("radialblur", "");
-	Add<Rotate>("rotate", "");
-	Add<Saturation>("saturation", "");
-	Add<Scale>("scale", "");
-	Add<Sobel>("sobel", "");
-	Add<Sharpening>("sharpening", "");
-	Add<UnsharpMask>("unsharpmask", "");
+	Add<BlockBlur>("blockblur", "Block blurs the image, weights all neighbouring pixels equally");
+	Add<Brightness>("brightness", "Adjusts brightness by applying an additive value");
+	Add<ColorBlend>("colorblend", "Blends the image and a selected colour with the specified mode");
+	Add<Contrast>("contrast", "Adjusts contrast by applying a multiplicative value");
+	Add<Dilation>("dilation", "Dilates the image by applying max in the given neighbourhood");
+	Add<EdgeDetection>("edgedetection", "Uses the 3x3 -1,8,-1 kernel for edge detection (alternative: sobel)");
+	Add<Erosion>("erosion", "Erodes the image by applying min in the given neighbourhood");
+	Add<GaussianBlur>("gaussianblur", "Blurs the image using a gaussian distribution for weighting");
+	Add<Grayscale>("grayscale", "Converts the colours of the image into grayscale");
+	Add<Invert>("invert", "Inverts the colours of the image");
+	Add<Mirror>("mirror", "Mirrors the image along the x- and/or y-axis");
+	Add<MotionBlur>("motionblur", "Applies motion blurring, i.e. blurs all pixels in the same direction");
+	Add<RadialBlur>("radialblur", "Applies radial blurring, i.e. blurs all pixels towards a center");
+	Add<Rotate>("rotate", "Rotates the image by multiples of 90°");
+	Add<Saturation>("saturation", "Adjusts saturation by interpolating with the given value");
+	Add<Scale>("scale", "Scales the image with the specified mode");
+	Add<Sobel>("sobel", "Applies the sobel or scharr operator (used mostly for edge detection)");
+	Add<Sharpening>("sharpening", "Sharpens the image by using a kernel");
+	Add<UnsharpMask>("unsharpmask", "Sharpens the image by using the difference to the blurred image");
 
 	return true;
 }
