@@ -245,7 +245,7 @@ bool Builder::help(const QString & name)
 	qDebug("Available filter:");
 	for(auto & filter : filters)
 	{
-		qDebug() << " " << filter.c_str();
+		qDebug() << " " << filter.first.c_str() << "-" << filter.second.c_str();
 	}
 
     return false;

@@ -11,7 +11,7 @@ namespace glraw
 {
 
 typedef std::function<AbstractFilter * (const QVariantMap &)> FactoryFunction;
-typedef std::map<std::string, FactoryFunction> LibraryInstance;
+typedef std::map<std::string, std::pair<FactoryFunction, std::string>> LibraryInstance;
 
 class GLRAW_API Filter
 {
@@ -28,7 +28,8 @@ public:
 		}
 		else
 		{
-			return it->second(options);
+			auto filter = it->second;
+			return filter.first(options);
 		}
 	}
 
@@ -42,7 +43,7 @@ public:
 	template<typename FilterType>
 	static void Add(const std::string & name, const std::string& description)
 	{
-		instance.emplace(name, &Factory<FilterType>);
+		instance.emplace(name, std::make_pair(&Factory<FilterType>, description));
 	}
 
 	static bool Exists(const std::string & name)
@@ -50,13 +51,13 @@ public:
 		return Library().find(name) != Library().end();
 	}
 
-	static std::vector<std::string> All()
+	static std::map<std::string, std::string> All()
 	{
-		std::vector<std::string> output;
+		std::map<std::string, std::string> output;
 
 		for(auto entry : Library())
 		{
-			output.push_back(entry.first);
+			output.emplace(entry.first, entry.second.second);
 		}
 		return output;
 	}
