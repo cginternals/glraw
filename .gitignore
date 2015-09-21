@@ -22,7 +22,12 @@
 /_start-cmake-gui.bat
 /_start-console.bat
 
-# QtCreator
+# Project files
 CMakeLists.txt.user
 CMakeLists.txt.user.*
 *.autosave
+*.sublime-project
+*.sublime-workspace
+
+# Local config
+.localconfig
