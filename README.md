@@ -2,8 +2,18 @@
 
 *glraw* is an utility that converts Qt-supported images into an OpenGL-compatible raw format. *glraw* reduces the process of loading textures at run-time to a minimum: A file-content dump into GPU memory. *glraw* is a cross-platform library licenced under the [MIT license](http://opensource.org/licenses/MIT).
 
-The current release is [glraw-1.0.3](https://github.com/hpicgs/glraw/releases/tag/v1.0.3).
+The latest release is [glraw-1.0.3](https://github.com/hpicgs/glraw/releases/tag/v1.0.3).
 
+## Project Health (master)
+
+| Service | System | Compiler | Options | Status |
+| ------- | ------ | -------- | ------- | ------ |
+| Jenkins | Ubuntu 14.04 | GCC 4.8 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc4.8&style=plastic)](http://jenkins.hpi3d.de/job/glraw-linux-gcc4.8)|
+| Jenkins | Ubuntu 14.04 | GCC 4.9 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc4.9&style=plastic)](http://jenkins.hpi3d.de/job/glraw-linux-gcc4.9)|
+| Jenkins | Ubuntu 14.04 | Clang 3.5 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-clang3.5&style=plastic)](http://jenkins.hpi3d.de/job/glraw-linux-clang3.5) |
+| Jenkins | OS X 10.10 | Clang 3.5 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-osx-clang3.5&style=plastic)](http://jenkins.hpi3d.de/job/glraw-osx-clang3.5) |
+| Jenkins | Windows 8.1 | MSVC 2013 Update 3 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-windows-msvc2013&style=plastic)](http://jenkins.hpi3d.de/job/glraw-windows-msvc2013) |
+| Jenkins | Windows 8.1 | MSVC 2015 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-windows-msvc2015&style=plastic)](http://jenkins.hpi3d.de/job/glraw-windows-msvc2015) |
 
 ## Features
 
