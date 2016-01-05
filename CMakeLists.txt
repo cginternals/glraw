@@ -1,172 +1,166 @@
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+# 
+# CMake options
+# 
+
+# CMake version
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+
+# Include cmake modules
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(GenerateExportHeader)
+include(ExternalProject)
+include(WriteCompilerDetectionHeader)
+include(cmake/GetGitRevisionDescription.cmake)
+include(cmake/Custom.cmake)
+
+# Set policies
+set_policy(CMP0028 NEW) # ENABLE CMP0028: Double colon in target name means ALIAS or IMPORTED target.
+set_policy(CMP0054 NEW) # ENABLE CMP0054: Only interpret if() arguments as variables or keywords when unquoted.
+set_policy(CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
+set_policy(CMP0063 NEW) # ENABLE CMP0063: Honor visibility properties for all target types.
 
 
+# 
 # Project description and (meta) information
+# 
 
+# Get git revision
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+string(SUBSTRING "${GIT_SHA1}" 0 12 GIT_REV)
+
+# Meta information about the project
 set(META_PROJECT_NAME        "glraw")
 set(META_PROJECT_DESCRIPTION "Converts images to OpenGL compatible raw files")
+set(META_AUTHOR_ORGANIZATION "CG Internals GmbH")
+set(META_AUTHOR_DOMAIN       "https://github.com/cginternals/cmake-init/")
+set(META_AUTHOR_MAINTAINER   "opensource@cginternals.com")
 set(META_VERSION_MAJOR       "1")
 set(META_VERSION_MINOR       "0")
 set(META_VERSION_PATCH       "4")
+set(META_VERSION_REVISION    "${GIT_REV}")
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
-set(META_AUTHOR_ORGANIZATION "hpicgs group")
-set(META_AUTHOR_DOMAIN       "https://github.com/hpicgs/glraw")
-set(META_AUTHOR_MAINTAINER   "daniel.limberger@hpi.de")
-
-string(TOUPPER ${META_PROJECT_NAME} META_PROJECT_NAME_UPPER)
+set(META_NAME_VERSION        "${META_PROJECT_NAME} v${META_VERSION} (${META_VERSION_REVISION})")
 
 
-# Limit supported configuration types
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Limited Configs" FORCE)
+# 
+# Project configuration options
+# 
 
-# Set project name and type (C/C++)
-project(${META_PROJECT_NAME} C CXX)
-
-
-# Configuration options
-
-option(OPTION_PORTABLE_INSTALL  "Install into a self-contained directory." OFF)
-option(OPTION_BUILD_STATIC      "Build static libraries." OFF)
-#option(OPTION_BUILD_TESTS       "Build tests (if gmock and gtest are found)." ON)
+# Project options
+option(BUILD_SHARED_LIBS     "Build shared instead of static libraries."              ON)
+option(OPTION_SELF_CONTAINED "Create a self-contained install with all dependencies." OFF)
+option(OPTION_BUILD_TESTS    "Build tests."                                           ON)
+option(OPTION_BUILD_DOCS     "Build documentation."                                   OFF)
 
 
-if(OPTION_BUILD_STATIC)
-   set(BUILD_SHARED_LIBS OFF)
-   message("Note: ${META_PROJECT_NAME_UPPER}_STATIC needs to be defined for static linking.")
-else()
-    set(BUILD_SHARED_LIBS ON)
-endif()
-
-
-# CMake configuration:
-
-# Append the path to the custom cmake modules from this project to the CMAKE_MODULE_PATH.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-# Set output directories
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
+# 
+# Declare project
+# 
 
 # Generate folders for IDE targets (e.g., VisualStudio solutions)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# Put projects in root folder by default
 set(IDE_FOLDER "")  
 
-# Include custom cmake functions
-include(cmake/Custom.cmake)
-include(cmake/GitRevision.cmake)
+# Declare project
+project(${META_PROJECT_NAME} C CXX)
+
+# Set output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+
+# Create version file
+file(WRITE "${PROJECT_BINARY_DIR}/VERSION" "${META_NAME_VERSION}")
 
 
-# Platform and architecture setup
+# 
+# Compiler settings and options
+# 
 
-# Architecture (32/64 bit)
-set(X64 OFF)
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(X64 ON)
-endif()
-
-# Setup platform specifics (compile flags, etc., ...)
-
-# This policy was introduced in 3.0.0 and does not allow for COMPILER_DEFINITIONS_<Config>,
-# anymore, but instead requires generator expressions like $<CONFIG:Debug> ... 
-# For now the current compile-flag, -definitions, and linker-flags setup shall remain as is.
-if(POLICY CMP0043)
-    cmake_policy(SET CMP0043 OLD)
-endif()
-
-if(MSVC)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformWindowsMSVC.cmake)
-elseif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformWindowsGCC.cmake)
-elseif(APPLE)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformMacOS.cmake)
-elseif(UNIX)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformLinuxGCC.cmake)
-else()
-    message(WARNING "Unsupported platform/compiler combination")
-endif()
+include(cmake/CompileOptions.cmake)
 
 
+# 
 # Deployment/installation setup
+# 
 
+# Get project name
 set(project ${META_PROJECT_NAME})
-if(WIN32)
 
-    # "%PROGRAMFILES%/<project>/"
+# Check for system dir install
+set(SYSTEM_DIR_INSTALL FALSE)
+if("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr" OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local")
+    set(SYSTEM_DIR_INSTALL TRUE)
+endif()
 
-    set(INSTALL_ROOT      ".")
-    set(INSTALL_DATA      "bin")
-    set(INSTALL_BIN       "bin")
-    set(INSTALL_SHARED    ".")
-    set(INSTALL_LIB       "lib")
-    set(INSTALL_INCLUDE   "include")
-    set(INSTALL_DOC       "doc")
-    set(INSTALL_SHORTCUTS ".") # not available in windows
-    set(INSTALL_ICONS     ".") # not available in windows
-    set(INSTALL_INIT      ".") # not available in windows
-
+# Installation paths
+if(UNIX AND SYSTEM_DIR_INSTALL)
+    # Install into the system (/usr/bin or /usr/local/bin)
+    set(INSTALL_ROOT      "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_CMAKE     "share/${project}/cmake") # /usr/[local]/share/<project>
+    set(INSTALL_DATA      "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_BIN       "bin")                    # /usr/[local]/bin
+    set(INSTALL_SHARED    "lib")                    # /usr/[local]/lib
+    set(INSTALL_LIB       "lib")                    # /usr/[local]/lib
+    set(INSTALL_INCLUDE   "include")                # /usr/[local]/include
+    set(INSTALL_DOC       "share/doc/${project}")   # /usr/[local]/share/doc/<project>
+    set(INSTALL_SHORTCUTS "share/applications")     # /usr/[local]/share/applications
+    set(INSTALL_ICONS     "share/pixmaps")          # /usr/[local]/share/pixmaps
+    set(INSTALL_INIT      "/etc/init")              # /etc/init (upstart init scripts)
 else()
+    # Install into local directory
+    set(INSTALL_ROOT      ".")                      # ./
+    set(INSTALL_CMAKE     "cmake")                  # ./cmake
+    set(INSTALL_DATA      ".")                      # ./bin
+    set(INSTALL_BIN       ".")                      # ./bin
+    set(INSTALL_SHARED    "lib")                    # ./lib
+    set(INSTALL_LIB       "lib")                    # ./lib
+    set(INSTALL_INCLUDE   "include")                # ./include
+    set(INSTALL_DOC       "doc")                    # ./doc
+    set(INSTALL_SHORTCUTS "misc")                   # ./misc
+    set(INSTALL_ICONS     "misc")                   # ./misc
+    set(INSTALL_INIT      "misc")                   # ./misc
+endif()
 
-    # "/user/[local]/"  
+# Set runtime path
+set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD
+set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE) # Use CMAKE_INSTALL_RPATH for INSTALL
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies for INSTALL
 
-    set(INSTALL_ROOT      "share/${project}")
-    set(INSTALL_DATA      "share/${project}")
-    set(INSTALL_BIN       "bin")
-    set(INSTALL_SHARED    "lib")
-    set(INSTALL_LIB       "lib")
-    set(INSTALL_INCLUDE   "include")
-    set(INSTALL_DOC       "share/doc/${project}")
-    set(INSTALL_SHORTCUTS "share/applications")
-    set(INSTALL_ICONS     "share/pixmaps")
-    set(INSTALL_INIT      "/etc/init") # /etc/init (upstart init scripts)
-
-    # Adjust target paths for portable installs
-
-    # "<INSTALL_PREFIX>/"
-
-    if(OPTION_PORTABLE_INSTALL)
-        # Put binaries in root directory and keep data directory name
-        set(INSTALL_ROOT      ".")
-        set(INSTALL_UTILITIES ".")
-        set(INSTALL_DATA      ".")
-        set(INSTALL_BIN       ".")
-
-        # We have to change the RPATH of binaries to achieve a usable local install.
-        # [TODO] For binaries, "$ORIGIN/lib" is right, so that libraries are found in ./lib.
-        #        However, I have not yet tested what happens when libraries use other libraries.
-        #        In that case, they might need the rpath $ORIGIN instead ...
-        set(CMAKE_SKIP_BUILD_RPATH            FALSE)         # Use automatic rpath for build
-        set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE)         # Use specific rpath for INSTALL
-        set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)         # NO automatic rpath for INSTALL
-        set(CMAKE_INSTALL_RPATH               "$ORIGIN/lib") # Libraries are relative to binary
+if(NOT SYSTEM_DIR_INSTALL)
+    # Find libraries relative to binary
+    if(APPLE)
+        set(CMAKE_INSTALL_RPATH "@loader_path/../../../${INSTALL_LIB}")
+    else()
+        set(CMAKE_INSTALL_RPATH "$ORIGIN/${INSTALL_LIB}")       
     endif()
-
 endif()
 
-# Global deployment
 
-# Add a revision file containing the git-head tag for cpack and install
-create_revision_file(${CMAKE_BINARY_DIR}/revision ${INSTALL_ROOT})
-
-# Project meta files
-install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION ${INSTALL_ROOT} COMPONENT dev)
-if(NOT OPTION_BUILD_STATIC)
-    install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION ${INSTALL_ROOT} COMPONENT runtime)
-endif()
-install(FILES AUTHORS DESTINATION               ${INSTALL_ROOT} COMPONENT dev)
-install(FILES LICENSE DESTINATION               ${INSTALL_ROOT} COMPONENT dev)
-install(FILES glraw-config.cmake DESTINATION    ${INSTALL_ROOT} COMPONENT dev)
-
-
-# Data files
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/data DESTINATION ${INSTALL_DATA} COMPONENT runtime)
-
-# Include projects
+# 
+# Project modules
+# 
 
 add_subdirectory(source)
 add_subdirectory(docs)
-add_subdirectory(packages)
+add_subdirectory(deploy)
+
+
+# 
+# Deployment (global project files)
+# 
+
+# Install version file
+install(FILES "${PROJECT_BINARY_DIR}/VERSION" DESTINATION ${INSTALL_ROOT} COMPONENT runtime)
+
+# Install cmake find script for the project
+install(FILES ${META_PROJECT_NAME}-config.cmake DESTINATION ${INSTALL_ROOT} COMPONENT dev)
+
+# Install the project meta files
+install(FILES AUTHORS   DESTINATION ${INSTALL_ROOT} COMPONENT runtime)
+install(FILES LICENSE   DESTINATION ${INSTALL_ROOT} COMPONENT runtime)
+install(FILES README.md DESTINATION ${INSTALL_ROOT} COMPONENT runtime)
+
+# Install runtime data
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${INSTALL_DATA} COMPONENT runtime)

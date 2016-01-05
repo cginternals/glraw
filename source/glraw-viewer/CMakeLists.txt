@@ -1,50 +1,40 @@
 
-set(target glraw-viewer)
-message(STATUS "App ${target}")
+# 
+# External dependencies
+# 
 
-
-# External libraries
-
+find_package(OpenGL REQUIRED)
+find_package(Qt5Core    5.1)
+find_package(Qt5Gui     5.1)
+find_package(Qt5Widgets 5.1)
 find_package(Qt5OpenGL  5.1 REQUIRED)
-find_package(Qt5Core    5.1 REQUIRED)
-find_package(Qt5Gui     5.1 REQUIRED)
-find_package(Qt5Widgets 5.1 REQUIRED)
 
+# Enable automoc
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
+set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
 
-# Includes
-
-include_directories(
-    # e.g., ${TRDP_INCLUDE_DIR}
-)
-
-include_directories(
-    BEFORE
-    ${CMAKE_SOURCE_DIR}/source/glraw/include
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-
-# Libraries
-
-set(libs
-    # e.g., ${TRDP_LIBRARIES}
-    glraw
-)
-
-
-# Compiler definitions
-
-if (OPTION_BUILD_STATIC)
-    add_definitions("-D${META_PROJECT_NAME_UPPER}_STATIC")
+# ENABLE CMP0020: Automatically link Qt executables to qtmain target on Windows.
+if (POLICY CMP0020)
+    cmake_policy(SET CMP0020 NEW)
 endif()
 
 
+# 
+# Executable name and options
+# 
+
+# Target name
+set(target glraw-viewer)
+
+
+# 
 # Sources
+# 
 
 set(sources
     main.cpp
-
     Application.cpp
     Application.h
     Canvas.cpp
@@ -53,46 +43,98 @@ set(sources
     DropFix.h
     Viewer.cpp
     Viewer.h
-)
-
-set(uis
     Viewer.ui
 )
 
 
-# UI Files
-
-qt5_wrap_ui(compiled_ui_files ${uis})
-
+# 
+# Create executable
+# 
 
 # Build executable
+add_executable(${target}
+    MACOSX_BUNDLE
+    ${sources}
+)
 
-add_executable(${target} ${sources} ${compiled_ui_files})
+# Create namespaced alias
+add_executable(${META_PROJECT_NAME}::${target} ALIAS ${target})
 
-target_link_libraries(${target} ${libs})
-qt5_use_modules(${target} OpenGL Core Gui Widgets)
 
-target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_FLAGS})
+# 
+# Project options
+# 
 
 set_target_properties(${target}
     PROPERTIES
-    LINKER_LANGUAGE              CXX
-    FOLDER                      "${IDE_FOLDER}"
-    COMPILE_DEFINITIONS_DEBUG   "${DEFAULT_COMPILE_DEFS_DEBUG}"
-    COMPILE_DEFINITIONS_RELEASE "${DEFAULT_COMPILE_DEFS_RELEASE}"
-    LINK_FLAGS_DEBUG            "${DEFAULT_LINKER_FLAGS_DEBUG}"
-    LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
-    DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
+    ${DEFAULT_PROJECT_OPTIONS}
+    FOLDER "${IDE_FOLDER}"
+)
 
 
+# 
+# Include directories
+# 
+
+target_include_directories(${target}
+    PRIVATE
+    ${DEFAULT_INCLUDE_DIRECTORIES}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${PROJECT_BINARY_DIR}/source/include
+)
+
+
+# 
+# Libraries
+# 
+
+target_link_libraries(${target}
+    PRIVATE
+    ${DEFAULT_LIBRARIES}
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::OpenGL
+    ${META_PROJECT_NAME}::glraw
+)
+
+
+# 
+# Compile definitions
+# 
+
+target_compile_definitions(${target}
+    PRIVATE
+    ${DEFAULT_COMPILE_DEFINITIONS}
+)
+
+
+# 
+# Compile options
+# 
+
+target_compile_options(${target}
+    PRIVATE
+    ${DEFAULT_COMPILE_OPTIONS}
+)
+
+
+# 
+# Linker options
+# 
+
+target_link_libraries(${target}
+    PRIVATE
+    ${DEFAULT_LINKER_OPTIONS}
+)
+
+
+# 
 # Deployment
+# 
 
-if(WIN32)
-    install_qt(runtime ${INSTALL_BIN} Widgets)
-endif()
-
-install(TARGETS ${target} COMPONENT runtime
-    RUNTIME DESTINATION ${INSTALL_BIN}
-#   LIBRARY DESTINATION ${INSTALL_SHARED}
-#   ARCHIVE DESTINATION ${INSTALL_LIB}
+# Executable
+install(TARGETS ${target}
+    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT runtime
+    BUNDLE  DESTINATION ${INSTALL_BIN} COMPONENT runtime
 )

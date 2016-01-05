@@ -3,7 +3,7 @@
 
 #include <QFileInfo>
 
-#include <glraw-version.h>
+#include <glraw/glraw-version.h>
 
 
 Application::Application(int & argc, char ** argv)
