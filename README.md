@@ -6,14 +6,15 @@ The latest release is [glraw-1.0.3](https://github.com/hpicgs/glraw/releases/tag
 
 ## Project Health (master)
 
-| Service | System | Compiler | Options | Status |
+| Service | System | Compiler | Targets | Status |
 | ------- | ------ | -------- | ------- | ------ |
-| Jenkins | Ubuntu 14.04 | GCC 4.8 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc4.8)](http://jenkins.hpi3d.de/job/glraw-linux-gcc4.8)|
-| Jenkins | Ubuntu 14.04 | GCC 4.9 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc4.9)](http://jenkins.hpi3d.de/job/glraw-linux-gcc4.9)|
-| Jenkins | Ubuntu 14.04 | Clang 3.5 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-clang3.5)](http://jenkins.hpi3d.de/job/glraw-linux-clang3.5) |
-| Jenkins | OS X 10.10 | Clang 3.5 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-osx-clang3.5)](http://jenkins.hpi3d.de/job/glraw-osx-clang3.5) |
-| Jenkins | Windows 8.1 | MSVC 2013 Update 5 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-windows-msvc2013)](http://jenkins.hpi3d.de/job/glraw-windows-msvc2013) |
-| Jenkins | Windows 8.1 | MSVC 2015 | default | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-windows-msvc2015)](http://jenkins.hpi3d.de/job/glraw-windows-msvc2015) |
+| Jenkins | Ubuntu 14.04 | GCC 4.8 | all | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc4.8)](http://jenkins.hpi3d.de/job/glraw-linux-gcc4.8)|
+| Jenkins | Ubuntu 14.04 | GCC 4.9 | all | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc4.9)](http://jenkins.hpi3d.de/job/glraw-linux-gcc4.9)|
+| Jenkins | Ubuntu 14.04 | GCC 5.3 | all | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-gcc5.3)](http://jenkins.hpi3d.de/job/glraw-linux-gcc5.3)|
+| Jenkins | Ubuntu 14.04 | Clang 3.5 | all | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-linux-clang3.5)](http://jenkins.hpi3d.de/job/glraw-linux-clang3.5) |
+| Jenkins | OS X 10.10 | Clang 3.5 | - | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-osx-clang3.5)](http://jenkins.hpi3d.de/job/glraw-osx-clang3.5) |
+| Jenkins | Windows 8.1 | MSVC 2013 Update 5 | all, install | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-windows-msvc2013)](http://jenkins.hpi3d.de/job/glraw-windows-msvc2013) |
+| Jenkins | Windows 8.1 | MSVC 2015 Update 1 | all, install | [![Build Status](http://jenkins.hpi3d.de/buildStatus/icon?job=glraw-windows-msvc2015)](http://jenkins.hpi3d.de/job/glraw-windows-msvc2015) |
 
 ## Features
 
