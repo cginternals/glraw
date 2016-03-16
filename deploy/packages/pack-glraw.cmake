@@ -47,17 +47,21 @@ endif()
 # Package components
 # 
 
-set(CPACK_COMPONENTS_ALL runtime dev examples docs)
+set(CPACK_COMPONENTS_ALL runtime dev)
 
-set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "glraw library")
-set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Runtime components for glraw library")
+set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "${META_PROJECT_NAME} library")
+set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Runtime components for ${META_PROJECT_NAME} library")
 
 set(CPACK_COMPONENT_DEV_DISPLAY_NAME "C/C++ development files")
-set(CPACK_COMPONENT_DEV_DESCRIPTION "Development files for glraw library")
+set(CPACK_COMPONENT_DEV_DESCRIPTION "Development files for ${META_PROJECT_NAME} library")
 set(CPACK_COMPONENT_DEV_DEPENDS runtime)
 
-set(CPACK_COMPONENT_DOCS_DISPLAY_NAME "Documentation")
-set(CPACK_COMPONENT_DOCS_DESCRIPTION "Documentation of glraw library")
+if(OPTION_BUILD_DOCS)
+    set(CPACK_COMPONENT_DOCS_DISPLAY_NAME "Documentation")
+    set(CPACK_COMPONENT_DOCS_DESCRIPTION "Documentation of ${META_PROJECT_NAME} library")
+    
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} docs)
+endif()
 
 
 # 
