@@ -70,7 +70,7 @@ const char * RawFile::data() const
 }
 
 
-const size_t RawFile::size() const
+size_t RawFile::size() const
 {
     return m_data.size();
 }

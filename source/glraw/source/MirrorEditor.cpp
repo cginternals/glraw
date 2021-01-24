@@ -24,7 +24,7 @@ MirrorEditor::~MirrorEditor()
 {
 }
 
-void MirrorEditor::editImage(QImage & image, AssetInformation & info)
+void MirrorEditor::editImage(QImage & image, AssetInformation & /*info*/)
 {
     image = image.mirrored(m_horizontal, m_vertical);
 }

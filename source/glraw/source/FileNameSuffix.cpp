@@ -61,11 +61,12 @@ namespace glraw
 {
 
 FileNameSuffix::FileNameSuffix(const QString & fileName)
-: m_width (-1)
+: m_suffix("")
+, m_compressed(false)
+, m_width (-1)
 , m_height(-1)
 , m_format(GL_INVALID_ENUM)
 , m_type(GL_INVALID_ENUM)
-, m_compressed(false)
 {
 	// check if either compressed or uncompressed (or unknown) format
 
@@ -103,11 +104,12 @@ FileNameSuffix::FileNameSuffix(const QString & fileName)
 
 FileNameSuffix::FileNameSuffix(
 	const int width, const int height, const GLenum format, const GLenum type)
-: m_width(width)
+: m_suffix("")
+, m_compressed(false)
+, m_width (width)
 , m_height(height)
 , m_format(format)
 , m_type(type)
-, m_compressed(false)
 {
 	m_suffix = QString(".%1.%2.%3.%4")
 		.arg(m_width).arg(m_height).arg(formatSuffix(m_format)).arg(typeSuffix(m_type));
@@ -115,11 +117,12 @@ FileNameSuffix::FileNameSuffix(
 
 FileNameSuffix::FileNameSuffix(
 	const int width, const int height, const GLenum compressedType)
-: m_width(width)
+: m_suffix("")
+, m_compressed(true)
+, m_width (width)
 , m_height(height)
 , m_format(GL_INVALID_ENUM)
 , m_type(compressedType)
-, m_compressed(true)
 {
     m_suffix = QString(".%1.%2.%3")
         .arg(m_width).arg(m_height).arg(typeSuffix(m_type));

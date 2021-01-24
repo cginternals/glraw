@@ -3,7 +3,6 @@
 # External dependencies
 # 
 
-find_package(OpenGL     REQUIRED)
 find_package(Qt5Core    5.1 REQUIRED)
 find_package(Qt5Gui     5.1 REQUIRED)
 find_package(Qt5Widgets 5.1 REQUIRED)
@@ -149,7 +148,6 @@ target_link_libraries(${target}
 
     PUBLIC
     ${DEFAULT_LIBRARIES}
-    ${OPENGL_LIBRARIES}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets

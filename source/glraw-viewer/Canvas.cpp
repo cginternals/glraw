@@ -81,13 +81,13 @@ QSurfaceFormat Canvas::format() const
     return m_context->format();
 }
 
-const QString Canvas::getString(const GLenum penum)
+QString Canvas::getString(const GLenum penum)
 {
     const QString result = reinterpret_cast<const char*>(m_gl->glGetString(penum));
     return result;
 }
 
-const GLint Canvas::getInteger(const GLenum penum)
+GLint Canvas::getInteger(const GLenum penum)
 {
     GLint result;
     m_gl->glGetIntegerv(penum, &result);

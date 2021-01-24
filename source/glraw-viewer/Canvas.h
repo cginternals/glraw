@@ -32,13 +32,13 @@ public:
     void toggleResolution();
 
 protected:
-    const QString getString(const GLenum penum);
-    const GLint getInteger(const GLenum penum);
+    QString getString(const GLenum penum);
+    GLint getInteger(const GLenum penum);
 
     virtual void initializeGL(const QSurfaceFormat & format);
-	virtual void paintGL();
+    virtual void paintGL();
 
-	virtual void resizeEvent(QResizeEvent * event);
+    virtual void resizeEvent(QResizeEvent * event);
     virtual void exposeEvent(QExposeEvent * event);
     virtual void showEvent(QShowEvent * event);
 
@@ -47,11 +47,11 @@ protected:
     */
     bool verifyExtensions() const;
 
-	void invalidate();
+    void invalidate();
 
-	bool loadGLRawImage(const QString & fileName);
-	bool loadRawImage(const QString & fileName);
-	bool loadQImage(const QString & fileName);
+    bool loadGLRawImage(const QString & fileName);
+    bool loadRawImage(const QString & fileName);
+    bool loadQImage(const QString & fileName);
 
 protected:
     QScopedPointer<QOpenGLContext> m_context;

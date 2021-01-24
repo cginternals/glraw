@@ -20,7 +20,7 @@
 
 namespace
 {
-    void messageHandler(QtMsgType type, const QMessageLogContext & context, const QString & message)
+    void messageHandler(QtMsgType type, const QMessageLogContext & /*context*/, const QString & message)
     {
         if (type == QtDebugMsg)
             return;
@@ -248,7 +248,7 @@ void Builder::process(const QCoreApplication & app)
         m_manager.process(source);
 }
 
-bool Builder::help(const QString & name)
+bool Builder::help(const QString & /*name*/)
 {
     showHelp();
     return false;
@@ -268,13 +268,13 @@ bool Builder::outputPath(const QString & name)
     return true;
 }
 
-bool Builder::quiet(const QString & name)
+bool Builder::quiet(const QString & /*name*/)
 {
     qInstallMessageHandler(messageHandler);
     return true;
 }
 
-bool Builder::noSuffixes(const QString & name)
+bool Builder::noSuffixes(const QString & /*name*/)
 {
     m_writer->setSuffixesEnabled(false);
     return true;
@@ -358,13 +358,13 @@ bool Builder::compressedFormat(const QString & name)
     return true;
 }
 
-bool Builder::raw(const QString & name)
+bool Builder::raw(const QString & /*name*/)
 {
     m_writer->setHeaderEnabled(false);
     return true;
 }
 
-bool Builder::mirrorVertical(const QString & name)
+bool Builder::mirrorVertical(const QString & /*name*/)
 {
     const QString editorName = "MirrorEditor";
     if (!editorExists(editorName))
@@ -377,7 +377,7 @@ bool Builder::mirrorVertical(const QString & name)
     return true;
 }
 
-bool Builder::mirrorHorizontal(const QString & name)
+bool Builder::mirrorHorizontal(const QString & /*name*/)
 {
     const QString editorName = "MirrorEditor";
     if (!editorExists(editorName))
